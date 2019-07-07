@@ -25,9 +25,9 @@ router.post(
 )
 
 /*
- * Verify route
+ * Verify Email route
  */
-router.post('/verify', trimRequest.all, validate.verify, controller.verify)
+router.get('/verify-email/:vid', trimRequest.all, controller.verifyEmail)
 
 /*
  * Forgot password route
@@ -52,16 +52,27 @@ router.post(
 /*
  * Get new refresh token
  */
-router.get(
-  '/token',
+router.post(
+  '/refresh-token',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'admin']),
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
   controller.getRefreshToken
 )
 
 /*
- * Login route
+ * Login with access-token token
+ */
+router.post(
+  '/access-token',
+  requireAuth,
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  controller.loginWithAccessToken
+)
+
+/*
+ * Login Route
  */
 router.post('/login', trimRequest.all, validate.login, controller.login)
 

@@ -6,7 +6,7 @@ const { check } = require('express-validator/check')
  * Validates update profile request
  */
 exports.updateProfile = [
-  check('name')
+  check('displayName')
     .exists()
     .withMessage('MISSING')
     .not()

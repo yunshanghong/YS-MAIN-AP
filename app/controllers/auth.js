@@ -25,16 +25,25 @@ const generateToken = user => {
     Math.floor(Date.now() / 1000) + 60 * process.env.JWT_EXPIRATION_IN_MINUTES
 
   // returns signed and encrypted token
-  return auth.encrypt(
-    jwt.sign(
-      {
-        data: {
-          _id: user
-        },
-        exp: expiration
+  // return auth.encrypt(
+  //   jwt.sign(
+  //     {
+  //       data: {
+  //         _id: user
+  //       },
+  //       exp: expiration
+  //     },
+  //     process.env.JWT_SECRET
+  //   )
+  // )
+  return jwt.sign(
+    {
+      data: {
+        _id: user
       },
-      process.env.JWT_SECRET
-    )
+      exp: expiration
+    },
+    process.env.JWT_SECRET
   )
 }
 
@@ -44,10 +53,35 @@ const generateToken = user => {
  */
 const setUserInfo = req => {
   let user = {
-    _id: req._id,
-    name: req.name,
-    email: req.email,
+    uuid: req._id,
+    from: 'm-lab-db',
     role: req.role,
+    data: {
+      displayName: req.displayName,
+      photoURL: req.photoURL,
+      email: req.email,
+      settings: {
+        layout: {
+          style: 'layout1',
+          config: {
+            navbar: {
+              folded: true
+            },
+            footer: {
+              style: 'static'
+            }
+          }
+        },
+        customScrollbars: true,
+        theme: {
+          main: 'defaultDark',
+          navbar: 'mainThemeDark',
+          toolbar: 'mainThemeDark',
+          footer: 'mainThemeDark'
+        }
+      },
+      shortcuts: req.shortcuts
+    },
     verified: req.verified
   }
   // Adds verification for testing purposes
@@ -80,7 +114,7 @@ const saveUserAccessAndReturnToken = async (req, user) => {
       const userInfo = setUserInfo(user)
       // Returns data with access token
       resolve({
-        token: generateToken(user._id),
+        access_token: generateToken(user._id), // eslint-disable-line
         user: userInfo
       })
     })
@@ -176,9 +210,9 @@ const findUser = async email => {
       {
         email
       },
-      'password loginAttempts blockExpires name email role verified verification',
+      'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts',
       (err, item) => {
-        utils.itemNotFound(err, item, reject, 'USER_DOES_NOT_EXIST')
+        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
         resolve(item)
       }
     )
@@ -192,7 +226,7 @@ const findUser = async email => {
 const findUserById = async userId => {
   return new Promise((resolve, reject) => {
     User.findById(userId, (err, item) => {
-      utils.itemNotFound(err, item, reject, 'USER_DOES_NOT_EXIST')
+      utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
       resolve(item)
     })
   })
@@ -222,7 +256,7 @@ const passwordsDoNotMatch = async user => {
 const registerUser = async req => {
   return new Promise((resolve, reject) => {
     const user = new User({
-      name: req.name,
+      displayName: req.displayName,
       email: req.email,
       password: req.password,
       verification: uuid.v4()
@@ -246,7 +280,7 @@ const returnRegisterToken = (item, userInfo) => {
     userInfo.verification = item.verification
   }
   const data = {
-    token: generateToken(item._id),
+    access_token: generateToken(item._id),// eslint-disable-line
     user: userInfo
   }
   return data
@@ -424,7 +458,8 @@ const checkPermissions = async (data, next) => {
 const getUserIdFromToken = async token => {
   return new Promise((resolve, reject) => {
     // Decrypts, verifies and decode token
-    jwt.verify(auth.decrypt(token), process.env.JWT_SECRET, (err, decoded) => {
+    // jwt.verify(auth.decrypt(token), process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         reject(utils.buildErrObject(409, 'BAD_TOKEN'))
       }
@@ -486,15 +521,19 @@ exports.register = async (req, res) => {
 }
 
 /**
- * Verify function called by route
+ * Verify email function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.verify = async (req, res) => {
+exports.verifyEmail = async (req, res) => {
   try {
-    req = matchedData(req)
-    const user = await verificationExists(req.id)
-    res.status(200).json(await verifyUser(user))
+    // TODO Fix here
+    // req = matchedData(req)
+    // const user = await verificationExists(req.id)
+    const user = await verificationExists(req.params.vid)
+    await verifyUser(user)
+    // res.status(200).json(await verifyUser(user))
+    res.redirect(`${process.env.FRONTEND_URL}/profile-settings`)
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -554,6 +593,28 @@ exports.getRefreshToken = async (req, res) => {
     // Removes user info from response
     delete token.user
     res.status(200).json(token)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Refresh token function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.loginWithAccessToken = async (req, res) => {
+  try {
+    const tokenEncrypted = req.headers.authorization
+      .replace('Bearer ', '')
+      .trim()
+    let userId = await getUserIdFromToken(tokenEncrypted)
+    userId = await utils.isIDGood(userId)
+    const user = await findUserById(userId)
+    const userWithToken = await saveUserAccessAndReturnToken(req, user)
+    // Removes user info from response
+    // delete userWithToken.user
+    res.status(200).json(userWithToken)
   } catch (error) {
     utils.handleError(res, error)
   }

@@ -16,7 +16,7 @@ const emailer = require('../middleware/emailer')
 const createItem = async req => {
   return new Promise((resolve, reject) => {
     const user = new model({
-      name: req.name,
+      displayName: req.displayName,
       email: req.email,
       password: req.password,
       role: req.role,

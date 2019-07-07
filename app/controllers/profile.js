@@ -1,4 +1,5 @@
 const model = require('../models/user')
+const accessModel = require('../models/userAccess')
 const utils = require('../middleware/utils')
 const { matchedData } = require('express-validator/filter')
 const auth = require('../middleware/auth')
@@ -50,7 +51,7 @@ const updateProfileInDB = async (req, id) => {
 const findUser = async id => {
   return new Promise((resolve, reject) => {
     model.findById(id, 'password email', (err, user) => {
-      utils.itemNotFound(err, user, reject, 'USER_DOES_NOT_EXIST')
+      utils.itemNotFound(err, user, reject, { email: 'USER_DOES_NOT_EXIST' })
       resolve(user)
     })
   })
@@ -87,6 +88,28 @@ const changePasswordInDB = async (id, req) => {
         resolve(utils.buildSuccObject('PASSWORD_CHANGED'))
       })
     })
+  })
+}
+
+/**
+ * Gets last 8 accesses log from database
+ */
+const findUserAccesses = async (req, email) => {
+  return new Promise((resolve, reject) => {
+    accessModel.find(
+      { email },
+      '-email -_id -createdAt',
+      {
+        sort: {
+          updatedAt: -1
+        },
+        limit: 8
+      },
+      (err, accessHistory) => {
+        utils.itemNotFound(err, accessHistory, reject, 'NOT_FOUND')
+        resolve(accessHistory)
+      }
+    )
   })
 }
 
@@ -140,6 +163,20 @@ exports.changePassword = async (req, res) => {
       // all ok, proceed to change password
       res.status(200).json(await changePasswordInDB(id, req))
     }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Get last 8 access history by user
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getAccesses = async (req, res) => {
+  try {
+    const accessHistory = await findUserAccesses(req, req.user.email)
+    res.status(200).json(accessHistory)
   } catch (error) {
     utils.handleError(res, error)
   }

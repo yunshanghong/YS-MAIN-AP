@@ -76,7 +76,16 @@ exports.validationResult = (req, res, next) => {
     }
     return next()
   } catch (err) {
-    return this.handleError(res, this.buildErrObject(422, err.array()))
+    return this.handleError(
+      res,
+      this.buildErrObject(
+        422,
+        err.array().reduce((result, item) => {
+          result[item.param] = item.msg
+          return result
+        }, {})
+      )
+    )
   }
 }
 

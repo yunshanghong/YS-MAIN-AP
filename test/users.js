@@ -20,26 +20,26 @@ const createdID = []
 chai.use(chaiHttp)
 
 describe('*********** USERS ***********', () => {
-  describe('/POST login', () => {
+  describe('/POST /auth/login', () => {
     it('it should GET token', done => {
       chai
         .request(server)
-        .post('/login')
+        .post('/auth/login')
         .send(loginDetails)
         .end((err, res) => {
           res.should.have.status(200)
           res.body.should.be.an('object')
-          res.body.should.have.property('token')
-          token = res.body.token
+          res.body.should.have.property('access_token')
+          token = res.body.access_token
           done()
         })
     })
   })
-  describe('/GET users', () => {
+  describe('/GET /api/users', () => {
     it('it should NOT be able to consume the route since no token was sent', done => {
       chai
         .request(server)
-        .get('/users')
+        .get('/api/users')
         .end((err, res) => {
           res.should.have.status(401)
           done()
@@ -48,7 +48,7 @@ describe('*********** USERS ***********', () => {
     it('it should GET all the users', done => {
       chai
         .request(server)
-        .get('/users')
+        .get('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .end((err, res) => {
           res.should.have.status(200)
@@ -60,7 +60,7 @@ describe('*********** USERS ***********', () => {
     it('it should GET the users with filters', done => {
       chai
         .request(server)
-        .get('/users?filter=admin&fields=name,email,city,country,phone')
+        .get('/api/users?filter=admin&fields=name,email,city,country,phone')
         .set('Authorization', `Bearer ${token}`)
         .end((err, res) => {
           res.should.have.status(200)
@@ -77,7 +77,7 @@ describe('*********** USERS ***********', () => {
       const user = {}
       chai
         .request(server)
-        .post('/users')
+        .post('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -89,7 +89,7 @@ describe('*********** USERS ***********', () => {
     })
     it('it should POST a user ', done => {
       const user = {
-        name: faker.random.words(),
+        displayName: faker.random.words(),
         email,
         password: faker.random.words(),
         role: 'admin',
@@ -101,13 +101,18 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/users')
+        .post('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
           res.should.have.status(201)
           res.body.should.be.a('object')
-          res.body.should.include.keys('_id', 'name', 'email', 'verification')
+          res.body.should.include.keys(
+            '_id',
+            'displayName',
+            'email',
+            'verification'
+          )
           createdID.push(res.body._id)
           done()
         })
@@ -121,7 +126,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/users')
+        .post('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -140,7 +145,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/users')
+        .post('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -151,27 +156,27 @@ describe('*********** USERS ***********', () => {
         })
     })
   })
-  describe('/GET/:id user', () => {
+  describe('/GET/:id /api/user', () => {
     it('it should GET a user by the given id', done => {
       const id = createdID.slice(-1).pop()
       chai
         .request(server)
-        .get(`/users/${id}`)
+        .get(`/api/users/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .end((error, res) => {
           res.should.have.status(200)
           res.body.should.be.a('object')
-          res.body.should.have.property('name')
+          res.body.should.have.property('displayName')
           res.body.should.have.property('_id').eql(id)
           done()
         })
     })
   })
-  describe('/PATCH/:id user', () => {
+  describe('/PATCH/:id /api/user', () => {
     it('it should UPDATE a user given the id', done => {
       const id = createdID.slice(-1).pop()
       const user = {
-        name: 'JS123456',
+        displayName: 'JS123456',
         email: 'emailthatalreadyexists@email.com',
         role: 'admin',
         urlTwitter: faker.internet.url(),
@@ -182,14 +187,14 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .patch(`/users/${id}`)
+        .patch(`/api/users/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((error, res) => {
           res.should.have.status(200)
           res.body.should.be.a('object')
           res.body.should.have.property('_id').eql(id)
-          res.body.should.have.property('name').eql('JS123456')
+          res.body.should.have.property('displayName').eql('JS123456')
           res.body.should.have
             .property('email')
             .eql('emailthatalreadyexists@email.com')
@@ -206,7 +211,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .patch(`/users/${id}`)
+        .patch(`/api/users/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -217,10 +222,10 @@ describe('*********** USERS ***********', () => {
         })
     })
   })
-  describe('/DELETE/:id user', () => {
+  describe('/DELETE/:id /api/user', () => {
     it('it should DELETE a user given the id', done => {
       const user = {
-        name: faker.random.words(),
+        displayName: faker.random.words(),
         email: faker.internet.email(),
         password: faker.random.words(),
         role: 'admin',
@@ -232,16 +237,21 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/users')
+        .post('/api/users')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
           res.should.have.status(201)
           res.body.should.be.a('object')
-          res.body.should.include.keys('_id', 'name', 'email', 'verification')
+          res.body.should.include.keys(
+            '_id',
+            'displayName',
+            'email',
+            'verification'
+          )
           chai
             .request(server)
-            .delete(`/users/${res.body._id}`)
+            .delete(`/api/users/${res.body._id}`)
             .set('Authorization', `Bearer ${token}`)
             .end((error, result) => {
               result.should.have.status(200)

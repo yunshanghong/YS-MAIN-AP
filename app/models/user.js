@@ -5,9 +5,19 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
+    role: {
+      type: String,
+      enum: ['user', 'staff', 'admin'],
+      default: 'user'
+    },
+    displayName: {
       type: String,
       required: true
+    },
+    photoURL: {
+      type: String,
+      required: false,
+      default: 'assets/images/avatars/penguin.png'
     },
     email: {
       type: String,
@@ -24,17 +34,16 @@ const UserSchema = new mongoose.Schema(
       required: true,
       select: false
     },
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user'
-    },
     verification: {
       type: String
     },
     verified: {
       type: Boolean,
       default: false
+    },
+    shortcuts: {
+      type: Array,
+      default: ['crypto-dashboard-markets']
     },
     phone: {
       type: String
@@ -74,6 +83,60 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
       select: false
+    },
+
+    /* Third Party Login */
+    google: {
+      id: {
+        type: String,
+        default: null
+      },
+      accessToken: {
+        type: String,
+        default: null
+      },
+      refreshToken: {
+        type: String,
+        default: null
+      },
+      displayName: {
+        type: String,
+        default: null
+      },
+      email: {
+        type: String,
+        default: null
+      },
+      photoURL: {
+        type: String,
+        default: null
+      }
+    },
+    facebook: {
+      id: {
+        type: String,
+        default: null
+      },
+      accessToken: {
+        type: String,
+        default: null
+      },
+      refreshToken: {
+        type: String,
+        default: null
+      },
+      displayName: {
+        type: String,
+        default: null
+      },
+      email: {
+        type: String,
+        default: null
+      },
+      photoURL: {
+        type: String,
+        default: null
+      }
     }
   },
   {

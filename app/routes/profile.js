@@ -49,4 +49,15 @@ router.post(
   controller.changePassword
 )
 
+/*
+ * User's access history routes
+ */
+router.post(
+  '/access-history',
+  requireAuth,
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  controller.getAccesses
+)
+
 module.exports = router

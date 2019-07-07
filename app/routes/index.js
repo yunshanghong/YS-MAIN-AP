@@ -9,7 +9,7 @@ const { removeExtensionFromFile } = require('../middleware/utils')
  */
 
 // Load Auth route
-router.use('/', require('./auth'))
+router.use('/auth', require('./auth'))
 
 // Loop routes path and loads every file as a route except this file and Auth route
 fs.readdirSync(routesPath).filter(file => {
@@ -17,15 +17,8 @@ fs.readdirSync(routesPath).filter(file => {
   const routeFile = removeExtensionFromFile(file)
   // Prevents loading of this file and auth file
   return routeFile !== 'index' && routeFile !== 'auth'
-    ? router.use(`/${routeFile}`, require(`./${routeFile}`))
+    ? router.use(`/api/${routeFile}`, require(`./${routeFile}`))
     : ''
-})
-
-/*
- * Setup routes for index
- */
-router.get('/', (req, res) => {
-  res.render('index')
 })
 
 /*
@@ -33,9 +26,7 @@ router.get('/', (req, res) => {
  */
 router.use('*', (req, res) => {
   res.status(404).json({
-    errors: {
-      msg: 'URL_NOT_FOUND'
-    }
+    error: 'URL_NOT_FOUND'
   })
 })
 
