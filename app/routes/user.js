@@ -1,5 +1,5 @@
-const controller = require('../controllers/users')
-const validate = require('../controllers/users.validate')
+const controller = require('../controllers/user')
+const validate = require('../controllers/user.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
 const router = express.Router()
@@ -49,28 +49,52 @@ router.get(
   controller.getItem
 )
 
+// /*
+//  * Update item route
+//  */
+// router.patch(
+//   '/:id',
+//   requireAuth,
+//   AuthController.roleAuthorization(['staff', 'admin']),
+//   trimRequest.all,
+//   validate.updateItem,
+//   controller.updateItem
+// )
+
 /*
- * Update item route
+ * Update item activation route
  */
 router.patch(
-  '/:id',
+  '/activation/:id',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  validate.updateItem,
-  controller.updateItem
+  validate.updateItemActivation,
+  controller.updateItemActivation
 )
 
 /*
- * Delete item route
+ * Update item permission route (only admin)
  */
-router.delete(
-  '/:id',
+router.patch(
+  '/permission/:id',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(['admin']),
   trimRequest.all,
-  validate.deleteItem,
-  controller.deleteItem
+  validate.updateItemPermission,
+  controller.updateItemPermission
 )
+
+// /*
+//  * Delete item route
+//  */
+// router.delete(
+//   '/:id',
+//   requireAuth,
+//   AuthController.roleAuthorization(['staff', 'admin']),
+//   trimRequest.all,
+//   validate.deleteItem,
+//   controller.deleteItem
+// )
 
 module.exports = router

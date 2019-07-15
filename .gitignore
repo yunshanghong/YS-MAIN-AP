@@ -67,3 +67,6 @@ typings/
 
 # ignore production configuration
 .env.production
+
+# User upload
+/uploads

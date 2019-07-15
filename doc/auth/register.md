@@ -1,6 +1,6 @@
 # 註冊入口
 
-## [POST] /api/auth/register
+## [POST] /auth/register
 
 ---
 
@@ -35,15 +35,37 @@ access_token: jwt,
 
 user 實體
 
-```
-uuid    : DB._id,
-from    : 'custom-db',
-role    : "admin",
-data    : {
-    displayName: displayName,
-    photoURL   : 'assets/images/avatars/Abbott.jpg',
-    email      : email,
-    settings   : {},
-    shortcuts  : []
+```javascript
+{
+    uuid: req._id,
+    from: 'm-lab-db',
+    role: req.role,
+    data: {
+      displayName: req.displayName,
+      photoURL: req.photoURL,
+      email: req.email,
+      settings: {
+        layout: {
+          style: 'layout1',
+          config: {
+            navbar: {
+              folded: true
+            },
+            footer: {
+              style: 'static'
+            }
+          }
+        },
+        customScrollbars: true,
+        theme: {
+          main: 'defaultDark',
+          navbar: 'mainThemeDark',
+          toolbar: 'mainThemeDark',
+          footer: 'mainThemeDark'
+        }
+      },
+      shortcuts: req.shortcuts
+    },
+    verified: req.verified
 }
 ```

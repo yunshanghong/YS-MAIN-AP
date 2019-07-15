@@ -77,12 +77,54 @@ exports.getItem = async (req, res) => {
   }
 }
 
+// /**
+//  * Update item function called by route
+//  * @param {Object} req - request object
+//  * @param {Object} res - response object
+//  */
+// exports.updateItem = async (req, res) => {
+//   try {
+//     req = matchedData(req)
+//     const id = await utils.isIDGood(req.id)
+//     const doesEmailExists = await emailer.emailExistsExcludingMyself(
+//       id,
+//       req.email
+//     )
+//     if (!doesEmailExists) {
+//       res.status(200).json(await db.updateItem(id, model, req))
+//     }
+//   } catch (error) {
+//     utils.handleError(res, error)
+//   }
+// }
+
 /**
- * Update item function called by route
+ * Update item Activation function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.updateItem = async (req, res) => {
+exports.updateItemActivation = async (req, res) => {
+  try {
+    req = matchedData(req)
+    const id = await utils.isIDGood(req.id)
+    const doesEmailExists = await emailer.emailExistsExcludingMyself(
+      id,
+      req.email
+    )
+    if (!doesEmailExists) {
+      res.status(200).json(await db.updateItem(id, model, req))
+    }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Update item Permission function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateItemPermission = async (req, res) => {
   try {
     req = matchedData(req)
     const id = await utils.isIDGood(req.id)

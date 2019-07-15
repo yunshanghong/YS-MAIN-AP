@@ -35,11 +35,11 @@ describe('*********** USERS ***********', () => {
         })
     })
   })
-  describe('/GET /api/users', () => {
+  describe('/GET /api/user', () => {
     it('it should NOT be able to consume the route since no token was sent', done => {
       chai
         .request(server)
-        .get('/api/users')
+        .get('/api/user')
         .end((err, res) => {
           res.should.have.status(401)
           done()
@@ -48,7 +48,7 @@ describe('*********** USERS ***********', () => {
     it('it should GET all the users', done => {
       chai
         .request(server)
-        .get('/api/users')
+        .get('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .end((err, res) => {
           res.should.have.status(200)
@@ -60,7 +60,7 @@ describe('*********** USERS ***********', () => {
     it('it should GET the users with filters', done => {
       chai
         .request(server)
-        .get('/api/users?filter=admin&fields=name,email,city,country,phone')
+        .get('/api/user?filter=admin&fields=name,email,city,country,phone')
         .set('Authorization', `Bearer ${token}`)
         .end((err, res) => {
           res.should.have.status(200)
@@ -77,7 +77,7 @@ describe('*********** USERS ***********', () => {
       const user = {}
       chai
         .request(server)
-        .post('/api/users')
+        .post('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -101,7 +101,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/api/users')
+        .post('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -126,7 +126,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/api/users')
+        .post('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -145,7 +145,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/api/users')
+        .post('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -161,7 +161,7 @@ describe('*********** USERS ***********', () => {
       const id = createdID.slice(-1).pop()
       chai
         .request(server)
-        .get(`/api/users/${id}`)
+        .get(`/api/user/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .end((error, res) => {
           res.should.have.status(200)
@@ -187,7 +187,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .patch(`/api/users/${id}`)
+        .patch(`/api/user/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((error, res) => {
@@ -211,7 +211,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .patch(`/api/users/${id}`)
+        .patch(`/api/user/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -237,7 +237,7 @@ describe('*********** USERS ***********', () => {
       }
       chai
         .request(server)
-        .post('/api/users')
+        .post('/api/user')
         .set('Authorization', `Bearer ${token}`)
         .send(user)
         .end((err, res) => {
@@ -251,7 +251,7 @@ describe('*********** USERS ***********', () => {
           )
           chai
             .request(server)
-            .delete(`/api/users/${res.body._id}`)
+            .delete(`/api/user/${res.body._id}`)
             .set('Authorization', `Bearer ${token}`)
             .end((error, result) => {
               result.should.have.status(200)

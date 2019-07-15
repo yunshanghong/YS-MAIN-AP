@@ -1,6 +1,6 @@
-# 忘記密碼入口
+# JWT 登入入口
 
-## [POST] /auth/forgot
+## [POST] /profile/access-history
 
 ---
 
@@ -8,7 +8,10 @@
 
 ```javascript
 {
-  email: 'NEED_RESET_EMAIL'
+  headers: {
+    authorization: `Bearer ACCESS_TOKEN`
+  },
+  data: {}
 }
 ```
 
@@ -29,12 +32,7 @@
 ### 回傳成功
 
 ```javascript
-{
-  msg: 'RESET_EMAIL_SENT',
-  email: 'NEED_RESET_EMAIL'
-}
+;['access-history']
 ```
-
-With Reset link email
 
 ---

@@ -135,6 +135,62 @@ exports.updateItem = [
 ]
 
 /**
+ * Validates update item Active status request
+ */
+exports.updateItemActivation = [
+  check('email')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  check('active')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('id')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
+ * Validates update item Permission status request
+ */
+exports.updateItemPermission = [
+  check('email')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  check('role')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('id')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates get item request
  */
 exports.getItem = [

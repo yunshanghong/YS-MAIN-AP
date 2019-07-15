@@ -1,6 +1,5 @@
 const controller = require('../controllers/auth')
 const validate = require('../controllers/auth.validate')
-const AuthController = require('../controllers/auth')
 const express = require('express')
 const router = express.Router()
 require('../../config/passport')
@@ -55,7 +54,7 @@ router.post(
 router.post(
   '/refresh-token',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
   controller.getRefreshToken
 )
@@ -66,7 +65,7 @@ router.post(
 router.post(
   '/access-token',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
   controller.loginWithAccessToken
 )

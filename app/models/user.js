@@ -3,6 +3,59 @@ const bcrypt = require('bcrypt-nodejs')
 const validator = require('validator')
 const mongoosePaginate = require('mongoose-paginate-v2')
 
+const GoogleProvider = new mongoose.Schema({
+  id: {
+    type: String,
+    default: null
+  },
+  accessToken: {
+    type: String,
+    default: null
+  },
+  refreshToken: {
+    type: String,
+    default: null
+  },
+  displayName: {
+    type: String,
+    default: null
+  },
+  email: {
+    type: String,
+    default: null
+  },
+  photoURL: {
+    type: String,
+    default: null
+  }
+})
+const FacebookProvider = new mongoose.Schema({
+  id: {
+    type: String,
+    default: null
+  },
+  accessToken: {
+    type: String,
+    default: null
+  },
+  refreshToken: {
+    type: String,
+    default: null
+  },
+  displayName: {
+    type: String,
+    default: null
+  },
+  email: {
+    type: String,
+    default: null
+  },
+  photoURL: {
+    type: String,
+    default: null
+  }
+})
+
 const UserSchema = new mongoose.Schema(
   {
     role: {
@@ -44,6 +97,14 @@ const UserSchema = new mongoose.Schema(
     shortcuts: {
       type: Array,
       default: ['crypto-dashboard-markets']
+    },
+    balance: {
+      type: mongoose.Types.Decimal128,
+      default: 0
+    },
+    active: {
+      type: Boolean,
+      default: true
     },
     phone: {
       type: String
@@ -87,56 +148,12 @@ const UserSchema = new mongoose.Schema(
 
     /* Third Party Login */
     google: {
-      id: {
-        type: String,
-        default: null
-      },
-      accessToken: {
-        type: String,
-        default: null
-      },
-      refreshToken: {
-        type: String,
-        default: null
-      },
-      displayName: {
-        type: String,
-        default: null
-      },
-      email: {
-        type: String,
-        default: null
-      },
-      photoURL: {
-        type: String,
-        default: null
-      }
+      type: GoogleProvider,
+      default: null
     },
     facebook: {
-      id: {
-        type: String,
-        default: null
-      },
-      accessToken: {
-        type: String,
-        default: null
-      },
-      refreshToken: {
-        type: String,
-        default: null
-      },
-      displayName: {
-        type: String,
-        default: null
-      },
-      email: {
-        type: String,
-        default: null
-      },
-      photoURL: {
-        type: String,
-        default: null
-      }
+      type: FacebookProvider,
+      default: null
     }
   },
   {

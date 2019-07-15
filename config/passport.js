@@ -49,45 +49,48 @@ const googleLogin = new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
-    callbackURL: `${process.env.AUTH_API_END_POINT}/auth/oauth/google/callback`
+    callbackURL: `${process.env.AUTH_API_END_POINT}/auth/link/google/callback`
   },
   (accessToken, refreshToken, profile, done) => {
-    // User.findOrCreate(
-    //   { google: { id: profile.id } },
-    //   { google: { name: profile.displayName, userid: profile.id } },
-    //   (err, user) => {
-    //     return done(err, user)
-    //   }
-    // )
+    process.nextTick(() => {
+      // User.findOrCreate(
+      //   { google: { id: profile.id } },
+      //   { google: { name: profile.displayName, userid: profile.id } },
+      //   (err, user) => {
+      //     return done(err, user)
+      //   }
+      // )
 
-    // const { sub, name, picture, email } = profile._json
+      // const { sub, name, picture, email } = profile._json
 
-    // console.log('accessToken, ', accessToken)
-    // console.log('refreshToken, ', refreshToken)
-    // console.log('profile, ', profile)
-    // console.log('profile._json, ', profile._json)
+      // console.log('accessToken, ', accessToken)
+      // console.log('refreshToken, ', refreshToken)
+      // console.log('profile, ', profile)
+      // console.log('profile._json, ', profile._json)
 
-    // model.findOneAndUpdate(
-    //   { google: { id: sub } },
-    //   {
-    //     google: {
-    //       id: sub,
-    //       displayName: name,
-    //       photoURL: picture,
-    //       email
-    //     }
-    //   },
-    //   (err, user) => {
-    //     return done(err, user)
-    //   }
-    // )
+      // model.findOneAndUpdate(
+      //   { google: { id: sub } },
+      //   {
+      //     google: {
+      //       id: sub,
+      //       displayName: name,
+      //       photoURL: picture,
+      //       email
+      //     }
+      //   },
+      //   (err, user) => {
+      //     return done(err, user)
+      //   }
+      // )
 
-    const userGoogleData = {
-      accessToken,
-      profile: profile._json
-    }
+      // const userGoogleData = {
+      //   accessToken,
+      //   profile: profile._json
+      // }
+      console.log('req.session in google callback ', req.session)
 
-    return done(null, userGoogleData)
+      return done(null, {})
+    })
   }
 )
 

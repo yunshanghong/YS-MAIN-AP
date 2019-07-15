@@ -1,6 +1,6 @@
 # 登入入口
 
-## [POST] /api/auth
+## [POST] /auth/login
 
 ---
 
