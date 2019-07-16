@@ -23,6 +23,11 @@ const UserAccessSchema = new mongoose.Schema(
     country: {
       type: String,
       required: true
+    },
+    byToken: {
+      type: Boolean,
+      require: true,
+      default: false
     }
   },
   {

@@ -100,13 +100,14 @@ const setUserInfo = req => {
  * @param {Object} req - request object
  * @param {Object} user - user object
  */
-const saveUserAccessAndReturnToken = async (req, user) => {
+const saveUserAccessAndReturnToken = async ({ req, user, byToken }) => {
   return new Promise((resolve, reject) => {
     const userAccess = new UserAccess({
       email: user.email,
       ip: utils.getIP(req),
       browser: utils.getBrowserInfo(req),
-      country: utils.getCountry(req)
+      country: utils.getCountry(req),
+      byToken: !!byToken
     })
     userAccess.save(err => {
       if (err) {
@@ -491,7 +492,7 @@ exports.login = async (req, res) => {
       // all ok, register access and return token
       user.loginAttempts = 0
       await saveLoginAttemptsToDB(user)
-      res.status(200).json(await saveUserAccessAndReturnToken(req, user))
+      res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
     }
   } catch (error) {
     utils.handleError(res, error)
@@ -590,7 +591,7 @@ exports.getRefreshToken = async (req, res) => {
     let userId = await getUserIdFromToken(tokenEncrypted)
     userId = await utils.isIDGood(userId)
     const user = await findUserById(userId)
-    const token = await saveUserAccessAndReturnToken(req, user)
+    const token = await saveUserAccessAndReturnToken({ req, user })
     // Removes user info from response
     delete token.user
     res.status(200).json(token)
@@ -612,7 +613,11 @@ exports.loginWithAccessToken = async (req, res) => {
     let userId = await getUserIdFromToken(tokenEncrypted)
     userId = await utils.isIDGood(userId)
     const user = await findUserById(userId)
-    const userWithToken = await saveUserAccessAndReturnToken(req, user)
+    const userWithToken = await saveUserAccessAndReturnToken({
+      req,
+      user,
+      byToken: true
+    })
     // Removes user info from response
     // delete userWithToken.user
     res.status(200).json(userWithToken)

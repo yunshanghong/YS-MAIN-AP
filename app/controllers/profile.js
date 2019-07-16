@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const model = require('../models/user')
 const accessModel = require('../models/userAccess')
 const utils = require('../middleware/utils')
@@ -97,13 +99,13 @@ const changePasswordInDB = async (id, req) => {
 const findUserAccesses = async (req, email) => {
   return new Promise((resolve, reject) => {
     accessModel.find(
-      { email },
+      { email, byToken: false },
       '-email -_id -createdAt',
       {
         sort: {
           updatedAt: -1
         },
-        limit: 8
+        limit: 3
       },
       (err, accessHistory) => {
         utils.itemNotFound(err, accessHistory, reject, 'NOT_FOUND')
@@ -140,6 +142,28 @@ exports.updateProfile = async (req, res) => {
   try {
     const id = await utils.isIDGood(req.user._id)
     req = matchedData(req)
+    res.status(200).json(await updateProfileInDB(req, id))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Update profile Avatar image function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateAvatar = async (req, res) => {
+  try {
+    // Find old Image, delete it if exist
+    const id = await utils.isIDGood(req.user._id)
+    const oldAvatar = req.user.photoURL
+    req.photoURL = req.file.filename
+    if (oldAvatar !== 'assets/images/avatars/penguin.png') {
+      fs.unlinkSync(
+        path.resolve(__dirname, '../', '../', 'uploads', 'avatar', oldAvatar)
+      )
+    }
     res.status(200).json(await updateProfileInDB(req, id))
   } catch (error) {
     utils.handleError(res, error)

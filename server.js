@@ -18,6 +18,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+// User Uploads
+app.use('/uploads', express.static('uploads'))
+
 // Redis cache enabled by env variable
 if (process.env.USE_REDIS === 'true') {
   const getExpeditiousCache = require('express-expeditious')
