@@ -4,7 +4,7 @@ const AuthController = require('../controllers/auth')
 const express = require('express')
 const uploader = require('../middleware/multer')
 const router = express.Router()
-require('../../config/passport')
+// require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
   session: false

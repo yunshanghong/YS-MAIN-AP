@@ -80,7 +80,8 @@ const setUserInfo = req => {
           footer: 'mainThemeDark'
         }
       },
-      shortcuts: req.shortcuts
+      shortcuts: req.shortcuts,
+      balance: req.balance
     },
     verified: req.verified,
     active: req.active
@@ -212,7 +213,7 @@ const findUser = async email => {
       {
         email
       },
-      'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active',
+      'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
       (err, item) => {
         utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
         resolve(item)

@@ -1,5 +1,5 @@
-const controller = require('../controllers/profile')
-const validate = require('../controllers/profile.validate')
+const controller = require('../controllers/purchase')
+const validate = require('../controllers/purchase.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
 const router = express.Router()
@@ -11,53 +11,50 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Profile routes
+ * Purchase routes
  */
-
 /*
- * Get profile route
+ * Get Purchase History route
  */
 router.get(
   '/',
   requireAuth,
   AuthController.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
-  controller.getProfile
+  controller.getPurchaseHistory
 )
-
 /*
- * Update profile route
- */
-router.patch(
-  '/',
-  requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
-  trimRequest.all,
-  validate.updateProfile,
-  controller.updateProfile
-)
-
-/*
- * Change password route
+ * Purchase Basic Package route
  */
 router.post(
-  '/changePassword',
+  '/basic-package',
   requireAuth,
   AuthController.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
-  validate.changePassword,
-  controller.changePassword
+  validate.purchaseBasicPackage,
+  controller.purchaseBasicPackage
 )
-
 /*
- * User's access history routes
+ * Purchase Pro Package route
  */
 router.post(
-  '/access-history',
+  '/pro-package',
   requireAuth,
   AuthController.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
-  controller.getAccesses
+  validate.purchaseProPackage,
+  controller.purchaseProPackage
+)
+/*
+ * Purchase Ultimate Package route
+ */
+router.post(
+  '/ultimate-package',
+  requireAuth,
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  validate.purchaseUltimatePackage,
+  controller.purchaseUltimatePackage
 )
 
 module.exports = router

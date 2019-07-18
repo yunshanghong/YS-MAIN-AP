@@ -12,10 +12,6 @@ const GoogleProvider = new mongoose.Schema({
     type: String,
     default: null
   },
-  refreshToken: {
-    type: String,
-    default: null
-  },
   displayName: {
     type: String,
     default: null
@@ -35,10 +31,6 @@ const FacebookProvider = new mongoose.Schema({
     default: null
   },
   accessToken: {
-    type: String,
-    default: null
-  },
-  refreshToken: {
     type: String,
     default: null
   },

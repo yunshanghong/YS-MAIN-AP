@@ -2,7 +2,7 @@ const controller = require('../controllers/auth')
 const validate = require('../controllers/auth.validate')
 const express = require('express')
 const router = express.Router()
-require('../../config/passport')
+// require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
   session: false

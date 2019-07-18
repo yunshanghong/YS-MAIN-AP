@@ -6,9 +6,13 @@ const compression = require('compression')
 const helmet = require('helmet')
 const cors = require('cors')
 const passport = require('passport')
+require('./config/passport')(passport)
 const app = express()
 const i18n = require('i18n')
 const initMongo = require('./config/mongo')
+
+// Init MongoDB
+initMongo()
 
 // Setup express server port from ENV, default: 3000
 app.set('port', process.env.PORT || 3000)
@@ -66,8 +70,5 @@ app.use(helmet())
 app.use(express.static('public'))
 app.use(require('./app/routes'))
 app.listen(app.get('port'))
-
-// Init MongoDB
-initMongo()
 
 module.exports = app // for testing

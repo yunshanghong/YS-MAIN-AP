@@ -1,4 +1,4 @@
-const passport = require('passport')
+// const passport = require('passport')
 const User = require('../app/models/user')
 // const auth = require('../app/middleware/auth')
 const JwtStrategy = require('passport-jwt').Strategy
@@ -49,9 +49,10 @@ const googleLogin = new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
-    callbackURL: `${process.env.AUTH_API_END_POINT}/auth/link/google/callback`
+    callbackURL: `${process.env.AUTH_API_END_POINT}/auth/oauth/google/callback`,
+    passReqToCallback: true
   },
-  (accessToken, refreshToken, profile, done) => {
+  (req, accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
       // User.findOrCreate(
       //   { google: { id: profile.id } },
@@ -83,16 +84,27 @@ const googleLogin = new GoogleStrategy(
       //   }
       // )
 
-      // const userGoogleData = {
-      //   accessToken,
-      //   profile: profile._json
-      // }
-      console.log('req.session in google callback ', req.session)
+      const userGoogleData = {
+        accessToken,
+        profile: profile._json
+      }
+      // console.log('req.session in google callback ', req.user)
 
-      return done(null, {})
+      return done(null, userGoogleData)
     })
   }
 )
 
-passport.use(jwtLogin)
-passport.use(googleLogin)
+module.exports = passport => {
+  passport.serializeUser((user, done) => {
+    // console.log('serializeUser ', user)
+    done(null, user)
+  })
+  passport.deserializeUser((user, done) => {
+    console.log('deserializeUser ', user)
+    done(null, user)
+  })
+
+  passport.use(jwtLogin)
+  passport.use(googleLogin)
+}
