@@ -81,7 +81,25 @@ const setUserInfo = req => {
         }
       },
       shortcuts: req.shortcuts,
-      balance: req.balance
+      balance: req.balance,
+      google: req.google
+        ? {
+            id: req.google.id,
+            displayName: req.google.displayName,
+            email: req.google.email,
+            photoURL: req.google.photoURL,
+            accessToken: req.google.accessToken
+          }
+        : null,
+      facebook: req.facebook
+        ? {
+            id: req.facebook.id,
+            displayName: req.facebook.displayName,
+            email: req.facebook.email,
+            photoURL: req.facebook.photoURL,
+            accessToken: req.facebook.accessToken
+          }
+        : null
     },
     verified: req.verified,
     active: req.active
@@ -213,7 +231,143 @@ const findUser = async email => {
       {
         email
       },
-      'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
+      // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
+      (err, item) => {
+        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+        resolve(item)
+      }
+    )
+  })
+}
+
+/**
+ * Finds google user by email
+ * @param {string} email - user´s google email
+ */
+const findGoogleUser = async email => {
+  return new Promise((resolve, reject) => { // eslint-disable-line
+    User.findOne(
+      {
+        'google.email': email
+      },
+      // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance google.id google.accessToken google.displayName google.email google.photoURL facebook.id facebook.accessToken facebook.displayName facebook.email facebook.photoURL',
+      (err, item) => {
+        if (err) {
+          resolve(null)
+        }
+        resolve(item)
+      }
+    )
+  })
+}
+
+/**
+ * Finds Facebook user by email
+ * @param {string} email - user´s facebook email
+ */
+const findFacebookUser = async email => {
+  return new Promise((resolve, reject) => { // eslint-disable-line
+    User.findOne(
+      {
+        'facebook.email': email
+      },
+      // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance google.id google.accessToken google.displayName google.email google.photoURL facebook.id facebook.accessToken facebook.displayName facebook.email facebook.photoURL',
+      (err, item) => {
+        if (err) {
+          resolve(null)
+        }
+        resolve(item)
+      }
+    )
+  })
+}
+
+/**
+ * Login Google function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+const loginGoogle = async (req, res, user) => {
+  try {
+    /* Sign-In */
+    user.loginAttempts = 0
+    await saveLoginAttemptsToDB(user)
+    res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Link Google account to user with id
+ * @param {string} user - user´s id
+ * @param {string} googleInfo - user´s google info
+ */
+const LinkGoogleAccountToUser = async (user, googleInfo) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(
+      user._id,
+      {
+        google: {
+          id: googleInfo.googleID,
+          accessToken: googleInfo.googleAccessToken,
+          displayName: googleInfo.googleDisplayName,
+          email: googleInfo.googleEmail,
+          photoURL: googleInfo.googlePhotoURL
+        }
+      },
+      {
+        new: true,
+        runValidators: true,
+        select: '-_id -updatedAt -createdAt'
+      },
+      (err, item) => {
+        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+        resolve(item)
+      }
+    )
+  })
+}
+
+/**
+ * Login Facebook function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+const loginFacebook = async (req, res, user) => {
+  try {
+    /* Sign-In */
+    user.loginAttempts = 0
+    await saveLoginAttemptsToDB(user)
+    res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Link Facebook account to user with id
+ * @param {string} user - user´s id
+ * @param {string} facebookInfo - user´s facebook info
+ */
+const LinkFacebookAccountToUser = async (user, facebookInfo) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(
+      user._id,
+      {
+        facebook: {
+          id: facebookInfo.facebookID,
+          accessToken: facebookInfo.facebookAccessToken,
+          displayName: facebookInfo.facebookDisplayName,
+          email: facebookInfo.facebookEmail,
+          photoURL: facebookInfo.facebookPhotoURL
+        }
+      },
+      {
+        new: true,
+        runValidators: true,
+        select: '-_id -updatedAt -createdAt'
+      },
       (err, item) => {
         utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
         resolve(item)
@@ -274,19 +428,59 @@ const registerUser = async req => {
 }
 
 /**
- * Builds the registration token
- * @param {Object} item - user object that contains created id
- * @param {Object} userInfo - user object
+ * Registers a new google user in database
+ * @param {Object} req - request object
  */
-const returnRegisterToken = (item, userInfo) => {
-  if (process.env.NODE_ENV !== 'production') {
-    userInfo.verification = item.verification
-  }
-  const data = {
-    access_token: generateToken(item._id),// eslint-disable-line
-    user: userInfo
-  }
-  return data
+const registerGoogleUser = async req => {
+  return new Promise((resolve, reject) => {
+    const user = new User({
+      displayName: req.googleDisplayName,
+      email: req.googleEmail,
+      photoURL: req.googlePhotoURL,
+      verification: uuid.v4(),
+      google: {
+        id: req.googleID,
+        accessToken: req.googleAccessToken,
+        displayName: req.googleDisplayName,
+        email: req.googleEmail,
+        photoURL: req.googlePhotoURL
+      }
+    })
+    user.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      resolve(item)
+    })
+  })
+}
+
+/**
+ * Registers a new Facebook user in database
+ * @param {Object} req - request object
+ */
+const registerFacebookUser = async req => {
+  return new Promise((resolve, reject) => {
+    const user = new User({
+      displayName: req.facebookDisplayName,
+      email: req.facebookEmail,
+      photoURL: req.facebookPhotoURL,
+      verification: uuid.v4(),
+      facebook: {
+        id: req.facebookID,
+        accessToken: req.facebookAccessToken,
+        displayName: req.facebookDisplayName,
+        email: req.facebookEmail,
+        photoURL: req.facebookPhotoURL
+      }
+    })
+    user.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      resolve(item)
+    })
+  })
 }
 
 /**
@@ -501,6 +695,104 @@ exports.login = async (req, res) => {
 }
 
 /**
+ * Sign with Google function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.signWithGoogle = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const user = await findGoogleUser(data.googleEmail)
+    if (user) {
+      /* Sign-In */
+      await userIsBlocked(user)
+      await checkLoginAttemptsAndBlockExpires(user)
+      loginGoogle(req, res, user)
+    } else {
+      /* Sign-Up */
+      const locale = req.getLocale()
+      const newUser = await registerGoogleUser(data)
+      emailer.sendRegistrationEmailMessage(locale, newUser)
+      res
+        .status(200)
+        .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+    }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Sign with Facebook function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.signWithFacebook = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const user = await findFacebookUser(data.facebookEmail)
+    if (user) {
+      /* Sign-In */
+      await userIsBlocked(user)
+      await checkLoginAttemptsAndBlockExpires(user)
+      loginFacebook(req, res, user)
+    } else {
+      /* Sign-Up */
+      const locale = req.getLocale()
+      const newUser = await registerFacebookUser(data)
+      emailer.sendRegistrationEmailMessage(locale, newUser)
+      res
+        .status(200)
+        .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+    }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Link Google account function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.linkGoogle = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    if (req.user.google === null) {
+      /* Lunk account */
+      const item = await LinkGoogleAccountToUser(req.user, data)
+      const linkedUser = setUserInfo(item)
+      res.status(200).json(linkedUser)
+    } else {
+      res.status(200).json(req.user)
+    }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Link Facebook account function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.linkFacebook = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    if (req.user.facebook === null) {
+      /* Link account */
+      const item = await LinkFacebookAccountToUser(req.user, data)
+      const linkedUser = setUserInfo(item)
+      res.status(200).json(linkedUser)
+    } else {
+      res.status(200).json(req.user)
+    }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Register function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
@@ -509,14 +801,15 @@ exports.register = async (req, res) => {
   try {
     // Gets locale from header 'Accept-Language'
     const locale = req.getLocale()
-    req = matchedData(req)
-    const doesEmailExists = await emailer.emailExists(req.email)
+    const data = matchedData(req)
+    const doesEmailExists = await emailer.emailExists(data.email)
     if (!doesEmailExists) {
-      const item = await registerUser(req)
-      const userInfo = setUserInfo(item)
-      const response = returnRegisterToken(item, userInfo)
-      emailer.sendRegistrationEmailMessage(locale, item)
-      res.status(201).json(response)
+      const user = await registerUser(data)
+      // const userInfo = setUserInfo(user)
+      // const response = returnRegisterToken(user, userInfo)
+      emailer.sendRegistrationEmailMessage(locale, user)
+      // res.status(201).json(response)
+      res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
     }
   } catch (error) {
     utils.handleError(res, error)

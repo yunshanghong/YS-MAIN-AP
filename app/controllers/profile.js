@@ -159,7 +159,10 @@ exports.updateAvatar = async (req, res) => {
     const id = await utils.isIDGood(req.user._id)
     const oldAvatar = req.user.photoURL
     req.photoURL = req.file.filename
-    if (oldAvatar !== 'assets/images/avatars/penguin.png') {
+    if (
+      oldAvatar !== 'assets/images/avatars/penguin.png' &&
+      !oldAvatar.includes('http')
+    ) {
       fs.unlinkSync(
         path.resolve(__dirname, '../', '../', 'uploads', 'avatar', oldAvatar)
       )

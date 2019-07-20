@@ -71,8 +71,50 @@ router.post(
 )
 
 /*
+ * Connect Account with Google account
+ */
+router.post(
+  '/link/google',
+  requireAuth,
+  controller.roleAuthorization(['user', 'staff', 'admin']),
+  validate.signWithGoogle,
+  controller.linkGoogle
+)
+
+/*
+ * Connect Account with Facebook account
+ */
+router.post(
+  '/link/facebook',
+  requireAuth,
+  controller.roleAuthorization(['user', 'staff', 'admin']),
+  validate.signWithFacebook,
+  controller.linkFacebook
+)
+
+/*
  * Login Route
  */
 router.post('/login', trimRequest.all, validate.login, controller.login)
+
+/*
+ * Login Googel Route
+ */
+router.post(
+  '/login/google',
+  trimRequest.all,
+  validate.signWithGoogle,
+  controller.signWithGoogle
+)
+
+/*
+ * Login Facebook Route
+ */
+router.post(
+  '/login/facebook',
+  trimRequest.all,
+  validate.signWithFacebook,
+  controller.signWithFacebook
+)
 
 module.exports = router

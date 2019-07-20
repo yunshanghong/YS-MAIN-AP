@@ -13,7 +13,8 @@ module.exports = {
     return new Promise((resolve, reject) => {
       user.comparePassword(password, (err, isMatch) => {
         if (err) {
-          reject(this.buildErrObject(422, err.message))
+          // reject(this.buildErrObject(422, err.message))
+          reject({ code: 422, message: err.message })
         }
         if (!isMatch) {
           resolve(false)
