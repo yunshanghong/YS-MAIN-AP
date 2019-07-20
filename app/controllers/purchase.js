@@ -1,9 +1,9 @@
 const User = require('../models/user')
 const model = require('../models/purchase')
-const uuid = require('uuid')
-const { matchedData } = require('express-validator/filter')
+// const uuid = require('uuid')
+// const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
-const db = require('../middleware/db')
+// const db = require('../middleware/db')
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 /*********************
