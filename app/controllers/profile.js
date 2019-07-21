@@ -149,6 +149,21 @@ exports.updateProfile = async (req, res) => {
 }
 
 /**
+ * Update profile function shortcuts called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateProfileShortcuts = async (req, res) => {
+  try {
+    const id = await utils.isIDGood(req.user._id)
+    req = matchedData(req)
+    res.status(200).json(await updateProfileInDB(req, id))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Update profile Avatar image function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object

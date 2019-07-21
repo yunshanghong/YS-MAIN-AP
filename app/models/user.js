@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt-nodejs')
 const validator = require('validator')
 const mongoosePaginate = require('mongoose-paginate-v2')
+const shortid = require('shortid')
 
 const GoogleProvider = new mongoose.Schema({
   id: {
@@ -139,6 +140,19 @@ const UserSchema = new mongoose.Schema(
       default: Date.now,
       select: false
     },
+
+    /* Referral */
+    referralCode: {
+      type: String,
+      default: shortid.generate,
+      unique: true
+    },
+    referralList: [
+      {
+        id: mongoose.Schema.Types.ObjectId,
+        displayName: String
+      }
+    ],
 
     /* Third Party Login */
     google: {

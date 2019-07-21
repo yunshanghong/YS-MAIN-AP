@@ -47,6 +47,21 @@ exports.updateProfile = [
 ]
 
 /**
+ * Validates update profile shortcuts request
+ */
+exports.updateProfileShortcuts = [
+  check('shortcuts')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates change password request
  */
 exports.changePassword = [

@@ -38,6 +38,18 @@ router.patch(
 )
 
 /*
+ * Update profile shortcuts route
+ */
+router.patch(
+  '/shortcuts',
+  requireAuth,
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  validate.updateProfileShortcuts,
+  controller.updateProfileShortcuts
+)
+
+/*
  * Change password route
  */
 router.post(
