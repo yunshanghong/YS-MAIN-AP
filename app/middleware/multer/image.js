@@ -5,24 +5,21 @@ const shortUUID = require('short-uuid')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.resolve(__dirname, '../', '../', 'uploads', 'avatar'))
+    cb(null, path.resolve(__dirname, '../', '../', '../', 'uploads', 'image'))
   },
   filename: (req, file, cb) => {
     cb(
       null,
-      `${req.user.displayName}-${shortUUID.generate()}.${mime.extension(
-        file.mimetype
-      )}`
+      `${req.user.displayName.replace(
+        ' ',
+        '_'
+      )}-${shortUUID.generate()}.${mime.extension(file.mimetype)}`
     )
   }
 })
 
 const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === 'image/jpeg' ||
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/png'
-  ) {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
     // eslint-disable-next-line
     cb(null, true)
   } else {
@@ -32,11 +29,11 @@ const fileFilter = (req, file, cb) => {
 }
 
 /**
- * Uploader
+ * Avatar Uploader
  * @param null
  */
 module.exports = multer({
   storage,
   fileFilter,
-  limits: 1024 * 1024 * 5
+  limits: 1024 * 1024 * 12
 })

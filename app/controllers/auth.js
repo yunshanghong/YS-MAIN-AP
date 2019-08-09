@@ -232,6 +232,7 @@ const findUser = async email => {
         email
       },
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
+      '+password +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
         utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
         resolve(item)
