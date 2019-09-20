@@ -60,9 +60,25 @@ const setUserInfo = req => {
       displayName: req.displayName,
       photoURL: req.photoURL,
       email: req.email,
+      fullName: req.fullName,
+      gender: req.gender,
+      bob: req.bob,
+      phone: req.phone,
+      education: req.education,
+      schoolName: req.schoolName,
+      departmentName: req.departmentName,
+      employmentStatus: req.employmentStatus,
+      city: req.city,
+      postAddress: req.postAddress,
+      companyName: req.companyName,
+      serviceDepartment: req.serviceDepartment,
+      jobTitle: req.jobTitle,
+      firstYearOfCareer: req.firstYearOfCareer,
+      heardFrom: req.heardFrom,
+      haveParticipated: req.haveParticipated,
       settings: {
         layout: {
-          style: 'layout1',
+          style: 'layout2',
           config: {
             navbar: {
               folded: true
@@ -74,31 +90,30 @@ const setUserInfo = req => {
         },
         customScrollbars: true,
         theme: {
-          main: 'defaultDark',
-          navbar: 'mainThemeDark',
-          toolbar: 'mainThemeDark',
-          footer: 'mainThemeDark'
+          main: 'sunset',
+          navbar: 'sunset',
+          toolbar: 'sunset',
+          footer: 'sunset'
         }
       },
       shortcuts: req.shortcuts,
-      balance: req.balance,
       google: req.google
         ? {
-            id: req.google.id,
-            displayName: req.google.displayName,
-            email: req.google.email,
-            photoURL: req.google.photoURL,
-            accessToken: req.google.accessToken
-          }
+          id: req.google.id,
+          displayName: req.google.displayName,
+          email: req.google.email,
+          photoURL: req.google.photoURL,
+          accessToken: req.google.accessToken
+        }
         : null,
       facebook: req.facebook
         ? {
-            id: req.facebook.id,
-            displayName: req.facebook.displayName,
-            email: req.facebook.email,
-            photoURL: req.facebook.photoURL,
-            accessToken: req.facebook.accessToken
-          }
+          id: req.facebook.id,
+          displayName: req.facebook.displayName,
+          email: req.facebook.email,
+          photoURL: req.facebook.photoURL,
+          accessToken: req.facebook.accessToken
+        }
         : null
     },
     verified: req.verified,
@@ -830,7 +845,7 @@ exports.verifyEmail = async (req, res) => {
     const user = await verificationExists(req.params.vid)
     await verifyUser(user)
     // res.status(200).json(await verifyUser(user))
-    res.redirect(`${process.env.FRONTEND_URL}/profile-settings`)
+    res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
   } catch (error) {
     utils.handleError(res, error)
   }

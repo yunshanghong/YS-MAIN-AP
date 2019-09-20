@@ -1,10 +1,8 @@
-const controller = require('../controllers/document')
-const validate = require('../controllers/document.validate')
+const controller = require('../controllers/news')
+const validate = require('../controllers/news.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
-const uploader = require('../middleware/multer/document')
 const router = express.Router()
-// require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
   session: false
@@ -12,40 +10,57 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Uploads Document routes
+ * Home page News routes
  */
 /*
- * Get uploaded Documents route
+ * Get all news route
  */
 router.get(
   '/',
-  requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  controller.getDocuments
+  controller.getItems
 )
 /*
- * Uploaded single Document route
+ * Get single news by newsId route
+ */
+router.get(
+  '/:newsId',
+  trimRequest.all,
+  validate.getItem,
+  controller.getItem
+)
+/*
+ * Add new news route
  */
 router.post(
   '/',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  uploader.single('documentData'),
-  validate.uploadDocument,
-  controller.uploadDocument
+  validate.createItem,
+  controller.createItem
 )
 /*
- * Delete single Document by document's id route
+ * Update news route
  */
-router.delete(
-  '/:documentId',
+router.post(
+  '/update',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  validate.deleteDocument,
-  controller.deleteDocument
+  validate.updateItem,
+  controller.updateItem
+)
+/*
+ * Delete news route
+ */
+router.delete(
+  '/:newsId',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.deleteItem,
+  controller.deleteItem
 )
 
 module.exports = router

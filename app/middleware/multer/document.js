@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
       `${req.user.displayName.replace(
         ' ',
         '_'
-      )}-${shortUUID.generate()}.${mime.extension(file.mimetype)}`
+      )}-${file.originalname.split('.')[0]}-${shortUUID.generate()}.${mime.extension(file.mimetype)}`
     )
   }
 })
@@ -24,8 +24,7 @@ const storage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === 'application/msword' ||
-    file.mimetype ===
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
     file.mimetype === 'application/pdf'
   ) {
     // eslint-disable-next-line

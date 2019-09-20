@@ -2,48 +2,10 @@ const { validationResult } = require('../middleware/utils')
 const { check } = require('express-validator')
 
 /**
- * Validates upload single Image request
+ * Validates Get item request
  */
-exports.uploadImage = [
-  check('imageName')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageTags')
-    .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageHeight')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageWidth')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('mimeType')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageSize')
+exports.getItem = [
+  check('speakerId')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -54,22 +16,32 @@ exports.uploadImage = [
     validationResult(req, res, next)
   }
 ]
-
 /**
- * Validates update image request
+ * Validates create new item request
  */
-exports.updateImage = [
-  check('imageId')
+exports.createItem = [
+  check('displayName')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageTags')
+  check('title')
     .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('photoURL')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('website')
     .exists()
     .withMessage('MISSING')
     .trim(),
@@ -79,15 +51,57 @@ exports.updateImage = [
 ]
 
 /**
- * Validates delete image request
+ * Validates update item request
  */
-exports.deleteImage = [
-  check('imageId')
+exports.updateItem = [
+  check('_id')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY'),
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('displayName')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('title')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('photoURL')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('website')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
+ * Validates delete item request
+ */
+exports.deleteItem = [
+  check('speakerId')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }

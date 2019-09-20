@@ -6,41 +6,70 @@ const { check } = require('express-validator')
  * Validates update profile request
  */
 exports.updateProfile = [
-  check('displayName')
+  check('fullName')
     .exists()
     .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY'),
+    .trim(),
+  check('bob')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('gender')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('education')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('schoolName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('departmentName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('employmentStatus')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('phone')
     .exists()
     .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
     .trim(),
   check('city')
     .exists()
     .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
     .trim(),
-  check('country')
+  check('postAddress')
     .exists()
     .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
     .trim(),
-  check('urlTwitter')
-    .optional()
-    .custom(v => (v === '' ? true : validator.isURL(v)))
-    .withMessage('NOT_A_VALID_URL'),
-  check('urlGitHub')
-    .optional()
-    .custom(v => (v === '' ? true : validator.isURL(v)))
-    .withMessage('NOT_A_VALID_URL'),
+  check('companyName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('serviceDepartment')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('jobTitle')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('firstYearOfCareer')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('heardFrom')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('haveParticipated')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }

@@ -1,10 +1,8 @@
-const controller = require('../controllers/document')
-const validate = require('../controllers/document.validate')
+const controller = require('../controllers/carousel')
+const validate = require('../controllers/carousel.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
-const uploader = require('../middleware/multer/document')
 const router = express.Router()
-// require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
   session: false
@@ -12,40 +10,48 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Uploads Document routes
+ * Home page Carousel routes
  */
 /*
- * Get uploaded Documents route
+ * Get all carousels route
  */
 router.get(
   '/',
-  requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  controller.getDocuments
+  controller.getAllItems
 )
 /*
- * Uploaded single Document route
+ * Add new carousel route
  */
 router.post(
   '/',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  uploader.single('documentData'),
-  validate.uploadDocument,
-  controller.uploadDocument
+  validate.createItem,
+  controller.createItem
 )
 /*
- * Delete single Document by document's id route
+ * Update carousel route
  */
-router.delete(
-  '/:documentId',
+router.post(
+  '/update',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  validate.deleteDocument,
-  controller.deleteDocument
+  validate.updateItem,
+  controller.updateItem
+)
+/*
+ * Delete carousel route
+ */
+router.delete(
+  '/:carouselId',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.deleteItem,
+  controller.deleteItem
 )
 
 module.exports = router

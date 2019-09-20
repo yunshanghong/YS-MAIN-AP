@@ -1,10 +1,8 @@
-const controller = require('../controllers/document')
-const validate = require('../controllers/document.validate')
+const controller = require('../controllers/event')
+const validate = require('../controllers/event.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
-const uploader = require('../middleware/multer/document')
 const router = express.Router()
-// require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
   session: false
@@ -12,40 +10,57 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Uploads Document routes
+ * Home page Event List routes
  */
 /*
- * Get uploaded Documents route
+ * Get all Events route
  */
 router.get(
   '/',
-  requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  controller.getDocuments
+  controller.getItems
 )
 /*
- * Uploaded single Document route
+ * Get single enent by enentId route
+ */
+router.get(
+  '/:eventId',
+  trimRequest.all,
+  validate.getItem,
+  controller.getItem
+)
+/*
+ * Add new enent route
  */
 router.post(
   '/',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  uploader.single('documentData'),
-  validate.uploadDocument,
-  controller.uploadDocument
+  validate.createItem,
+  controller.createItem
 )
 /*
- * Delete single Document by document's id route
+ * Update enent route
  */
-router.delete(
-  '/:documentId',
+router.post(
+  '/update',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
-  validate.deleteDocument,
-  controller.deleteDocument
+  validate.updateItem,
+  controller.updateItem
+)
+/*
+ * Delete enent route
+ */
+router.delete(
+  '/:enentId',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.deleteItem,
+  controller.deleteItem
 )
 
 module.exports = router

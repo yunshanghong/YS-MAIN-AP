@@ -1,4 +1,4 @@
-const model = require('../models/city')
+const model = require('../models/carousel')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const db = require('../middleware/db')
@@ -8,42 +8,26 @@ const db = require('../middleware/db')
  *********************/
 
 /**
- * Checks if a city already exists excluding itself
- * @param {string} id - id of item
- * @param {string} name - name of item
- */
-const cityExistsExcludingItself = async (id, name) => {
+* Creates a new item in database
+* @param {Object} req - request object
+*/
+const createItem = async req => {
   return new Promise((resolve, reject) => {
-    model.findOne(
-      {
-        name,
-        _id: {
-          $ne: id
-        }
-      },
-      (err, item) => {
-        utils.itemAlreadyExists(err, item, reject, 'CITY_ALREADY_EXISTS')
-        resolve(false)
+    const image = new model({
+      title: req.title,
+      subTitle: req.subTitle,
+      imageName: req.imageName,
+      linkAddress: req.linkAddress,
+      published: req.published,
+      author: req.authorId
+    })
+    image.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
       }
-    )
-  })
-}
 
-/**
- * Checks if a city already exists in database
- * @param {string} name - name of item
- */
-const cityExists = async name => {
-  return new Promise((resolve, reject) => {
-    model.findOne(
-      {
-        name
-      },
-      (err, item) => {
-        utils.itemAlreadyExists(err, item, reject, 'CITY_ALREADY_EXISTS')
-        resolve(false)
-      }
-    )
+      resolve(item)
+    })
   })
 }
 
@@ -117,12 +101,20 @@ exports.getItem = async (req, res) => {
  */
 exports.updateItem = async (req, res) => {
   try {
-    req = matchedData(req)
-    const id = await utils.isIDGood(req.id)
-    const doesCityExists = await cityExistsExcludingItself(id, req.name)
-    if (!doesCityExists) {
-      res.status(200).json(await db.updateItem(id, model, req))
-    }
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    /* TODO Fix here */
+    // const item = await db.updateItem(data._id, model, {
+    //   ...data,
+    //   author: {
+    //     id: req.user._id,
+    //     displayName: req.user.displayName,
+    //     photoURL: req.user.photoURL,
+    //     email: req.user.email
+    //   }
+    // })
+    const item = await db.updateItem(data._id, model, data)
+    res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -135,11 +127,20 @@ exports.updateItem = async (req, res) => {
  */
 exports.createItem = async (req, res) => {
   try {
-    req = matchedData(req)
-    const doesCityExists = await cityExists(req.name)
-    if (!doesCityExists) {
-      res.status(201).json(await db.createItem(req, model))
-    }
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const item = await createItem({
+      ...data,
+      authorId: req.user._id,
+    })
+    res.status(200).json({
+      ...item,
+      author: {
+        displayName: req.user.displayName,
+        photoURL: req.user.photoURL,
+        email: req.user.email,
+      }
+    })
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -152,9 +153,9 @@ exports.createItem = async (req, res) => {
  */
 exports.deleteItem = async (req, res) => {
   try {
-    req = matchedData(req)
-    const id = await utils.isIDGood(req.id)
-    res.status(200).json(await db.deleteItem(id, model))
+    await utils.isIDGood(req.user._id)
+    const { carouselId } = matchedData(req)
+    res.status(200).json(await db.deleteItem(carouselId, model))
   } catch (error) {
     utils.handleError(res, error)
   }

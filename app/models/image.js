@@ -2,28 +2,6 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const mongoosePaginate = require('mongoose-paginate-v2')
 
-const AuthorSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  displayName: {
-    type: String,
-    required: true
-  },
-  photoURL: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    validate: {
-      validator: validator.isEmail,
-      message: 'AUTHOR_EMAIL_IS_NOT_VALID'
-    },
-    required: true
-  }
-})
 const imageSchema = new mongoose.Schema(
   {
     imageName: {
@@ -31,9 +9,29 @@ const imageSchema = new mongoose.Schema(
       unique: true,
       required: true
     },
+    imageTags: {
+      type: [String],
+      enum: [undefined, 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'gray'],
+      default: undefined,
+    },
+    imageCaption: {
+      type: String,
+      default: function () {
+        return this.imageName;
+      },
+      required: true,
+    },
+    imageHeight: {
+      type: Number,
+      required: true
+    },
+    imageWidth: {
+      type: Number,
+      required: true
+    },
     mimeType: {
       type: String,
-      enum: ['image/jpeg', 'image/png'],
+      enum: ['image/jpeg', 'image/png', 'image/svg+xml'],
       required: true
     },
     imageSize: {
@@ -41,10 +39,9 @@ const imageSchema = new mongoose.Schema(
       require: true
     },
     author: {
-      type: AuthorSchema,
-      required: true,
-      default: null
-    }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   {
     versionKey: false,

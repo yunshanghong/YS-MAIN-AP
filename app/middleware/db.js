@@ -37,6 +37,17 @@ const listInitOptions = async req => {
     const limit = parseInt(req.query.limit, 10) || 5
     const options = {
       sort: sortBy,
+      // populate: {
+      //   path: 'author',
+      //   select: 'displayName photoURL email',
+      // },
+      populate: [{
+        path: 'author',
+        select: 'displayName photoURL email',
+      }, {
+        path: 'speaker',
+        select: 'displayName title photoURL website',
+      }],
       lean: true,
       page,
       limit
@@ -109,10 +120,15 @@ module.exports = {
    */
   async getItem(id, model) {
     return new Promise((resolve, reject) => {
-      model.findById(id, (err, item) => {
-        itemNotFound(err, item, reject, 'NOT_FOUND')
-        resolve(item)
-      })
+      model
+        .findById(id)
+        // .populate({ path: 'author', select: 'displayName photoURL email' })
+        .populate({ path: 'author', select: 'displayName photoURL email' })
+        .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+        .exec((err, item) => {
+          itemNotFound(err, item, reject, 'NOT_FOUND')
+          resolve(item)
+        })
     })
   },
 
@@ -136,10 +152,10 @@ module.exports = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItem(id, model, req) {
+  async updateItem(_id, model, req) {
     return new Promise((resolve, reject) => {
       model.findByIdAndUpdate(
-        id,
+        _id,
         req,
         {
           new: true,
@@ -157,9 +173,9 @@ module.exports = {
    * Deletes an item from database by id
    * @param {string} id - id of item
    */
-  async deleteItem(id, model) {
+  async deleteItem(_id, model) {
     return new Promise((resolve, reject) => {
-      model.findByIdAndRemove(id, (err, item) => {
+      model.findByIdAndRemove(_id, (err, item) => {
         itemNotFound(err, item, reject, 'NOT_FOUND')
         resolve(buildSuccObject('DELETED'))
       })

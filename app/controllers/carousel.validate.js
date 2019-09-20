@@ -2,9 +2,23 @@ const { validationResult } = require('../middleware/utils')
 const { check } = require('express-validator')
 
 /**
- * Validates upload single Image request
+ * Validates create new item request
  */
-exports.uploadImage = [
+exports.createItem = [
+  check('title')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('subTitle')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('imageName')
     .exists()
     .withMessage('MISSING')
@@ -12,38 +26,7 @@ exports.uploadImage = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageTags')
-    .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageHeight')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageWidth')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('mimeType')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('imageSize')
+  check('published')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -56,22 +39,43 @@ exports.uploadImage = [
 ]
 
 /**
- * Validates update image request
+ * Validates update item request
  */
-exports.updateImage = [
-  check('imageId')
+exports.updateItem = [
+  check('_id')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageTags')
-    .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
+  check('title')
     .exists()
     .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('subTitle')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('imageName')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('published')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
     .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
@@ -79,10 +83,10 @@ exports.updateImage = [
 ]
 
 /**
- * Validates delete image request
+ * Validates delete item request
  */
-exports.deleteImage = [
-  check('imageId')
+exports.deleteItem = [
+  check('carouselId')
     .exists()
     .withMessage('MISSING')
     .not()

@@ -15,14 +15,13 @@ const createItem = async req => {
   return new Promise((resolve, reject) => {
     const image = new model({
       imageName: req.imageName,
+      imageTags: req.imageTags,
+      imageCaption: req.imageCaption,
+      imageHeight: req.imageHeight,
+      imageWidth: req.imageWidth,
       mimeType: req.mimeType,
       imageSize: req.imageSize,
-      author: {
-        id: req.authorId,
-        displayName: req.authorDisplayName,
-        photoURL: req.authorPhotoURL,
-        email: req.authorEmail
-      }
+      author: req.authorId
     })
     image.save((err, item) => {
       if (err) {
@@ -53,6 +52,26 @@ exports.getImages = async (req, res) => {
 }
 
 /**
+ * Get Images for manager function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getImagesForManager = async (req, res) => {
+  try {
+    const query = await db.checkQueryString(req.query)
+    const { docs } = await db.getItems(req, model, query)
+    const imageListResponse = docs.map(item => ({
+      url: 'http://localhost:8000/uploads/image/' + item.imageName,
+      id: item._id,
+      name: item.imageName
+    }))
+    res.status(200).json(imageListResponse)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Upload single Image function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
@@ -63,13 +82,50 @@ exports.uploadImage = async (req, res) => {
     const data = matchedData(req)
     const item = await createItem({
       ...data,
+      imageTags: data.imageTags ? data.imageTags.split(',') : [],
       imageName: req.file.filename,
       authorId: req.user._id,
-      authorDisplayName: req.user.displayName,
-      authorPhotoURL: req.user.photoURL,
-      authorEmail: req.user.email
+    })
+    res.status(200).json({
+      ...item,
+      author: {
+        displayName: req.user.displayName,
+        photoURL: req.user.photoURL,
+        email: req.user.email,
+      }
     })
     res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Update item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateImage = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const item = await db.updateItem(data.imageId, model, data)
+    res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Delete item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.deleteImage = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const { imageId } = matchedData(req)
+    res.status(200).json(await db.deleteItem(imageId, model))
   } catch (error) {
     utils.handleError(res, error)
   }

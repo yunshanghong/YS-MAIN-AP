@@ -2,24 +2,6 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const mongoosePaginate = require('mongoose-paginate-v2')
 
-const AuthorSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  displayName: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    validate: {
-      validator: validator.isEmail,
-      message: 'AUTHOR_EMAIL_IS_NOT_VALID'
-    },
-    required: true
-  }
-})
 const documentSchema = new mongoose.Schema(
   {
     documentName: {
@@ -41,9 +23,9 @@ const documentSchema = new mongoose.Schema(
       require: true
     },
     author: {
-      type: AuthorSchema,
-      required: true
-    }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   {
     versionKey: false,

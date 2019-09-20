@@ -28,8 +28,8 @@ router.get(
 /*
  * Update profile route
  */
-router.patch(
-  '/',
+router.post(
+  '/update',
   requireAuth,
   AuthController.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,

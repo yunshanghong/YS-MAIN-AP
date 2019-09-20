@@ -5,6 +5,7 @@ const accessModel = require('../models/userAccess')
 const utils = require('../middleware/utils')
 const { matchedData } = require('express-validator')
 const auth = require('../middleware/auth')
+const db = require('../middleware/db')
 
 /*********************
  * Private functions *
@@ -140,9 +141,11 @@ exports.getProfile = async (req, res) => {
  */
 exports.updateProfile = async (req, res) => {
   try {
-    const id = await utils.isIDGood(req.user._id)
-    req = matchedData(req)
-    res.status(200).json(await updateProfileInDB(req, id))
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    console.log('profile data update ', data)
+    const item = await db.updateItem(req.user._id, model, data)
+    res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)
   }

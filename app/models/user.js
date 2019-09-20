@@ -91,44 +91,11 @@ const UserSchema = new mongoose.Schema(
     },
     shortcuts: {
       type: Array,
-      default: ['crypto-dashboard-markets']
-    },
-    balance: {
-      type: mongoose.Types.Decimal128,
-      default: 0
+      default: ['ys-home']
     },
     active: {
       type: Boolean,
       default: true
-    },
-    phone: {
-      type: String
-    },
-    city: {
-      type: String
-    },
-    country: {
-      type: String
-    },
-    urlTwitter: {
-      type: String,
-      validate: {
-        validator(v) {
-          return v === '' ? true : validator.isURL(v)
-        },
-        message: 'NOT_A_VALID_URL'
-      },
-      lowercase: true
-    },
-    urlGitHub: {
-      type: String,
-      validate: {
-        validator(v) {
-          return v === '' ? true : validator.isURL(v)
-        },
-        message: 'NOT_A_VALID_URL'
-      },
-      lowercase: true
     },
     loginAttempts: {
       type: Number,
@@ -140,6 +107,75 @@ const UserSchema = new mongoose.Schema(
       default: Date.now,
       select: false
     },
+
+    /* User Detail */
+    fullName: {
+      type: String
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'diversity', 'female'],
+    },
+    bob: {
+      type: Date,
+    },
+    phone: {
+      type: String
+    },
+    education: {
+      type: String,
+      // 國中、高中、大專、大學、研究所
+      enum: ['middle', 'high', 'faculty', 'bachelor', 'institute'],
+    },
+    schoolName: {
+      type: String
+    },
+    departmentName: {
+      type: String
+    },
+    employmentStatus: {
+      type: String,
+      enum: ['student', 'employed', 'self-employed', 'unemployed'],
+    },
+    companyName: {
+      type: String,
+
+    },
+    city: {
+      type: String
+    },
+    postAddress: {
+      type: String,
+    },
+    country: {
+      type: String
+    },
+
+    /* Career */
+    companyName: {
+      type: String
+    },
+    serviceDepartment: {
+      type: String,
+    },
+    jobTitle: {
+      type: String,
+    },
+    firstYearOfCareer: {
+      type: Date,
+    },
+
+    /* Marketing */
+    heardFrom: {
+      type: String,
+      // 新聞報導、電台廣播、YS臉書、YS官網、台灣就業通網站連結、校園徵才博覽會、校園講座、收到DM、收到E- mail活動通知、親友介紹、其他
+      enum: ['新聞報導', '電台廣播', 'YS臉書', 'YS官網', '台灣就業通網站連結', '校園徵才博覽會', '校園講座', '收到DM', '收到Email活動通知', '親友介紹', '其他'],
+    },
+    haveParticipated: {
+      type: String,
+      enum: ['yes', 'no'],
+    },
+
 
     /* Referral */
     referralCode: {
@@ -189,7 +225,7 @@ const genSalt = (user, SALT_FACTOR, next) => {
   })
 }
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
   const that = this
   const SALT_FACTOR = 5
   if (!that.isModified('password')) {
@@ -198,7 +234,7 @@ UserSchema.pre('save', function(next) {
   return genSalt(that, SALT_FACTOR, next)
 })
 
-UserSchema.methods.comparePassword = function(passwordAttempt, cb) {
+UserSchema.methods.comparePassword = function (passwordAttempt, cb) {
   bcrypt.compare(passwordAttempt, this.password, (err, isMatch) =>
     err ? cb(err) : cb(null, isMatch)
   )

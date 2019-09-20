@@ -27,3 +27,18 @@ exports.uploadDocument = [
     validationResult(req, res, next)
   }
 ]
+
+/**
+ * Validates delete document request
+ */
+exports.deleteDocument = [
+  check('documentId')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]

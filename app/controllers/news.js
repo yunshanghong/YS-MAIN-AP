@@ -1,36 +1,33 @@
-const model = require('../models/document')
+const model = require('../models/news')
+const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const db = require('../middleware/db')
-const { matchedData } = require('express-validator')
 
 /*********************
  * Private functions *
  *********************/
 
 /**
- * Creates a new item in database
- * @param {Object} req - request object
- */
+* Creates a new item in database
+* @param {Object} req - request object
+*/
 const createItem = async req => {
   return new Promise((resolve, reject) => {
-    const newDocument = new model({
-      documentName: req.documentName,
-      mimeType: req.mimeType,
-      documentSize: req.documentSize,
-      // author: {
-      //   id: req.authorId,
-      //   displayName: req.authorDisplayName,
-      //   photoURL: req.authorPhotoURL,
-      //   email: req.authorEmail
-      // }
-      author: req.authorId
+    const image = new model({
+      title: req.title,
+      subTitle: req.subTitle,
+      imageName: req.imageName,
+      content: req.content,
+      tags: req.tags,
+      published: req.published,
+      author: req.authorId,
     })
-    newDocument.save((err, item) => {
+    image.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       }
 
-      resolve(item.toObject())
+      resolve(item)
     })
   })
 }
@@ -57,11 +54,24 @@ const getAllItemsFromDB = async () => {
  ********************/
 
 /**
- * Get Documents function called by route
+ * Get all items function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.getDocuments = async (req, res) => {
+exports.getAllItems = async (req, res) => {
+  try {
+    res.status(200).json(await getAllItemsFromDB())
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Get items function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
     res.status(200).json(await db.getItems(req, model, query))
@@ -71,17 +81,46 @@ exports.getDocuments = async (req, res) => {
 }
 
 /**
- * Upload single Document function called by route
+ * Get item function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.uploadDocument = async (req, res) => {
+exports.getItem = async (req, res) => {
+  try {
+    const { newsId } = matchedData(req)
+    res.status(200).json(await db.getItem(newsId, model))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Update item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateItem = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const item = await db.updateItem(data._id, model, data)
+    res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Create item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.createItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
     const item = await createItem({
       ...data,
-      documentName: req.file.filename,
       authorId: req.user._id,
     })
     res.status(200).json({
@@ -102,11 +141,11 @@ exports.uploadDocument = async (req, res) => {
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.deleteDocument = async (req, res) => {
+exports.deleteItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
-    const { documentId } = matchedData(req)
-    res.status(200).json(await db.deleteItem(documentId, model))
+    const { newsId } = matchedData(req)
+    res.status(200).json(await db.deleteItem(newsId, model))
   } catch (error) {
     utils.handleError(res, error)
   }

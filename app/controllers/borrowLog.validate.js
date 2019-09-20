@@ -2,48 +2,59 @@ const { validationResult } = require('../middleware/utils')
 const { check } = require('express-validator')
 
 /**
- * Validates upload single Image request
+ * Validates create new item request
  */
-exports.uploadImage = [
-  check('imageName')
+exports.createItem = [
+  check('institutionName')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageTags')
-    .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
+  check('institutionAddress')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageHeight')
+  check('borrowingDate')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageWidth')
+  check('borrowingTimeSlot')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('mimeType')
+  check('borrowingNumber')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageSize')
+  check('borrowingIntention')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('borrowingSpace')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('borrowingHeardFrom')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -56,20 +67,21 @@ exports.uploadImage = [
 ]
 
 /**
- * Validates update image request
+ * Validates update item request
  */
-exports.updateImage = [
-  check('imageId')
+exports.updateItem = [
+  check('_id')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('imageTags')
+  check('checkinStatus')
     .exists()
-    .withMessage('MISSING'),
-  check('imageCaption')
+    .withMessage('MISSING')
+    .trim(),
+  check('checkinStatus')
     .exists()
     .withMessage('MISSING')
     .trim(),
@@ -79,15 +91,16 @@ exports.updateImage = [
 ]
 
 /**
- * Validates delete image request
+ * Validates cancel item request
  */
-exports.deleteImage = [
-  check('imageId')
+exports.cancelItem = [
+  check('borrowId')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY'),
+    .withMessage('IS_EMPTY')
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }

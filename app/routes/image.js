@@ -20,9 +20,19 @@ const trimRequest = require('trim-request')
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
   controller.getImages
+)
+/*
+ * Get uploaded Images for post route
+ */
+router.get(
+  '/manager',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  controller.getImagesForManager
 )
 /*
  * Uploaded single Image route
@@ -30,22 +40,33 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,
   uploader.single('imageData'),
   validate.uploadImage,
   controller.uploadImage
 )
 /*
+ * Update single Image route
+ */
+router.post(
+  '/update',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.updateImage,
+  controller.updateImage
+)
+/*
  * Delete single Image by image's id route
  */
-// router.delete(
-//   '/:id',
-//   requireAuth,
-//   AuthController.roleAuthorization(['user', 'staff', 'admin']),
-//   trimRequest.all,
-//   validate.deleteImage,
-//   controller.deleteImage
-// )
+router.delete(
+  '/:imageId',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.deleteImage,
+  controller.deleteImage
+)
 
 module.exports = router
