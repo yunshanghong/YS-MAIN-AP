@@ -1,18 +1,18 @@
 {
   "registration": {
-    "SUBJECT": "【1788】- 請驗證您的電子信箱",
+    "SUBJECT": "【YS】- 請驗證您的電子信箱",
     "HEADER": "驗證您的電子信箱",
-    "DESCRIPTION": "為了開通 1788 交易權限，我們需要驗證您的電子信箱",
+    "DESCRIPTION": "為了激活 YS 權限，我們需要驗證您的電子信箱",
     "LINK_TEXT": "驗證我的電子信箱",
-    "HINT": "如果您不想使用 1788 ，可以略過這封郵件，我們會刪除這個帳號",
+    "HINT": "如果您不想使用 YS ，可以略過這封郵件，我們會刪除這個帳號",
     "MESSAGE": "<p>Hello %s.</p> <p>Welcome! To verify your email, please click in this link:</p> <p>%s/verify/%s</p> <p>Thank you.</p>"
   },
   "forgotPassword": {
-    "SUBJECT": "【1788】- 重新設定您的密碼",
+    "SUBJECT": "【YS】- 重新設定您的密碼",
     "HEADER": "重新設定您的密碼",
     "DESCRIPTION": "請點選鏈結進入密碼重設頁面",
-    "LINKTEXT": "重新設定我的密碼",
-    "HINT": "如果您不想重新設定 1788 密碼，可以略過這封郵件",
+    "LINK_TEXT": "重新設定我的密碼",
+    "HINT": "如果您不想重新設定 YS 密碼，可以略過這封郵件",
     "MESSAGE": "<p>To recover the password for user: %s</p> <p>click the following link:</p> <p>%s/reset-password/%s</p> <p>If this was a mistake, you can ignore this message.</p> <p>Thank you.</p>"
   }
 }

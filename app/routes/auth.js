@@ -24,6 +24,16 @@ router.post(
 )
 
 /*
+ * Re-Send Verify Email token
+ */
+router.post(
+  '/resend-verify',
+  requireAuth,
+  controller.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  controller.resendVerifyEmail
+)
+/*
  * Verify Email route
  */
 router.get('/verify-email/:vid', trimRequest.all, controller.verifyEmail)

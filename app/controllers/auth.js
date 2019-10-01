@@ -99,21 +99,21 @@ const setUserInfo = req => {
       shortcuts: req.shortcuts,
       google: req.google
         ? {
-          id: req.google.id,
-          displayName: req.google.displayName,
-          email: req.google.email,
-          photoURL: req.google.photoURL,
-          accessToken: req.google.accessToken
-        }
+            id: req.google.id,
+            displayName: req.google.displayName,
+            email: req.google.email,
+            photoURL: req.google.photoURL,
+            accessToken: req.google.accessToken
+          }
         : null,
       facebook: req.facebook
         ? {
-          id: req.facebook.id,
-          displayName: req.facebook.displayName,
-          email: req.facebook.email,
-          photoURL: req.facebook.photoURL,
-          accessToken: req.facebook.accessToken
-        }
+            id: req.facebook.id,
+            displayName: req.facebook.displayName,
+            email: req.facebook.email,
+            photoURL: req.facebook.photoURL,
+            accessToken: req.facebook.accessToken
+          }
         : null
     },
     verified: req.verified,
@@ -261,7 +261,8 @@ const findUser = async email => {
  * @param {string} email - user´s google email
  */
 const findGoogleUser = async email => {
-  return new Promise((resolve, reject) => { // eslint-disable-line
+  return new Promise((resolve, reject) => {
+    // eslint-disable-line
     User.findOne(
       {
         'google.email': email
@@ -282,7 +283,8 @@ const findGoogleUser = async email => {
  * @param {string} email - user´s facebook email
  */
 const findFacebookUser = async email => {
-  return new Promise((resolve, reject) => { // eslint-disable-line
+  return new Promise((resolve, reject) => {
+    // eslint-disable-line
     User.findOne(
       {
         'facebook.email': email
@@ -850,6 +852,23 @@ exports.verifyEmail = async (req, res) => {
     utils.handleError(res, error)
   }
 }
+/**
+ * Resend verify email function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+// TODO Fix here
+exports.resendVerifyEmail = async (req, res) => {
+  try {
+    const user = findUser()
+
+    emailer.sendRegistrationEmailMessage(locale, user)
+
+    res.status(200).json({ message: 'success' })
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
 
 /**
  * Forgot password function called by route
@@ -861,9 +880,15 @@ exports.forgotPassword = async (req, res) => {
     // Gets locale from header 'Accept-Language'
     const locale = req.getLocale()
     const data = matchedData(req)
-    await findUser(data.email)
+    const user = await findUser(data.email)
     const item = await saveForgotPassword(req)
-    emailer.sendResetPasswordEmailMessage(locale, item)
+    const userData = {
+      resetID: item._id,
+      email: item.email,
+      verification: item.verification,
+      displayName: user.displayName
+    }
+    emailer.sendResetPasswordEmailMessage(locale, userData)
     res.status(200).json(forgotPasswordResponse(item))
   } catch (error) {
     utils.handleError(res, error)

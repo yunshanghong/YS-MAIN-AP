@@ -22,7 +22,7 @@ const sendEmail = async (data, callback) => {
   // const transporter = nodemailer.createTransport(mg(auth))
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SMTP_HOST, // Office 365 server
-    port: 587, // secure SMTP
+    port: process.env.SMTP_SECURE_PORT, // secure SMTP
     secure: false, // false for TLS - as a boolean not string - but the default is false so just remove this completely
     auth: {
       user: process.env.EMAIL_SMTP_USER,
@@ -64,11 +64,12 @@ const sendEmail = async (data, callback) => {
  * @param {string} emailLocals - Email locals
  */
 const prepareToSendEmail = (user, subject, emailLocals) => {
-  user = {
-    displayName: user.displayName,
-    email: user.email,
-    verification: user.verification
-  }
+  // user = {
+  //   resetID: user.resetID,
+  //   displayName: user.displayName,
+  //   email: user.email,
+  //   verification: user.verification
+  // }
   const data = {
     user,
     subject,
@@ -165,8 +166,9 @@ module.exports = {
     const emailLocals = {
       HEADER: i18n.__('forgotPassword.HEADER'),
       DESCRIPTION: i18n.__('forgotPassword.DESCRIPTION'),
-      LINKTEXT: i18n.__('forgotPassword.LINKTEXT'),
-      HINT: i18n.__('forgotPassword.HINT')
+      LINK_TEXT: i18n.__('forgotPassword.LINK_TEXT'),
+      HINT: i18n.__('forgotPassword.HINT'),
+      RESET_URL: `${process.env.FRONTEND_URL}/reset-password/${user.resetID}`
     }
     prepareToSendEmail(user, subject, emailLocals)
   }
