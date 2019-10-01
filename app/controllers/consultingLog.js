@@ -1,4 +1,4 @@
-const model = require('../models/borrowLog')
+const model = require('../models/consultingLog')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 // const db = require('../middleware/db')
@@ -15,7 +15,24 @@ const cleanPaginationID = result => {
   result.docs.map(element => delete element.id)
   return result
 }
-const listInitOptions = async req => {
+const publicListInitOptions = async req => {
+  return new Promise(resolve => {
+    const order = req.query.order || -1
+    const sort = req.query.sort || 'createdAt'
+    const sortBy = buildSort(sort, order)
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 5
+    const options = {
+      sort: sortBy,
+      select: '-applicant -consultingIntention -consultingexpectation',
+      lean: true,
+      page,
+      limit
+    }
+    resolve(options)
+  })
+}
+const secretListInitOptions = async req => {
   return new Promise(resolve => {
     const order = req.query.order || -1
     const sort = req.query.sort || 'createdAt'
@@ -72,7 +89,6 @@ const db = {
           resolve({})
         }
       } catch (err) {
-        console.log(err.message)
         reject(utils.buildErrObject(422, 'ERROR_WITH_FILTER'))
       }
     })
@@ -83,8 +99,24 @@ const db = {
    * @param {Object} req - request object
    * @param {Object} query - query object
    */
-  async getItems(req, model, query) {
-    const options = await listInitOptions(req)
+  async getPublicItems(req, model, query) {
+    const options = await publicListInitOptions(req)
+    return new Promise((resolve, reject) => {
+      model.paginate(query, options, (err, items) => {
+        if (err) {
+          reject(utils.buildErrObject(422, err.message))
+        }
+        resolve(cleanPaginationID(items))
+      })
+    })
+  },
+  /**
+   * Gets items from database
+   * @param {Object} req - request object
+   * @param {Object} query - query object
+   */
+  async getSecretItems(req, model, query) {
+    const options = await secretListInitOptions(req)
     return new Promise((resolve, reject) => {
       model.paginate(query, options, (err, items) => {
         if (err) {
@@ -140,11 +172,11 @@ const db = {
   },
 
   /**
-   * Updates borrow status an item in database by id
+   * Updates consulting status an item in database by id
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemBorrowStatus({ _id }, model, req) {
+  async updateItemConsultingStatus({ _id }, model, req) {
     return new Promise((resolve, reject) => {
       model.findOneAndUpdate(
         { _id },
@@ -162,11 +194,11 @@ const db = {
   },
 
   /**
-   * Cancel borrow status an item in database by id
+   * Cancel Consulting status an item in database by id
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async cancelSelfBorrowStatus({ _id, applicant }, model, req) {
+  async cancelSelfConsultingStatus({ _id, applicant }, model, req) {
     return new Promise((resolve, reject) => {
       model.findOneAndUpdate(
         { _id, applicant },
@@ -194,19 +226,16 @@ const db = {
  */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
-    const borrowLog = new model({
+    const consultingLog = new model({
       applicant: req.applicantId,
 
-      institutionName: req.institutionName,
-      institutionAddress: req.institutionAddress,
-      borrowingDate: req.borrowingDate,
-      borrowingTimeSlot: req.borrowingTimeSlot,
-      borrowingNumber: req.borrowingNumber,
-      borrowingIntention: req.borrowingIntention,
-      borrowingSpace: req.borrowingSpace,
-      borrowingHeardFrom: req.borrowingHeardFrom
+      consultingDate: req.consultingDate,
+      consultingTimeSlot: req.consultingTimeSlot,
+      consultingTopic: req.consultingTopic,
+      consultingIntention: req.consultingIntention,
+      consultingexpectation: req.consultingexpectation
     })
-    borrowLog.save((err, item) => {
+    consultingLog.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       } else {
@@ -227,7 +256,7 @@ const createItem = async req => {
 /**
  * Gets User's all items from database
  */
-const getUserBorrowHistoryFromDB = async userId => {
+const getUserConsultingHistoryFromDB = async userId => {
   return new Promise((resolve, reject) => {
     model
       .find({ applicant: userId }, '-applicant', {
@@ -249,28 +278,41 @@ const getUserBorrowHistoryFromDB = async userId => {
  ********************/
 
 /**
- * Get Self all borrow log by user id route
+ * Get Self all Consulting log by user id route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
 exports.getItemsBySelfId = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
-    res.status(200).json(await getUserBorrowHistoryFromDB(req.user._id))
+    res.status(200).json(await getUserConsultingHistoryFromDB(req.user._id))
   } catch (error) {
     utils.handleError(res, error)
   }
 }
 
 /**
- * Get all borrow log by user id route
+ * Get all Consulting log route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-exports.getItems = async (req, res) => {
+exports.getPublicItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    res.status(200).json(await db.getItems(req, model, query))
+    res.status(200).json(await db.getPublicItems(req, model, query))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+/**
+ * Get all Consulting log route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getSecretItems = async (req, res) => {
+  try {
+    const query = await db.checkQueryString(req.query)
+    res.status(200).json(await db.getSecretItems(req, model, query))
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -311,9 +353,9 @@ exports.updateItem = async (req, res) => {
     if (data.checkinStatus) {
       updateStatus.checkinStatus = data.checkinStatus
     }
-    const item = await db.updateItemBorrowStatus(
+    const item = await db.updateItemConsultingStatus(
       {
-        _id: data.borrowId
+        _id: data.consultingId
       },
       model,
       updateStatus
@@ -333,10 +375,10 @@ exports.cancelItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    const item = await db.cancelSelfBorrowStatus(
+    const item = await db.cancelSelfConsultingStatus(
       {
         applicant: req.user._id,
-        _id: data.borrowId
+        _id: data.consultingId
       },
       model,
       {

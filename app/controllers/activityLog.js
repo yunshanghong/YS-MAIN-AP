@@ -8,11 +8,11 @@ const utils = require('../middleware/utils')
  *********************/
 const db = {
   /**
-     * Checks the query string for filtering records
-     * query.filter should be the text to search (string)
-     * query.fields should be the fields to search into (array)
-     * @param {Object} query - query object
-     */
+   * Checks the query string for filtering records
+   * query.filter should be the text to search (string)
+   * query.fields should be the fields to search into (array)
+   * @param {Object} query - query object
+   */
   async checkQueryString(query) {
     return new Promise((resolve, reject) => {
       try {
@@ -73,7 +73,10 @@ const db = {
       model
         .findById(id)
         .populate({ path: 'event' })
-        .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+        .populate({
+          path: 'speaker',
+          select: 'displayName title photoURL website'
+        })
         .populate({ path: 'applicant' })
         .exec((err, item) => {
           utils.itemNotFound(err, item, reject, 'NOT_FOUND')
@@ -146,7 +149,7 @@ const db = {
         }
       )
     })
-  },
+  }
 }
 
 /*********************
@@ -154,9 +157,9 @@ const db = {
  *********************/
 
 /**
-* Creates a new item in database
-* @param {Object} req - request object
-*/
+ * Creates a new item in database
+ * @param {Object} req - request object
+ */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
     const activityLog = new model({
@@ -169,7 +172,7 @@ const createItem = async req => {
       participantID: req.participantID,
       participantIsManager: req.participantIsManager,
       participateLunch: req.participateLunch,
-      lunchType: req.lunchType,
+      lunchType: req.lunchType
     })
     activityLog.save((err, item) => {
       if (err) {
@@ -178,7 +181,10 @@ const createItem = async req => {
         model
           .findById(item._id)
           .populate({ path: 'event' })
-          .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+          .populate({
+            path: 'speaker',
+            select: 'displayName title photoURL website'
+          })
           .populate({ path: 'applicant' })
           .exec((err, resp) => {
             utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
@@ -194,10 +200,12 @@ const createItem = async req => {
 /**
  * Gets User's all items from database
  */
-const getUserActivitysHistoryFromDB = async (userId) => {
+const getUserActivitysHistoryFromDB = async userId => {
   return new Promise((resolve, reject) => {
     model
-      .find({ applicant: userId }, '-applicant -createdAt', { sort: { createdAt: -1 } })
+      .find({ applicant: userId }, '-applicant -createdAt', {
+        sort: { createdAt: -1 }
+      })
       // .populate({ path: 'applicant', select: 'displayName photoURL email' })
       .populate({ path: 'event', select: '-author -speaker -createdAt' })
       .populate({ path: 'speaker', select: '-createdAt' })
@@ -214,11 +222,14 @@ const getUserActivitysHistoryFromDB = async (userId) => {
 /**
  * Gets Event's all items (user activitys) from database
  */
-const getEventActivitysHistoryFromDB = async (eventId) => {
+const getEventActivitysHistoryFromDB = async eventId => {
   return new Promise((resolve, reject) => {
     model
       .find({ event: eventId }, '-event -speaker', { sort: { name: 1 } })
-      .populate({ path: 'applicant', select: '-facebook -google -verification -createdAt' })
+      .populate({
+        path: 'applicant',
+        select: '-facebook -google -verification -createdAt'
+      })
       .exec((err, items) => {
         if (err) {
           reject(utils.buildErrObject(422, err.message))
@@ -233,7 +244,7 @@ const getEventActivitysHistoryFromDB = async (eventId) => {
  * Gets Speaker's (max, min, avg) stars by user's reviews from database
  */
 // TODO: fix here
-const getSpeakerStarsFromDB = async (speakerId) => {
+const getSpeakerStarsFromDB = async speakerId => {
   return new Promise((resolve, reject) => {
     model
       .find({ speaker: speakerId }, '-createdAt', { sort: { name: 1 } })
@@ -317,16 +328,23 @@ exports.updateItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    const item = await db.updateItemReview({
-      event: data.eventId,
-      applicant: req.user._id,
-    }, model, {
-      eventStars: data.eventStars,
-      speakerStars: (Number(data.speakerExpressionStars) + Number(data.speakerContentStars)) / 2,
-      speakerExpressionStars: data.speakerExpressionStars,
-      speakerContentStars: data.speakerContentStars,
-      eventComments: data.eventComments,
-    })
+    const item = await db.updateItemReview(
+      {
+        event: data.eventId,
+        applicant: req.user._id
+      },
+      model,
+      {
+        eventStars: data.eventStars,
+        speakerStars:
+          (Number(data.speakerExpressionStars) +
+            Number(data.speakerContentStars)) /
+          2,
+        speakerExpressionStars: data.speakerExpressionStars,
+        speakerContentStars: data.speakerContentStars,
+        eventComments: data.eventComments
+      }
+    )
     res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)
@@ -344,7 +362,7 @@ exports.createItem = async (req, res) => {
     const data = matchedData(req)
     const item = await createItem({
       ...data,
-      applicantId: req.user._id,
+      applicantId: req.user._id
     })
     res.status(200).json(item)
   } catch (error) {
@@ -376,7 +394,9 @@ exports.updateRegistrationItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    const item = await db.updateItemRegistration(data, model, { registrationStatus: data.updateAction })
+    const item = await db.updateItemRegistration(data, model, {
+      registrationStatus: data.updateAction
+    })
     res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)
@@ -392,7 +412,9 @@ exports.cancelItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    const item = await db.updateItemRegistration(data, model, { registrationStatus: 'canceled' })
+    const item = await db.updateItemRegistration(data, model, {
+      registrationStatus: 'canceled'
+    })
     res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)

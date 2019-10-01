@@ -5,56 +5,35 @@ const { check } = require('express-validator')
  * Validates create new item request
  */
 exports.createItem = [
-  check('institutionName')
+  check('consultingDate')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('institutionAddress')
+  check('consultingTimeSlot')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingDate')
+  check('consultingTopic')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingTimeSlot')
+  check('consultingIntention')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingNumber')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('borrowingIntention')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('borrowingSpace')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('borrowingHeardFrom')
+  check('consultingexpectation')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -70,7 +49,7 @@ exports.createItem = [
  * Validates update item request
  */
 exports.updateItem = [
-  check('borrowId')
+  check('consultingId')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -88,7 +67,7 @@ exports.updateItem = [
  * Validates cancel item request
  */
 exports.cancelItem = [
-  check('borrowId')
+  check('consultingId')
     .exists()
     .withMessage('MISSING')
     .not()

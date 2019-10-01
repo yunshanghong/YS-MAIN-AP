@@ -61,7 +61,7 @@ exports.getImagesForManager = async (req, res) => {
     const query = await db.checkQueryString(req.query)
     const { docs } = await db.getItems(req, model, query)
     const imageListResponse = docs.map(item => ({
-      url: 'http://localhost:8000/uploads/image/' + item.imageName,
+      url: 'http://localhost:3000/uploads/image/' + item.imageName,
       id: item._id,
       name: item.imageName
     }))

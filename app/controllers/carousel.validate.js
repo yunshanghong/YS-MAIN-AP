@@ -26,6 +26,10 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
+  check('linkAddress')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('published')
     .exists()
     .withMessage('MISSING')
@@ -69,6 +73,10 @@ exports.updateItem = [
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
+    .trim(),
+  check('linkAddress')
+    .exists()
+    .withMessage('MISSING')
     .trim(),
   check('published')
     .exists()

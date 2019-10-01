@@ -1,4 +1,4 @@
-const model = require('../models/borrowLog')
+const model = require('../models/guideLog')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 // const db = require('../middleware/db')
@@ -140,11 +140,11 @@ const db = {
   },
 
   /**
-   * Updates borrow status an item in database by id
+   * Updates guide status an item in database by id
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemBorrowStatus({ _id }, model, req) {
+  async updateItemGuideStatus({ _id }, model, req) {
     return new Promise((resolve, reject) => {
       model.findOneAndUpdate(
         { _id },
@@ -162,11 +162,11 @@ const db = {
   },
 
   /**
-   * Cancel borrow status an item in database by id
+   * Cancel guide status an item in database by id
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async cancelSelfBorrowStatus({ _id, applicant }, model, req) {
+  async cancelSelfGuideStatus({ _id, applicant }, model, req) {
     return new Promise((resolve, reject) => {
       model.findOneAndUpdate(
         { _id, applicant },
@@ -194,19 +194,19 @@ const db = {
  */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
-    const borrowLog = new model({
+    const guideLog = new model({
       applicant: req.applicantId,
 
       institutionName: req.institutionName,
       institutionAddress: req.institutionAddress,
-      borrowingDate: req.borrowingDate,
-      borrowingTimeSlot: req.borrowingTimeSlot,
-      borrowingNumber: req.borrowingNumber,
-      borrowingIntention: req.borrowingIntention,
-      borrowingSpace: req.borrowingSpace,
-      borrowingHeardFrom: req.borrowingHeardFrom
+      guideDate: req.guideDate,
+      guideTimeSlot: req.guideTimeSlot,
+      guideNumber: req.guideNumber,
+      guideIntention: req.guideIntention,
+      guideSpace: req.guideSpace,
+      guideHeardFrom: req.guideHeardFrom
     })
-    borrowLog.save((err, item) => {
+    guideLog.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       } else {
@@ -227,7 +227,7 @@ const createItem = async req => {
 /**
  * Gets User's all items from database
  */
-const getUserBorrowHistoryFromDB = async userId => {
+const getUserGuideHistoryFromDB = async userId => {
   return new Promise((resolve, reject) => {
     model
       .find({ applicant: userId }, '-applicant', {
@@ -249,21 +249,21 @@ const getUserBorrowHistoryFromDB = async userId => {
  ********************/
 
 /**
- * Get Self all borrow log by user id route
+ * Get Self all guide log by user id route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
 exports.getItemsBySelfId = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
-    res.status(200).json(await getUserBorrowHistoryFromDB(req.user._id))
+    res.status(200).json(await getUserGuideHistoryFromDB(req.user._id))
   } catch (error) {
     utils.handleError(res, error)
   }
 }
 
 /**
- * Get all borrow log by user id route
+ * Get all guide log by user id route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
@@ -311,9 +311,9 @@ exports.updateItem = async (req, res) => {
     if (data.checkinStatus) {
       updateStatus.checkinStatus = data.checkinStatus
     }
-    const item = await db.updateItemBorrowStatus(
+    const item = await db.updateItemGuideStatus(
       {
-        _id: data.borrowId
+        _id: data.guideId
       },
       model,
       updateStatus
@@ -333,10 +333,10 @@ exports.cancelItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    const item = await db.cancelSelfBorrowStatus(
+    const item = await db.cancelSelfGuideStatus(
       {
         applicant: req.user._id,
-        _id: data.borrowId
+        _id: data.guideId
       },
       model,
       {

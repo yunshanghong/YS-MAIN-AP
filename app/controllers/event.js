@@ -8,9 +8,9 @@ const db = require('../middleware/db')
  *********************/
 
 /**
-* Creates a new item in database
-* @param {Object} req - request object
-*/
+ * Creates a new item in database
+ * @param {Object} req - request object
+ */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
     const image = new model({
@@ -26,14 +26,11 @@ const createItem = async req => {
       content: req.content,
 
       speaker: req.speaker,
-      // speakerName: req.speakerName,
-      // speakerTitle: req.speakerTitle,
-      // speakerLink: req.speakerLink,
-      // speakerImageName: req.speakerImageName,
+      preQuestionList: req.preQuestionList,
 
       published: req.published,
 
-      author: req.authorId,
+      author: req.authorId
     })
     image.save((err, item) => {
       if (err) {
@@ -53,7 +50,10 @@ const getAllItemsFromDB = async () => {
     model
       .find({}, '-createdAt', { sort: { name: 1 } })
       .populate({ path: 'author', select: 'displayName photoURL email' })
-      .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+      .populate({
+        path: 'speaker',
+        select: 'displayName title photoURL website'
+      })
       .exec((err, items) => {
         if (err) {
           reject(utils.buildErrObject(422, err.message))
@@ -117,7 +117,6 @@ exports.updateItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    console.log('updateItem ', data)
     const item = await db.updateItem(data._id, model, data)
     res.status(200).json(item)
   } catch (error) {
@@ -136,14 +135,14 @@ exports.createItem = async (req, res) => {
     const data = matchedData(req)
     const item = await createItem({
       ...data,
-      authorId: req.user._id,
+      authorId: req.user._id
     })
     res.status(200).json({
       ...item,
       author: {
         displayName: req.user.displayName,
         photoURL: req.user.photoURL,
-        email: req.user.email,
+        email: req.user.email
       }
     })
   } catch (error) {

@@ -13,11 +13,11 @@ const utils = require('../middleware/utils')
  *********************/
 const db = {
   /**
-     * Checks the query string for filtering records
-     * query.filter should be the text to search (string)
-     * query.fields should be the fields to search into (array)
-     * @param {Object} query - query object
-     */
+   * Checks the query string for filtering records
+   * query.filter should be the text to search (string)
+   * query.fields should be the fields to search into (array)
+   * @param {Object} query - query object
+   */
   async checkQueryString(query) {
     return new Promise((resolve, reject) => {
       try {
@@ -78,7 +78,10 @@ const db = {
       model
         .findById(id)
         .populate({ path: 'event' })
-        .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+        .populate({
+          path: 'speaker',
+          select: 'displayName title photoURL website'
+        })
         .populate({ path: 'applicant' })
         .exec((err, item) => {
           utils.itemNotFound(err, item, reject, 'NOT_FOUND')
@@ -130,78 +133,55 @@ const db = {
         }
       )
     })
-  },
-
+  }
 }
 
+// // start();
 // async function start() {
 //   console.time('db')
-//   const CURRENT_YEAR = new Date().getFullYear();
+//   const CURRENT_YEAR = new Date().getFullYear()
 
 //   const verified = await USER_MODEL.aggregate([
-//     { $addFields: { "createdMonth": { $month: '$createdAt' }, "createdYear": { $year: '$createdAt' } } },
-//     { $match: { "verified": true, "createdYear": CURRENT_YEAR } },
 //     {
-//       $bucket: {
-//         groupBy: "$createdMonth",
-//         boundaries: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-//         default: "8",
-//         output: {
-//           "newUsersCount": { $sum: 1 },
-//         }
+//       $addFields: {
+//         createdMonth: { $month: '$createdAt' },
+//         createdYear: { $year: '$createdAt' }
 //       }
-//     }
-//   ])
-//   const unVerified = await USER_MODEL.aggregate([
-//     { $addFields: { "createdMonth": { $month: '$createdAt' }, "createdYear": { $year: '$createdAt' } } },
-//     { $match: { "verified": false, "createdYear": CURRENT_YEAR } },
+//     },
+//     { $match: { verified: false, createdYear: CURRENT_YEAR } },
 //     {
-//       $bucket: {
-//         groupBy: "$createdMonth",
-//         boundaries: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-//         default: "8",
-//         output: {
-//           "newUsersCount": { $sum: 1 },
-//         }
+//       $group: {
+//         _id: {
+//           gender: { $ifNull: ['$gender', null] },
+//           verified: '$verified',
+//           createdMonth: '$createdMonth'
+//         },
+//         newUsersCount: { $sum: 1 }
 //       }
 //     }
 //   ])
 
-//   console.log('result ', {
-//     verified,
-//     unVerified
-//   })
-
+//   console.log('result ', verified)
 //   console.timeEnd('db')
-// } 1 2 1 1 1 10
-
+// }
 // start();
 async function start() {
   console.time('db')
-  const CURRENT_YEAR = new Date().getFullYear();
 
   const verified = await USER_MODEL.aggregate([
-    { $addFields: { "createdMonth": { $month: '$createdAt' }, "createdYear": { $year: '$createdAt' } } },
-    { $match: { "verified": false, "createdYear": CURRENT_YEAR } },
+    { $match: { verified: true } },
     {
-      "$group": {
-        "_id": {
-          "gender": { "$ifNull": ["$gender", null] },
-          "verified": "$verified",
-          "createdMonth": "$createdMonth",
+      $group: {
+        _id: {
+          heardFrom: '$heardFrom'
         },
-        "newUsersCount": { $sum: 1 }
+        usersCount: { $sum: 1 }
       }
     }
   ])
 
   console.log('result ', verified)
-  // USER_MODEL.find({}, (err, docs) => {
-  //   console.log('docs', docs)
-  // })
-
   console.timeEnd('db')
 }
 
-start();
-
+start()

@@ -83,7 +83,8 @@ const UserSchema = new mongoose.Schema(
       select: false
     },
     verification: {
-      type: String
+      type: String,
+      select: false
     },
     verified: {
       type: Boolean,
@@ -114,10 +115,10 @@ const UserSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'diversity', 'female'],
+      enum: ['male', 'diversity', 'female']
     },
     bob: {
-      type: Date,
+      type: Date
     },
     phone: {
       type: String
@@ -125,7 +126,7 @@ const UserSchema = new mongoose.Schema(
     education: {
       type: String,
       // 國中、高中、大專、大學、研究所
-      enum: ['middle', 'high', 'faculty', 'bachelor', 'institute'],
+      enum: ['middle', 'high', 'faculty', 'bachelor', 'institute']
     },
     schoolName: {
       type: String
@@ -135,17 +136,16 @@ const UserSchema = new mongoose.Schema(
     },
     employmentStatus: {
       type: String,
-      enum: ['student', 'employed', 'self-employed', 'unemployed'],
+      enum: ['student', 'employed', 'self-employed', 'unemployed']
     },
     companyName: {
-      type: String,
-
+      type: String
     },
     city: {
       type: String
     },
     postAddress: {
-      type: String,
+      type: String
     },
     country: {
       type: String
@@ -156,26 +156,37 @@ const UserSchema = new mongoose.Schema(
       type: String
     },
     serviceDepartment: {
-      type: String,
+      type: String
     },
     jobTitle: {
-      type: String,
+      type: String
     },
     firstYearOfCareer: {
-      type: Date,
+      type: Date
     },
 
     /* Marketing */
     heardFrom: {
       type: String,
       // 新聞報導、電台廣播、YS臉書、YS官網、台灣就業通網站連結、校園徵才博覽會、校園講座、收到DM、收到E- mail活動通知、親友介紹、其他
-      enum: ['新聞報導', '電台廣播', 'YS臉書', 'YS官網', '台灣就業通網站連結', '校園徵才博覽會', '校園講座', '收到DM', '收到Email活動通知', '親友介紹', '其他'],
+      enum: [
+        '新聞報導',
+        '電台廣播',
+        'YS臉書',
+        'YS官網',
+        '台灣就業通網站連結',
+        '校園徵才博覽會',
+        '校園講座',
+        '收到DM',
+        '收到Email活動通知',
+        '親友介紹',
+        '其他'
+      ]
     },
     haveParticipated: {
       type: String,
-      enum: ['yes', 'no'],
+      enum: ['yes', 'no']
     },
-
 
     /* Referral */
     referralCode: {
@@ -225,7 +236,7 @@ const genSalt = (user, SALT_FACTOR, next) => {
   })
 }
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function(next) {
   const that = this
   const SALT_FACTOR = 5
   if (!that.isModified('password')) {
@@ -234,7 +245,7 @@ UserSchema.pre('save', function (next) {
   return genSalt(that, SALT_FACTOR, next)
 })
 
-UserSchema.methods.comparePassword = function (passwordAttempt, cb) {
+UserSchema.methods.comparePassword = function(passwordAttempt, cb) {
   bcrypt.compare(passwordAttempt, this.password, (err, isMatch) =>
     err ? cb(err) : cb(null, isMatch)
   )

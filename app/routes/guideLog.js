@@ -1,5 +1,5 @@
-const controller = require('../controllers/borrowLog')
-const validate = require('../controllers/borrowLog.validate')
+const controller = require('../controllers/guideLog')
+const validate = require('../controllers/guideLog.validate')
 const AuthController = require('../controllers/auth')
 const express = require('express')
 const router = express.Router()
@@ -10,17 +10,17 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Space Borrow log history routes
+ * Space Guide log history routes
  * purposes
- *  - get user's borrow history
- *  - get space's borrow history
+ *  - get user's guide history
+ *  - get space's guide history
  */
 /*
- * Get all space borrow log route. (No login required)
+ * Get all space guide log route. (No login required)
  */
 router.get('/', trimRequest.all, controller.getItems)
 /*
- * Get self all borrow log by user id route
+ * Get self all guide log by user id route
  */
 router.get(
   '/self',
@@ -31,7 +31,7 @@ router.get(
 )
 
 /*
- * Add new borrow log route
+ * Add new guide log route
  */
 router.post(
   '/',
@@ -42,7 +42,7 @@ router.post(
   controller.createItem
 )
 /*
- * Update borrow Log route. (Only staff above)
+ * Update guide Log route. (Only staff above)
  */
 router.post(
   '/update',
@@ -53,7 +53,7 @@ router.post(
   controller.updateItem
 )
 /*
- * Cancel self borrow Log route.
+ * Cancel self guide Log route.
  */
 router.post(
   '/cancel',

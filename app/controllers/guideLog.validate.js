@@ -19,42 +19,35 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingDate')
+  check('guideDate')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingTimeSlot')
+  check('guideTimeSlot')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingNumber')
+  check('guideNumber')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingIntention')
+  check('guideIntention')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('borrowingSpace')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('borrowingHeardFrom')
+  check('guideHeardFrom')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -70,7 +63,7 @@ exports.createItem = [
  * Validates update item request
  */
 exports.updateItem = [
-  check('borrowId')
+  check('guideId')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -88,7 +81,7 @@ exports.updateItem = [
  * Validates cancel item request
  */
 exports.cancelItem = [
-  check('borrowId')
+  check('guideId')
     .exists()
     .withMessage('MISSING')
     .not()
