@@ -61,7 +61,8 @@ exports.getImagesForManager = async (req, res) => {
     const query = await db.checkQueryString(req.query)
     const { docs } = await db.getItems(req, model, query)
     const imageListResponse = docs.map(item => ({
-      url: 'http://localhost:3000/uploads/image/' + item.imageName,
+      // url: 'http://localhost:3000/uploads/image/' + item.imageName,
+      url: `${process.env.AUTH_API_END_POINT}/uploads/image/${item.imageName}`,
       id: item._id,
       name: item.imageName
     }))
@@ -84,14 +85,14 @@ exports.uploadImage = async (req, res) => {
       ...data,
       imageTags: data.imageTags ? data.imageTags.split(',') : [],
       imageName: req.file.filename,
-      authorId: req.user._id,
+      authorId: req.user._id
     })
     res.status(200).json({
       ...item,
       author: {
         displayName: req.user.displayName,
         photoURL: req.user.photoURL,
-        email: req.user.email,
+        email: req.user.email
       }
     })
     res.status(200).json(item)
