@@ -14,6 +14,17 @@ const trimRequest = require('trim-request')
  */
 
 /*
+ * Get all review to stars route
+ */
+router.post(
+  '/reviewStars',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  controller.getReviewStars
+)
+
+/*
  * Get new user member per month route
  */
 router.post(

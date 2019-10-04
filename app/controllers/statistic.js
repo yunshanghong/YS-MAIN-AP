@@ -1,4 +1,5 @@
 const USER_MODEL = require('../models/user')
+const ACTIVITY_MODEL = require('../models/activityLog')
 // const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 
@@ -132,6 +133,37 @@ const db = {
 /*********************
  * Private functions *
  *********************/
+
+/**
+ * Count stars by review in database
+ * @param {Object} req - request object
+ */
+const countStarsByReview = async req => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const item = await ACTIVITY_MODEL.aggregate([
+        {
+          $group: {
+            _id: null,
+            eventStarsAvg: { $avg: '$eventStars' },
+            speakerStarsAvg: { $avg: '$speakerStars' },
+            speakerExpressionStarsAvg: {
+              $avg: '$speakerExpressionStars'
+            },
+            speakerContentStarsAvg: {
+              $avg: '$speakerContentStars'
+            }
+          }
+        }
+      ])
+
+      // Array Based
+      resolve(item)
+    } catch (err) {
+      reject(utils.buildErrObject(422, err.message))
+    }
+  })
+}
 
 /**
  * Count users number each month in database
@@ -323,6 +355,20 @@ const countUserHeardFromByVerification = async req => {
 /********************
  * Public functions *
  ********************/
+
+/**
+ * Get all review to stars route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getReviewStars = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    res.status(200).json(await countStarsByReview())
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
 
 /**
  * Get New users number per month route

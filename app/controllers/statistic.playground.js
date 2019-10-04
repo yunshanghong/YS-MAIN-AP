@@ -175,7 +175,8 @@ async function start() {
       $group: {
         _id: null,
         eventStarsAvg: { $avg: '$eventStars' },
-        speakerStarsAvg: {
+        speakerStarsAvg: { $avg: '$speakerStars' },
+        speakerExpressionStarsAvg: {
           $avg: '$speakerExpressionStars'
         },
         speakerContentStarsAvg: {
