@@ -142,6 +142,36 @@ exports.updateItem = [
 ]
 
 /**
+ * Validates Update Checkin Status status item request
+ */
+exports.updateCheckinStatusItem = [
+  check('event')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('applicant')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('updateAction')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates Update registration status item request
  */
 exports.updateRegistrationItem = [

@@ -338,6 +338,31 @@ exports.createItem = async (req, res) => {
 }
 
 /**
+ * Checkin item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.checkinItem = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const updateStatus = {
+      checkinStatus: true
+    }
+    const item = await db.updateItemConsultingStatus(
+      {
+        _id: data.consultingId
+      },
+      model,
+      updateStatus
+    )
+    res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Update item function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object

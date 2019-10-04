@@ -41,6 +41,18 @@ router.post(
   validate.createItem,
   controller.createItem
 )
+
+/*
+ * Checkin guide Log route. (Only staff above)
+ */
+router.post(
+  '/checkin',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.checkinItem,
+  controller.checkinItem
+)
 /*
  * Update guide Log route. (Only staff above)
  */

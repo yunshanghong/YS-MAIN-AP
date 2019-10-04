@@ -92,6 +92,17 @@ router.post(
   controller.updateItem
 )
 /*
+ * Update user checkin status route
+ */
+router.post(
+  '/event/checkinStatus/:updateAction',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.updateCheckinStatusItem,
+  controller.updateCheckinStatusItem
+)
+/*
  * Update user registration status route
  */
 router.post(

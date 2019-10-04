@@ -46,6 +46,22 @@ exports.createItem = [
 ]
 
 /**
+ * Validates checkin item request
+ */
+exports.checkinItem = [
+  check('consultingId')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates update item request
  */
 exports.updateItem = [

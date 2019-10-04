@@ -149,7 +149,7 @@ const countNewUserNumberPerMonth = async req => {
             createdYear: { $year: '$createdAt' }
           }
         },
-        { $match: { verified: false, createdYear: CURRENT_YEAR } },
+        { $match: { createdYear: CURRENT_YEAR } },
         {
           $group: {
             _id: {

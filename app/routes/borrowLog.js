@@ -42,6 +42,17 @@ router.post(
   controller.createItem
 )
 /*
+ * Checkin borrow Log route. (Only staff above)
+ */
+router.post(
+  '/checkin',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.checkinItem,
+  controller.checkinItem
+)
+/*
  * Update borrow Log route. (Only staff above)
  */
 router.post(

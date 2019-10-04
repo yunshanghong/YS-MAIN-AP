@@ -108,6 +108,28 @@ const db = {
   },
 
   /**
+   * Updates Checkin status an item in database by id
+   * @param {string} id - item id
+   * @param {Object} req - request object
+   */
+  async updateItemCheckinStatus({ event, applicant }, model, req) {
+    return new Promise((resolve, reject) => {
+      model.findOneAndUpdate(
+        { event, applicant },
+        req,
+        {
+          new: true,
+          runValidators: true
+        },
+        (err, item) => {
+          utils.itemNotFound(err, item, reject, 'NOT_FOUND')
+          resolve(item)
+        }
+      )
+    })
+  },
+
+  /**
    * Updates registration status an item in database by id
    * @param {string} id - item id
    * @param {Object} req - request object
@@ -384,6 +406,24 @@ exports.createItem = async (req, res) => {
 //     utils.handleError(res, error)
 //   }
 // }
+
+/**
+ * Update Checkin status item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateCheckinStatusItem = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const item = await db.updateItemCheckinStatus(data, model, {
+      checkinStatus: data.updateAction
+    })
+    res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
 
 /**
  * Update registration status item function called by route

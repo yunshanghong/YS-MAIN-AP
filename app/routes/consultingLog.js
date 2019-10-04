@@ -24,7 +24,7 @@ router.get(
   controller.getSecretItems
 )
 /*
- * Get self all guide log by user id route
+ * Get self all consulting log by user id route
  */
 router.get(
   '/self',
@@ -35,7 +35,7 @@ router.get(
 )
 
 /*
- * Add new guide log route
+ * Add new consulting log route
  */
 router.post(
   '/',
@@ -46,7 +46,18 @@ router.post(
   controller.createItem
 )
 /*
- * Update guide Log route. (Only staff above)
+ * Update consulting Log route. (Only staff above)
+ */
+router.post(
+  '/checkin',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  validate.checkinItem,
+  controller.checkinItem
+)
+/*
+ * Update consulting Log route. (Only staff above)
  */
 router.post(
   '/update',
@@ -57,7 +68,7 @@ router.post(
   controller.updateItem
 )
 /*
- * Cancel self guide Log route.
+ * Cancel self consulting Log route.
  */
 router.post(
   '/cancel',

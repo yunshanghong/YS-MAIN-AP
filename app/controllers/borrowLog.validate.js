@@ -69,6 +69,22 @@ exports.createItem = [
 /**
  * Validates update item request
  */
+exports.checkinItem = [
+  check('borrowId')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
+ * Validates update item request
+ */
 exports.updateItem = [
   check('borrowId')
     .exists()

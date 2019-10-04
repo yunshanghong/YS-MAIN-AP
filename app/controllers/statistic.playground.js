@@ -5,6 +5,7 @@ const initMongo = require('../../config/mongo')
 initMongo()
 
 const USER_MODEL = require('../models/user')
+const ACTIVITY_MODEL = require('../models/activityLog')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 
@@ -148,7 +149,7 @@ const db = {
 //         createdYear: { $year: '$createdAt' }
 //       }
 //     },
-//     { $match: { verified: false, createdYear: CURRENT_YEAR } },
+//     { $match: { createdYear: CURRENT_YEAR } },
 //     {
 //       $group: {
 //         _id: {
@@ -167,15 +168,19 @@ const db = {
 // start();
 async function start() {
   console.time('db')
+  const CURRENT_YEAR = new Date().getFullYear()
 
-  const verified = await USER_MODEL.aggregate([
-    { $match: { verified: true } },
+  const verified = await ACTIVITY_MODEL.aggregate([
     {
       $group: {
-        _id: {
-          heardFrom: '$heardFrom'
+        _id: null,
+        eventStarsAvg: { $avg: '$eventStars' },
+        speakerStarsAvg: {
+          $avg: '$speakerExpressionStars'
         },
-        usersCount: { $sum: 1 }
+        speakerContentStarsAvg: {
+          $avg: '$speakerContentStars'
+        }
       }
     }
   ])
