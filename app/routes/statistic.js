@@ -25,6 +25,17 @@ router.post(
 )
 
 /*
+ * Get all review to log route
+ */
+router.post(
+  '/reviewLogs',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  trimRequest.all,
+  controller.getReviewLogs
+)
+
+/*
  * Get new user member per month route
  */
 router.post(

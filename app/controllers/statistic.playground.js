@@ -168,20 +168,16 @@ const db = {
 // start();
 async function start() {
   console.time('db')
-  const CURRENT_YEAR = new Date().getFullYear()
+  // const CURRENT_YEAR = new Date().getFullYear()
 
-  const verified = await ACTIVITY_MODEL.aggregate([
+  const verified = await USER_MODEL.aggregate([
+    { $match: { verified: true } },
     {
       $group: {
-        _id: null,
-        eventStarsAvg: { $avg: '$eventStars' },
-        speakerStarsAvg: { $avg: '$speakerStars' },
-        speakerExpressionStarsAvg: {
-          $avg: '$speakerExpressionStars'
+        _id: {
+          heardFrom: '$heardFrom'
         },
-        speakerContentStarsAvg: {
-          $avg: '$speakerContentStars'
-        }
+        usersCount: { $sum: 1 }
       }
     }
   ])

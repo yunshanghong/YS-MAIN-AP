@@ -166,6 +166,30 @@ const countStarsByReview = async req => {
 }
 
 /**
+ * Find Latest review comment in database
+ * @param {Object} req - request object
+ */
+const getLatestReviewComments = async req => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const item = await ACTIVITY_MODEL.find({
+        eventStars: { $ne: null },
+        speakerStars: { $ne: null },
+        speakerExpressionStars: { $ne: null },
+        speakerContentStars: { $ne: null }
+      })
+        .populate({ path: 'applicant', select: 'displayName photoURL email' })
+        .limit(10)
+
+      // Array Based
+      resolve(item)
+    } catch (err) {
+      reject(utils.buildErrObject(422, err.message))
+    }
+  })
+}
+
+/**
  * Count users number each month in database
  * @param {Object} req - request object
  */
@@ -365,6 +389,20 @@ exports.getReviewStars = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     res.status(200).json(await countStarsByReview())
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Get all review to logs route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getReviewLogs = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    res.status(200).json(await getLatestReviewComments())
   } catch (error) {
     utils.handleError(res, error)
   }

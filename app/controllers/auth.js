@@ -247,7 +247,7 @@ const findUser = async email => {
         email
       },
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
-      '+password +loginAttempts +blockExpires -updatedAt -createdAt',
+      '+password +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
         utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
         resolve(item)
@@ -776,7 +776,8 @@ exports.signWithFacebook = async (req, res) => {
 exports.linkGoogle = async (req, res) => {
   try {
     const data = matchedData(req)
-    if (req.user.google === null) {
+    const hasGoogleUser = await findGoogleUser()
+    if (req.user.google === null && !hasGoogleUser) {
       /* Lunk account */
       const item = await LinkGoogleAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
@@ -797,7 +798,8 @@ exports.linkGoogle = async (req, res) => {
 exports.linkFacebook = async (req, res) => {
   try {
     const data = matchedData(req)
-    if (req.user.facebook === null) {
+    const hasFacebookUser = await findFacebookUser()
+    if (req.user.facebook === null && !hasFacebookUser) {
       /* Link account */
       const item = await LinkFacebookAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
@@ -841,12 +843,8 @@ exports.register = async (req, res) => {
  */
 exports.verifyEmail = async (req, res) => {
   try {
-    // TODO Fix here
-    // req = matchedData(req)
-    // const user = await verificationExists(req.id)
     const user = await verificationExists(req.params.vid)
     await verifyUser(user)
-    // res.status(200).json(await verifyUser(user))
     res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
   } catch (error) {
     utils.handleError(res, error)
@@ -857,14 +855,14 @@ exports.verifyEmail = async (req, res) => {
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
-// TODO Fix here
 exports.resendVerifyEmail = async (req, res) => {
   try {
-    const user = findUser()
+    const locale = req.getLocale()
+    const user = await findUser(req.user.email)
 
     emailer.sendRegistrationEmailMessage(locale, user)
 
-    res.status(200).json({ message: 'success' })
+    res.status(200).json({ message: 'resend verify email succeeded!' })
   } catch (error) {
     utils.handleError(res, error)
   }

@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer')
 const Email = require('email-templates')
 const path = require('path')
-// const mg = require('nodemailer-mailgun-transport')
 const i18n = require('i18n')
 const User = require('../models/user')
 const { itemAlreadyExists } = require('../middleware/utils')
@@ -12,16 +11,8 @@ const { itemAlreadyExists } = require('../middleware/utils')
  * @param {boolean} callback - callback
  */
 const sendEmail = async (data, callback) => {
-  // const auth = {
-  //   auth: {
-  //     // eslint-disable-next-line camelcase
-  //     api_key: process.env.EMAIL_SMTP_API_MAILGUN,
-  //     domain: process.env.EMAIL_SMTP_DOMAIN_MAILGUN
-  //   }
-  // }
-  // const transporter = nodemailer.createTransport(mg(auth))
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_SMTP_HOST, // Office 365 server
+    host: process.env.EMAIL_SMTP_HOST, // SMTP server
     port: process.env.SMTP_SECURE_PORT, // secure SMTP
     secure: false, // false for TLS - as a boolean not string - but the default is false so just remove this completely
     auth: {
@@ -64,18 +55,12 @@ const sendEmail = async (data, callback) => {
  * @param {string} emailLocals - Email locals
  */
 const prepareToSendEmail = (user, subject, emailLocals) => {
-  // user = {
-  //   resetID: user.resetID,
-  //   displayName: user.displayName,
-  //   email: user.email,
-  //   verification: user.verification
-  // }
   const data = {
     user,
     subject,
     locals: emailLocals
   }
-  // TODO Fix here
+  // NOTE here
   // if (process.env.NODE_ENV === 'production') {
   //   sendEmail(data, messageSent =>
   //     messageSent
