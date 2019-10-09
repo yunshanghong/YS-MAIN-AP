@@ -848,6 +848,7 @@ exports.verifyEmail = async (req, res) => {
     res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
   } catch (error) {
     utils.handleError(res, error)
+    res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
   }
 }
 /**
