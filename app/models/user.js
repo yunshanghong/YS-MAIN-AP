@@ -125,8 +125,18 @@ const UserSchema = new mongoose.Schema(
     },
     education: {
       type: String,
-      // 國中、高中、大專、大學、研究所
-      enum: ['middle', 'high', 'faculty', 'bachelor', 'institute']
+      // origianl => 國中、高中、大專、大學、研究所
+      // new      => 國中、高中、高職、專科、大學(包含四技、二技)、研究所、其他
+      // new      => middle、high、Vocational、faculty、bachelor、institute、other
+      enum: [
+        'middle',
+        'high',
+        'vocational',
+        'faculty',
+        'bachelor',
+        'institute',
+        'other'
+      ]
     },
     schoolName: {
       type: String
