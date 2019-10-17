@@ -29,6 +29,16 @@ router.get(
  * Create new item route
  */
 router.post(
+  '/csv',
+  requireAuth,
+  AuthController.roleAuthorization(['staff', 'admin']),
+  controller.getExportSCV
+)
+
+/*
+ * Create new item route
+ */
+router.post(
   '/',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),

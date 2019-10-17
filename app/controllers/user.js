@@ -1,3 +1,4 @@
+const { Parser } = require('json2csv')
 const model = require('../models/user')
 const uuid = require('uuid')
 const { matchedData } = require('express-validator')
@@ -57,6 +58,156 @@ exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
     res.status(200).json(await db.getItems(req, model, query))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * Get items csv function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.getExportSCV = async (req, res) => {
+  try {
+    model
+      .find({ role: 'user' }, '-shortcuts -referralCode -referralList')
+      .exec((err, items) => {
+        const parser = new Parser({
+          fields: [
+            {
+              label: '會員編號',
+              value: '_id',
+              default: '未提供'
+            },
+            {
+              label: '顯示名稱',
+              value: 'displayName',
+              default: '未提供'
+            },
+            {
+              label: '信箱',
+              value: 'email',
+              default: '未提供'
+            },
+            {
+              label: '是否驗證',
+              value: 'verified',
+              default: '未提供'
+            },
+            {
+              label: '中文姓名',
+              value: 'fullName',
+              default: '未提供'
+            },
+            {
+              label: '性別',
+              value: 'gender',
+              default: '未提供'
+            },
+            {
+              label: '生日',
+              value: 'bob',
+              default: '未提供'
+            },
+            {
+              label: '手機',
+              value: 'phone',
+              default: '未提供'
+            },
+            {
+              label: '最高學歷',
+              value: 'education',
+              default: '未提供'
+            },
+            {
+              label: '學校名稱',
+              value: 'schoolName',
+              default: '未提供'
+            },
+            {
+              label: '所屬學群',
+              value: 'departmentName',
+              default: '未提供'
+            },
+            {
+              label: '目前工作狀態',
+              value: 'employmentStatus',
+              default: '未提供'
+            },
+            {
+              label: '企業名稱',
+              value: 'companyName',
+              default: '未提供'
+            },
+            {
+              label: '所屬企業部門',
+              value: 'serviceDepartment',
+              default: '未提供'
+            },
+            {
+              label: '所屬職位',
+              value: 'jobTitle',
+              default: '未提供'
+            },
+            {
+              label: '居住縣市',
+              value: 'city',
+              default: '未提供'
+            },
+            {
+              label: '詳細地址',
+              value: 'postAddress',
+              default: '未提供'
+            },
+            {
+              label: '得知YS管道',
+              value: 'heardFrom',
+              default: '未提供'
+            },
+            {
+              label: '是否參加過 YS 活動',
+              value: 'haveParticipated',
+              default: '未提供'
+            },
+            {
+              label: '綁定 Google 帳號',
+              value: 'google.displayName',
+              default: '未綁定'
+            },
+            {
+              label: '綁定 Facebook 帳號',
+              value: 'facebook.displayName',
+              default: '未綁定'
+            }
+          ]
+        })
+
+        const csv = parser.parse(items)
+        /* NOTE */
+        // const dateTime = moment().format('YYYYMMDDhhmmss')
+        // const filePath = path.join(
+        //   __dirname,
+        //   '../',
+        //   '../',
+        //   'exports',
+        //   'ys-users-' + dateTime + '.csv'
+        // )
+        // fs.writeFile(filePath, csv, err => {
+        //   if (err) {
+        //     console.log('err, ', err)
+        //   } else {
+        //     setTimeout(() => {
+        //       fs.unlinkSync(filePath)
+        //     }, 30 * 60 * 1000)
+
+        //     res.set('Content-Type', 'application/octet-stream')
+        //     res.status(200).send(Buffer.from(csv))
+        //   }
+        // })
+        res.set('Content-Type', 'application/octet-stream')
+        res.status(200).send(Buffer.from(csv))
+      })
   } catch (error) {
     utils.handleError(res, error)
   }

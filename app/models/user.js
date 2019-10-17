@@ -146,7 +146,7 @@ const UserSchema = new mongoose.Schema(
     },
     employmentStatus: {
       type: String,
-      enum: ['student', 'employed', 'self-employed', 'unemployed']
+      enum: ['student', 'employed', 'unemployed', 'other']
     },
     companyName: {
       type: String

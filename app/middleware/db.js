@@ -41,13 +41,16 @@ const listInitOptions = async req => {
       //   path: 'author',
       //   select: 'displayName photoURL email',
       // },
-      populate: [{
-        path: 'author',
-        select: 'displayName photoURL email',
-      }, {
-        path: 'speaker',
-        select: 'displayName title photoURL website',
-      }],
+      populate: [
+        {
+          path: 'author',
+          select: 'displayName photoURL email'
+        },
+        {
+          path: 'speaker',
+          select: 'displayName title photoURL website'
+        }
+      ],
       lean: true,
       page,
       limit
@@ -124,7 +127,10 @@ module.exports = {
         .findById(id)
         // .populate({ path: 'author', select: 'displayName photoURL email' })
         .populate({ path: 'author', select: 'displayName photoURL email' })
-        .populate({ path: 'speaker', select: 'displayName title photoURL website' })
+        .populate({
+          path: 'speaker',
+          select: 'displayName title photoURL website'
+        })
         .exec((err, item) => {
           itemNotFound(err, item, reject, 'NOT_FOUND')
           resolve(item)

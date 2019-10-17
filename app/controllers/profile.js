@@ -143,7 +143,6 @@ exports.updateProfile = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    console.log('profile data update ', data)
     const item = await db.updateItem(req.user._id, model, data)
     res.status(200).json(item)
   } catch (error) {
