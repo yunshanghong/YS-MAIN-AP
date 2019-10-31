@@ -265,7 +265,7 @@ const getEventActivitysHistoryFromDB = async eventId => {
 /**
  * Gets Speaker's (max, min, avg) stars by user's reviews from database
  */
-// TODO: fix here
+/* NOTE: Low priority */
 const getSpeakerStarsFromDB = async speakerId => {
   return new Promise((resolve, reject) => {
     model
@@ -276,7 +276,7 @@ const getSpeakerStarsFromDB = async speakerId => {
           reject(utils.buildErrObject(422, err.message))
         }
 
-        console.log('getEventActivitysHistoryFromDB data ', items)
+        // console.log('getEventActivitysHistoryFromDB data ', items)
         resolve(items)
       })
   })

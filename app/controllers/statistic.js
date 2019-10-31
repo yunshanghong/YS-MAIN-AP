@@ -166,7 +166,7 @@ const countStarsByReview = async req => {
 }
 
 /**
- * Find Latest review comment in database
+ * Find Latest 8 review comments in database
  * @param {Object} req - request object
  */
 const getLatestReviewComments = async req => {
@@ -179,7 +179,7 @@ const getLatestReviewComments = async req => {
         speakerContentStars: { $ne: null }
       })
         .populate({ path: 'applicant', select: 'displayName photoURL email' })
-        .limit(10)
+        .limit(9)
 
       // Array Based
       resolve(item)
