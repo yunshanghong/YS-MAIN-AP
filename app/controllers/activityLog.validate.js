@@ -77,32 +77,25 @@ exports.createItem = [
     .withMessage('IS_EMPTY')
     .trim(),
   check('participateReason')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('participantHeardFrom')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('participantExpectation')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('participantID')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('participantIsManager')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('participateLunch')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('lunchType')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   (req, res, next) => {
     validationResult(req, res, next)

@@ -27,8 +27,7 @@ exports.createItem = [
     .withMessage('IS_EMPTY')
     .trim(),
   check('linkAddress')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .trim(),
   check('published')
     .exists()
