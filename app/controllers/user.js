@@ -57,7 +57,11 @@ const createItem = async req => {
 exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    res.status(200).json(await db.getItems(req, model, query))
+    const queryRoleUser = {
+      ...query,
+      role: 'user'
+    }
+    res.status(200).json(await db.getItems(req, model, queryRoleUser))
   } catch (error) {
     utils.handleError(res, error)
   }
