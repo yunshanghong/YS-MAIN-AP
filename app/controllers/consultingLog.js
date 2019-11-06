@@ -24,7 +24,7 @@ const publicListInitOptions = async req => {
     const limit = parseInt(req.query.limit, 10) || 5
     const options = {
       sort: sortBy,
-      select: '-applicant -consultingIntention -consultingexpectation',
+      select: '-applicant -consultingIntention -consultingExpectation',
       lean: true,
       page,
       limit
@@ -229,11 +229,11 @@ const createItem = async req => {
     const consultingLog = new model({
       applicant: req.applicantId,
 
-      consultingDate: req.consultingDate,
-      consultingTimeSlot: req.consultingTimeSlot,
-      consultingTopic: req.consultingTopic,
       consultingIntention: req.consultingIntention,
-      consultingexpectation: req.consultingexpectation
+      consultingTopic: req.consultingTopic,
+      consultingExpectation: req.consultingExpectation,
+      consultingHaveParticipated: req.consultingHaveParticipated,
+      consultingHeardFrom: req.consultingHeardFrom
     })
     consultingLog.save((err, item) => {
       if (err) {
@@ -372,6 +372,12 @@ exports.updateItem = async (req, res) => {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
     let updateStatus = {}
+    if (data.consultingDate) {
+      updateStatus.consultingDate = data.consultingDate
+    }
+    if (data.consultingTimeSlot) {
+      updateStatus.consultingTimeSlot = data.consultingTimeSlot
+    }
     if (data.appointmentStatus) {
       updateStatus.appointmentStatus = data.appointmentStatus
     }

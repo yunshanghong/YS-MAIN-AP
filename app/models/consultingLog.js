@@ -8,47 +8,54 @@ const consultingLogSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
-
-    /* Pre Questions */
-    // Question 1. consulting date.
     consultingDate: {
       type: Date,
-      required: true
+      default: undefined
     },
-    // Question 2. consulting time slot.
     consultingTimeSlot: {
       type: String,
-      enum: [
-        '10:00-11:00',
-        '11:00-12:00',
-        '14:00-15:00',
-        '15:00-16:00',
-        '16:00-17:00'
-      ],
+      default: undefined
+    },
+
+    /* Pre Questions */
+    // Question 1. consulting intention.
+    consultingIntention: {
+      type: String,
       required: true
     },
-    // Question 3. consulting topic.
+    // Question 2. consulting topic.
     consultingTopic: {
       type: String,
+      required: true
+    },
+    // Question 3. consulting expectation.
+    consultingExpectation: {
+      type: String,
+      required: true
+    },
+    // Question 4. have participated at least onece.
+    consultingHaveParticipated: {
+      type: String,
+      enum: ['yes', 'no'],
+      required: true
+    },
+    consultingHeardFrom: {
+      type: String,
+      // 新聞報導、電台廣播、YS臉書、YS官網、台灣就業通網站連結、校園徵才博覽會、校園講座、收到DM、收到E- mail活動通知、親友介紹、其他
       enum: [
-        '自我認識',
-        '職涯方向探索',
-        '職涯目標擬定',
-        '個人優勢分析',
-        '擬定職涯計畫',
-        '職能盤點/履歷健診',
-        '面試演練',
+        '新聞報導',
+        '電台廣播',
+        'YS臉書',
+        'YS官網',
+        '台灣就業通網站連結',
+        '校園徵才博覽會',
+        '校園講座',
+        '收到DM',
+        '收到Email活動通知',
+        '親友介紹',
         '其他'
       ],
       required: true
-    },
-    // Question 4. consulting intention.
-    consultingIntention: {
-      type: String
-    },
-    // Question 5. consulting expectation.
-    consultingexpectation: {
-      type: String
     },
 
     appointmentStatus: {

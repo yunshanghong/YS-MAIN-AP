@@ -5,14 +5,7 @@ const { check } = require('express-validator')
  * Validates create new item request
  */
 exports.createItem = [
-  check('consultingDate')
-    .exists()
-    .withMessage('MISSING')
-    .not()
-    .isEmpty()
-    .withMessage('IS_EMPTY')
-    .trim(),
-  check('consultingTimeSlot')
+  check('consultingIntention')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -26,14 +19,21 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('consultingIntention')
+  check('consultingExpectation')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('consultingexpectation')
+  check('consultingHaveParticipated')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('consultingHeardFrom')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -72,8 +72,18 @@ exports.updateItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('appointmentStatus').trim(),
-  check('checkinStatus').trim(),
+  check('consultingDate')
+    .optional()
+    .trim(),
+  check('consultingTimeSlot')
+    .optional()
+    .trim(),
+  check('appointmentStatus')
+    .optional()
+    .trim(),
+  check('checkinStatus')
+    .optional()
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }
