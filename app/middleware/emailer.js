@@ -36,7 +36,7 @@ const sendEmail = async (data, callback) => {
 
   email
     .send({
-      template: 'verify',
+      template: data.template,
       message: {
         from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM_ADDRESS}>`,
         to: `${data.user.displayName} <${data.user.email}>`,
@@ -54,10 +54,11 @@ const sendEmail = async (data, callback) => {
  * @param {string} subject - subject
  * @param {string} emailLocals - Email locals
  */
-const prepareToSendEmail = (user, subject, emailLocals) => {
+const prepareToSendEmail = (user, subject, template, emailLocals) => {
   const data = {
     user,
     subject,
+    template,
     locals: emailLocals
   }
   // NOTE here
@@ -130,6 +131,7 @@ module.exports = {
   async sendRegistrationEmailMessage(locale, user) {
     i18n.setLocale(locale)
     const subject = i18n.__('registration.SUBJECT')
+    const emailTemplate = 'verify'
     const emailLocals = {
       HEADER: i18n.__('registration.HEADER'),
       DESCRIPTION: i18n.__('registration.DESCRIPTION'),
@@ -137,7 +139,7 @@ module.exports = {
       HINT: i18n.__('registration.HINT'),
       VERIFY_URL: `${process.env.AUTH_API_END_POINT}/auth/verify-email/${user.verification}`
     }
-    prepareToSendEmail(user, subject, emailLocals)
+    prepareToSendEmail(user, subject, emailTemplate, emailLocals)
   },
 
   /**
@@ -148,13 +150,14 @@ module.exports = {
   async sendResetPasswordEmailMessage(locale, user) {
     i18n.setLocale(locale)
     const subject = i18n.__('forgotPassword.SUBJECT')
+    const emailTemplate = 'reset'
     const emailLocals = {
       HEADER: i18n.__('forgotPassword.HEADER'),
       DESCRIPTION: i18n.__('forgotPassword.DESCRIPTION'),
       LINK_TEXT: i18n.__('forgotPassword.LINK_TEXT'),
       HINT: i18n.__('forgotPassword.HINT'),
-      RESET_URL: `${process.env.FRONTEND_URL}/reset-password/${user.resetID}`
+      RESET_URL: `${process.env.FRONTEND_URL}/reset-password/${user.verification}`
     }
-    prepareToSendEmail(user, subject, emailLocals)
+    prepareToSendEmail(user, subject, emailTemplate, emailLocals)
   }
 }

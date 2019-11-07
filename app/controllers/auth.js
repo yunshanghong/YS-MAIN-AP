@@ -882,7 +882,6 @@ exports.forgotPassword = async (req, res) => {
     const user = await findUser(data.email)
     const item = await saveForgotPassword(req)
     const userData = {
-      resetID: item._id,
       email: item.email,
       verification: item.verification,
       displayName: user.displayName
