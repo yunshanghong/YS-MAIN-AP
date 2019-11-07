@@ -6,15 +6,15 @@ const eventSchema = new mongoose.Schema(
   {
     coverImageName: {
       type: String,
-      required: true,
+      required: true
     },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     subTitle: {
       type: String,
-      required: true,
+      required: true
     },
     tags: {
       type: [String],
@@ -26,28 +26,32 @@ const eventSchema = new mongoose.Schema(
     },
     endDateTime: {
       type: Date,
-      required: true,
+      required: true
     },
-    enrollDeadline: {
+    enrollStartDateTime: {
       type: Date,
-      required: true,
+      required: true
+    },
+    enrollEndDateTime: {
+      type: Date,
+      required: true
     },
     maximumOfApplicants: {
       type: Number,
       required: true,
-      default: 30,
+      default: 30
     },
     location: {
       type: String,
       default: '高雄市前金區五福三路21號'
     },
     content: {
-      type: String,
+      type: String
     },
 
     speaker: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Speaker',
+      ref: 'Speaker'
     },
 
     preQuestionList: {
@@ -74,13 +78,13 @@ const eventSchema = new mongoose.Schema(
     published: {
       type: Boolean,
       required: true,
-      default: false,
+      default: false
     },
 
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+      ref: 'User'
+    }
   },
   {
     versionKey: false,

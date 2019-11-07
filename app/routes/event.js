@@ -15,22 +15,13 @@ const trimRequest = require('trim-request')
 /*
  * Get all Events route
  */
-router.get(
-  '/',
-  trimRequest.all,
-  controller.getItems
-)
+router.get('/', trimRequest.all, controller.getItems)
 /*
- * Get single enent by enentId route
+ * Get single event by eventId route
  */
-router.get(
-  '/:eventId',
-  trimRequest.all,
-  validate.getItem,
-  controller.getItem
-)
+router.get('/:eventId', trimRequest.all, validate.getItem, controller.getItem)
 /*
- * Add new enent route
+ * Add new event route
  */
 router.post(
   '/',
@@ -41,7 +32,7 @@ router.post(
   controller.createItem
 )
 /*
- * Update enent route
+ * Update event route
  */
 router.post(
   '/update',
@@ -52,10 +43,10 @@ router.post(
   controller.updateItem
 )
 /*
- * Delete enent route
+ * Delete event route
  */
 router.delete(
-  '/:enentId',
+  '/:eventId',
   requireAuth,
   AuthController.roleAuthorization(['staff', 'admin']),
   trimRequest.all,

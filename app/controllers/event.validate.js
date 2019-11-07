@@ -61,7 +61,14 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('enrollDeadline')
+  check('enrollStartDateTime')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('enrollEndDateTime')
     .exists()
     .withMessage('MISSING')
     .not()
@@ -163,7 +170,14 @@ exports.updateItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
-  check('enrollDeadline')
+  check('enrollStartDateTime')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('enrollEndDateTime')
     .exists()
     .withMessage('MISSING')
     .not()

@@ -13,14 +13,15 @@ const db = require('../middleware/db')
  */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
-    const image = new model({
+    const newEvent = new model({
       coverImageName: req.coverImageName,
       title: req.title,
       subTitle: req.subTitle,
       tags: req.tags,
       startDateTime: req.startDateTime,
       endDateTime: req.endDateTime,
-      enrollDeadline: req.enrollDeadline,
+      enrollStartDateTime: req.enrollStartDateTime,
+      enrollEndDateTime: req.enrollEndDateTime,
       maximumOfApplicants: req.maximumOfApplicants,
       location: req.location,
       content: req.content,
@@ -32,12 +33,22 @@ const createItem = async req => {
 
       author: req.authorId
     })
-    image.save((err, item) => {
+    newEvent.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
+      } else {
+        model
+          .findById(item._id)
+          .lean()
+          .populate({
+            path: 'speaker',
+            select: 'displayName title photoURL website'
+          })
+          .exec((err, resp) => {
+            utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+            resolve(resp)
+          })
       }
-
-      resolve(item)
     })
   })
 }
@@ -49,6 +60,7 @@ const getAllItemsFromDB = async () => {
   return new Promise((resolve, reject) => {
     model
       .find({}, '-createdAt', { sort: { name: 1 } })
+      .lean()
       .populate({ path: 'author', select: 'displayName photoURL email' })
       .populate({
         path: 'speaker',
@@ -137,6 +149,7 @@ exports.createItem = async (req, res) => {
       ...data,
       authorId: req.user._id
     })
+
     res.status(200).json({
       ...item,
       author: {
