@@ -250,7 +250,7 @@ const findUser = async email => {
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
       '+password +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
         resolve(item)
       }
     )
@@ -341,7 +341,7 @@ const LinkGoogleAccountToUser = async (user, googleInfo) => {
         select: '-_id -updatedAt -createdAt'
       },
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
         resolve(item)
       }
     )
@@ -388,7 +388,7 @@ const LinkFacebookAccountToUser = async (user, facebookInfo) => {
         select: '-_id -updatedAt -createdAt'
       },
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
         resolve(item)
       }
     )
@@ -402,7 +402,7 @@ const LinkFacebookAccountToUser = async (user, facebookInfo) => {
 const findUserById = async userId => {
   return new Promise((resolve, reject) => {
     User.findById(userId, (err, item) => {
-      utils.itemNotFound(err, item, reject, { email: 'USER_DOES_NOT_EXIST' })
+      utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
       resolve(item)
     })
   })
@@ -514,7 +514,7 @@ const verificationExists = async id => {
         verified: false
       },
       (err, user) => {
-        utils.itemNotFound(err, user, reject, 'NOT_FOUND_OR_ALREADY_VERIFIED')
+        utils.itemNotFound(err, user, reject, '找不到或已經驗證完成')
         resolve(user)
       }
     )
@@ -730,11 +730,14 @@ exports.signWithGoogle = async (req, res) => {
     } else {
       /* Sign-Up */
       const locale = req.getLocale()
-      const newUser = await registerGoogleUser(data)
-      emailer.sendRegistrationEmailMessage(locale, newUser)
-      res
-        .status(200)
-        .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+      const doesEmailExists = await emailer.emailExists(data.googleEmail)
+      if (!doesEmailExists) {
+        const newUser = await registerGoogleUser(data)
+        emailer.sendRegistrationEmailMessage(locale, newUser)
+        res
+          .status(200)
+          .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+      }
     }
   } catch (error) {
     utils.handleError(res, error)
@@ -758,11 +761,14 @@ exports.signWithFacebook = async (req, res) => {
     } else {
       /* Sign-Up */
       const locale = req.getLocale()
-      const newUser = await registerFacebookUser(data)
-      emailer.sendRegistrationEmailMessage(locale, newUser)
-      res
-        .status(200)
-        .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+      const doesEmailExists = await emailer.emailExists(data.facebookEmail)
+      if (!doesEmailExists) {
+        const newUser = await registerFacebookUser(data)
+        emailer.sendRegistrationEmailMessage(locale, newUser)
+        res
+          .status(200)
+          .json(await saveUserAccessAndReturnToken({ req, user: newUser }))
+      }
     }
   } catch (error) {
     utils.handleError(res, error)
@@ -777,14 +783,17 @@ exports.signWithFacebook = async (req, res) => {
 exports.linkGoogle = async (req, res) => {
   try {
     const data = matchedData(req)
-    const hasGoogleUser = await findGoogleUser()
+    const hasGoogleUser = await findGoogleUser(data.googleEmail)
     if (req.user.google === null && !hasGoogleUser) {
-      /* Lunk account */
+      /* Link account */
       const item = await LinkGoogleAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
       res.status(200).json(linkedUser)
     } else {
-      res.status(200).json(req.user)
+      const error = new Error()
+      error.code = 422
+      error.message = '綁定 Google 失敗'
+      utils.handleError(res, error)
     }
   } catch (error) {
     utils.handleError(res, error)
@@ -799,14 +808,17 @@ exports.linkGoogle = async (req, res) => {
 exports.linkFacebook = async (req, res) => {
   try {
     const data = matchedData(req)
-    const hasFacebookUser = await findFacebookUser()
+    const hasFacebookUser = await findFacebookUser(data.facebookEmail)
     if (req.user.facebook === null && !hasFacebookUser) {
       /* Link account */
       const item = await LinkFacebookAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
       res.status(200).json(linkedUser)
     } else {
-      res.status(200).json(req.user)
+      const error = new Error()
+      error.code = 422
+      error.message = '綁定 Facebook 失敗'
+      utils.handleError(res, error)
     }
   } catch (error) {
     utils.handleError(res, error)

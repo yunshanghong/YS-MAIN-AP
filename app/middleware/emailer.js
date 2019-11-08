@@ -91,7 +91,7 @@ module.exports = {
         },
         (err, item) => {
           itemAlreadyExists(err, item, reject, {
-            email: 'EMAIL_ALREADY_EXISTS'
+            email: '信箱位址已經被使用過了'
           })
           resolve(false)
         }
@@ -115,7 +115,7 @@ module.exports = {
         },
         (err, item) => {
           itemAlreadyExists(err, item, reject, {
-            email: 'EMAIL_ALREADY_EXISTS'
+            email: '信箱位址已經被使用過了'
           })
           resolve(false)
         }
