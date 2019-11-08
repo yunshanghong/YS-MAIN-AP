@@ -109,6 +109,12 @@ const UserSchema = new mongoose.Schema(
       select: false
     },
 
+    /* Notification */
+    receivingEmail: {
+      type: Boolean,
+      default: true
+    },
+
     /* User Detail */
     fullName: {
       type: String

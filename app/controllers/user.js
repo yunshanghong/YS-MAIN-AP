@@ -254,6 +254,26 @@ exports.getItem = async (req, res) => {
 // }
 
 /**
+ * Update self item receiving email status function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.updateItemReceivingEmailStatus = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const userId = await utils.isIDGood(req.user._id)
+
+    res.status(200).json(
+      await db.updateItem(userId, model, {
+        receivingEmail: data.receivingEmailStatus
+      })
+    )
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Update item Activation function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object

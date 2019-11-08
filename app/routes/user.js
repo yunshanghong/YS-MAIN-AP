@@ -72,6 +72,18 @@ router.get(
 // )
 
 /*
+ * Update self item receiving email status route
+ */
+router.patch(
+  '/receiving-email',
+  requireAuth,
+  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  validate.updateItemReceivingEmailStatus,
+  controller.updateItemReceivingEmailStatus
+)
+
+/*
  * Update item activation route
  */
 router.patch(

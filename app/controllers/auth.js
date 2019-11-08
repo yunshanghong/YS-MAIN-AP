@@ -68,6 +68,7 @@ const setUserInfo = req => {
       schoolName: req.schoolName,
       departmentName: req.departmentName,
       employmentStatus: req.employmentStatus,
+      receivingEmail: req.receivingEmail,
       city: req.city,
       postAddress: req.postAddress,
       companyName: req.companyName,

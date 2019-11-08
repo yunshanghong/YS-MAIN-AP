@@ -135,6 +135,21 @@ exports.updateItem = [
 ]
 
 /**
+ * Validates update self item receiving status request
+ */
+exports.updateItemReceivingEmailStatus = [
+  check('receivingEmailStatus')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates update item Active status request
  */
 exports.updateItemActivation = [
