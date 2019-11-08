@@ -33,9 +33,7 @@ const guideLogSchema = new mongoose.Schema(
     },
     // Question 5. guide people number.
     guideNumber: {
-      type: Number,
-      min: 5,
-      max: 40,
+      type: String,
       required: true
     },
     // Question 6. guide intention.

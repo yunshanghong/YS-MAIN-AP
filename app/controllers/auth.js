@@ -11,6 +11,7 @@ const emailer = require('../middleware/emailer')
 const HOURS_TO_BLOCK = 2
 const LOGIN_ATTEMPTS = 5
 
+/* TODO: update facebook/google login flow */
 /*********************
  * Private functions *
  *********************/
