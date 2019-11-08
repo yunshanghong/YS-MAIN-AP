@@ -270,9 +270,9 @@ const findGoogleUser = async email => {
       },
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance google.id google.accessToken google.displayName google.email google.photoURL facebook.id facebook.accessToken facebook.displayName facebook.email facebook.photoURL',
       (err, item) => {
-        utils.itemAlreadyExists(err, item, reject, {
-          email: 'Google 帳號已被使用'
-        })
+        if (err) {
+          resolve(null)
+        }
         resolve(item)
       }
     )
@@ -292,9 +292,9 @@ const findFacebookUser = async email => {
       },
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance google.id google.accessToken google.displayName google.email google.photoURL facebook.id facebook.accessToken facebook.displayName facebook.email facebook.photoURL',
       (err, item) => {
-        utils.itemAlreadyExists(err, item, reject, {
-          email: 'Facebook 帳號已被使用'
-        })
+        if (err) {
+          resolve(null)
+        }
         resolve(item)
       }
     )
@@ -789,6 +789,11 @@ exports.linkGoogle = async (req, res) => {
       const item = await LinkGoogleAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
       res.status(200).json(linkedUser)
+    } else {
+      const error = new Error()
+      error.code = 422
+      error.message = '綁定 Google 失敗'
+      utils.handleError(res, error)
     }
   } catch (error) {
     utils.handleError(res, error)
@@ -809,6 +814,11 @@ exports.linkFacebook = async (req, res) => {
       const item = await LinkFacebookAccountToUser(req.user, data)
       const linkedUser = setUserInfo(item)
       res.status(200).json(linkedUser)
+    } else {
+      const error = new Error()
+      error.code = 422
+      error.message = '綁定 Facebook 失敗'
+      utils.handleError(res, error)
     }
   } catch (error) {
     utils.handleError(res, error)
