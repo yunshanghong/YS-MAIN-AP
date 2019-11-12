@@ -98,8 +98,7 @@ exports.createItem = [
     .trim(),
 
   check('preQuestionList')
-    .exists()
-    .withMessage('MISSING')
+    .optional()
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
