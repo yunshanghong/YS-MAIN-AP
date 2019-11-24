@@ -26,7 +26,7 @@ const createItem = async req => {
         reject(utils.buildErrObject(422, err.message))
       }
 
-      resolve(item)
+      resolve(item.toObject())
     })
   })
 }

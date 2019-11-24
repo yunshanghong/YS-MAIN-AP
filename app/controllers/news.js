@@ -8,9 +8,9 @@ const db = require('../middleware/db')
  *********************/
 
 /**
-* Creates a new item in database
-* @param {Object} req - request object
-*/
+ * Creates a new item in database
+ * @param {Object} req - request object
+ */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
     const image = new model({
@@ -20,14 +20,14 @@ const createItem = async req => {
       content: req.content,
       tags: req.tags,
       published: req.published,
-      author: req.authorId,
+      author: req.authorId
     })
     image.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       }
 
-      resolve(item)
+      resolve(item.toObject())
     })
   })
 }
@@ -121,14 +121,14 @@ exports.createItem = async (req, res) => {
     const data = matchedData(req)
     const item = await createItem({
       ...data,
-      authorId: req.user._id,
+      authorId: req.user._id
     })
     res.status(200).json({
       ...item,
       author: {
         displayName: req.user.displayName,
         photoURL: req.user.photoURL,
-        email: req.user.email,
+        email: req.user.email
       }
     })
   } catch (error) {
