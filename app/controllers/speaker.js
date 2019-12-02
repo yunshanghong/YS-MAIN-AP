@@ -8,23 +8,23 @@ const db = require('../middleware/db')
  *********************/
 
 /**
-* Creates a new item in database
-* @param {Object} req - request object
-*/
+ * Creates a new item in database
+ * @param {Object} req - request object
+ */
 const createItem = async req => {
   return new Promise((resolve, reject) => {
     const image = new model({
       displayName: req.displayName,
       title: req.title,
       photoURL: req.photoURL,
-      website: req.website,
+      website: req.website
     })
     image.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       }
 
-      resolve(item)
+      resolve(item.toObject())
     })
   })
 }
