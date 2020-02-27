@@ -52,8 +52,7 @@ exports.createItem = [
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY')
-    .isArray(),
+    .withMessage('IS_EMPTY'),
   check('published')
     .exists()
     .withMessage('MISSING')

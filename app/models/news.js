@@ -14,24 +14,25 @@ const NewsSchema = new mongoose.Schema(
     },
     imageName: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      require: true,
+      require: true
     },
     tags: {
-      type: [String],
+      type: String,
+      enum: ['events-list', 'event-teaser', 'event-highlight', 'fast-news'],
       retquire: true
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'User'
     },
     published: {
       type: Boolean,
       required: true,
-      default: false,
+      default: false
     }
   },
   {

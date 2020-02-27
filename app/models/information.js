@@ -14,25 +14,25 @@ const InformationSchema = new mongoose.Schema(
     },
     imageName: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      require: true,
+      require: true
     },
     tags: {
       type: String,
-      enum: ['news', 'training', 'skills', 'Interview'],
+      enum: ['news', 'skills', 'interview', 'says', 'training'],
       retquire: true
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'User'
     },
     published: {
       type: Boolean,
       required: true,
-      default: false,
+      default: false
     }
   },
   {
