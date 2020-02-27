@@ -28,7 +28,7 @@ const borrowLogSchema = new mongoose.Schema(
     // Question 4. borrowing time slot.
     borrowingTimeSlot: {
       type: String,
-      enum: ['上午', '下午'],
+      enum: ['上午', '下午', '整日'],
       required: true
     },
     // Question 5. borrowing people number.

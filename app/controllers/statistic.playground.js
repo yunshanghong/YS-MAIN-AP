@@ -210,11 +210,6 @@ async function start() {
     const parser = new Parser({
       fields: [
         {
-          label: '會員編號',
-          value: '_id',
-          default: '未提供'
-        },
-        {
           label: '顯示名稱',
           value: 'displayName',
           default: '未提供'
