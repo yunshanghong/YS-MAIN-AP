@@ -82,7 +82,6 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '會員編號',
               value: '_id',
-              default: '未提供'
             },
             {
               label: '顯示名稱',
@@ -90,17 +89,7 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '信箱',
-              value: 'email',
-              default: '未提供'
-            },
-            {
-              label: '是否驗證',
-              value: 'verified',
-              default: '未提供'
-            },
-            {
-              label: '中文姓名',
+              label: '全名',
               value: 'fullName',
               default: '未提供'
             },
@@ -115,8 +104,23 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '手機',
+              label: '信箱',
+              value: 'email',
+              default: '未提供'
+            },
+            {
+              label: '電話',
               value: 'phone',
+              default: '未提供'
+            },
+            {
+              label: '居住地',
+              value: 'city',
+              default: '未提供'
+            },
+            {
+              label: '詳細地址',
+              value: 'postAddress',
               default: '未提供'
             },
             {
@@ -155,16 +159,6 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '居住縣市',
-              value: 'city',
-              default: '未提供'
-            },
-            {
-              label: '詳細地址',
-              value: 'postAddress',
-              default: '未提供'
-            },
-            {
               label: '得知YS管道',
               value: 'heardFrom',
               default: '未提供'
@@ -183,7 +177,13 @@ exports.getExportSCV = async (req, res) => {
               label: '綁定 Facebook 帳號',
               value: 'facebook.displayName',
               default: '未綁定'
-            }
+            },
+            {
+              label: '是否驗證',
+              value: 'verified',
+              value: (row, field) => row['verified'] ? '已驗證' : '未驗證',
+              default: '未提供'
+            },
           ]
         })
 

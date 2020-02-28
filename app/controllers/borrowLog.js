@@ -199,6 +199,8 @@ const createItem = async req => {
 
       institutionName: req.institutionName,
       institutionAddress: req.institutionAddress,
+      contactName: req.contactName,
+      contactPhone: req.contactPhone,
       borrowingDate: req.borrowingDate,
       borrowingTimeSlot: req.borrowingTimeSlot,
       borrowingNumber: req.borrowingNumber,

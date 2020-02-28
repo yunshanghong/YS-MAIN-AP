@@ -199,6 +199,8 @@ const createItem = async req => {
 
       institutionName: req.institutionName,
       institutionAddress: req.institutionAddress,
+      contactName: req.contactName,
+      contactPhone: req.contactPhone,
       guideDate: req.guideDate,
       guideTimeSlot: req.guideTimeSlot,
       guideNumber: req.guideNumber,

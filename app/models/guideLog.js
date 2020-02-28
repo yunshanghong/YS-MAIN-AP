@@ -20,6 +20,14 @@ const guideLogSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    contactName: {
+      type: String,
+      required: true
+    },
+    contactPhone: {
+      type: String,
+      required: true
+    },
     // Question 3. guide date.
     guideDate: {
       type: Date,
