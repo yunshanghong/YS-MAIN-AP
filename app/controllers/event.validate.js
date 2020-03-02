@@ -83,6 +83,18 @@ exports.createItem = [
     .exists()
     .withMessage('MISSING')
     .trim(),
+  check('contactName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('contactEmail')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('contactPhone')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('content')
     .exists()
     .withMessage('MISSING')
@@ -188,6 +200,18 @@ exports.updateItem = [
     .withMessage('MISSING')
     .trim(),
   check('location')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('contactName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('contactEmail')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('contactPhone')
     .exists()
     .withMessage('MISSING')
     .trim(),

@@ -24,6 +24,9 @@ const createItem = async req => {
       enrollEndDateTime: req.enrollEndDateTime,
       maximumOfApplicants: req.maximumOfApplicants,
       location: req.location,
+      contactName: req.contactName,
+      contactEmail: req.contactEmail,
+      contactPhone: req.contactPhone,
       content: req.content,
 
       speaker: req.speaker,

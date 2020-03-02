@@ -45,6 +45,15 @@ const eventSchema = new mongoose.Schema(
       type: String,
       default: '高雄市前金區五福三路21號'
     },
+    contactName: {
+      type: String,
+    },
+    contactEmail: {
+      type: String,
+    },
+    contactPhone: {
+      type: String,
+    },
     content: {
       type: String
     },
