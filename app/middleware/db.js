@@ -74,7 +74,7 @@ module.exports = {
           typeof query.fields !== 'undefined'
         ) {
           const data = {
-            $or: []
+            $or: [],
           }
           const array = []
           // Takes fields param and builds an array by splitting with ','
@@ -87,6 +87,21 @@ module.exports = {
               }
             })
           })
+          // Apply Condition Search
+          if (query.conditions) {
+            const arrayCondition = []
+            Object.entries(JSON.parse(query.conditions)).map(([key, value]) => {
+              if (value !== 'all') {
+                arrayCondition.push({
+                  [key]: value
+                })
+              }
+            })
+
+            if (arrayCondition.length) {
+              data.$and = arrayCondition
+            }
+          }
           // Puts array result in data
           data.$or = array
           resolve(data)
