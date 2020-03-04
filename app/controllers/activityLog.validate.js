@@ -198,16 +198,12 @@ exports.updateRegistrationItem = [
  * Validates Cancel item request
  */
 exports.cancelItem = [
-  check('event')
+  check('activityId')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
-    .trim(),
-  check('applicant')
-    .exists()
-    .withMessage('MISSING')
     .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
