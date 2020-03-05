@@ -154,9 +154,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ['student', 'employed', 'unemployed', 'other']
     },
-    companyName: {
-      type: String
-    },
     city: {
       type: String
     },
@@ -177,8 +174,31 @@ const UserSchema = new mongoose.Schema(
     jobTitle: {
       type: String
     },
+    jobDescription: {
+      type: String
+    },
     firstYearOfCareer: {
       type: Date
+    },
+    // Second career
+    companyName2: {
+      type: String
+    },
+    jobTitle2: {
+      type: String
+    },
+    jobDescription2: {
+      type: String
+    },
+    // Third career
+    companyName3: {
+      type: String
+    },
+    jobTitle3: {
+      type: String
+    },
+    jobDescription3: {
+      type: String
     },
 
     /* Marketing */

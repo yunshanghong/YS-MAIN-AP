@@ -58,7 +58,35 @@ exports.updateProfile = [
     .exists()
     .withMessage('MISSING')
     .trim(),
+  check('jobDescription')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('firstYearOfCareer')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('companyName2')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('jobTitle2')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('jobDescription2')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('companyName3')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('jobTitle3')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
+  check('jobDescription3')
     .exists()
     .withMessage('MISSING')
     .trim(),

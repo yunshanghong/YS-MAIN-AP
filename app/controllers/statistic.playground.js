@@ -36,6 +36,13 @@ const asyncParser = new AsyncParser(
       'companyName',
       'serviceDepartment',
       'jobTitle',
+      'jobDescription',
+      'companyName2',
+      'jobTitle2',
+      'jobDescription2',
+      'companyName3',
+      'jobTitle3',
+      'jobDescription3',
       'heardFrom',
       'haveParticipated',
       'google.displayName',
@@ -277,6 +284,41 @@ async function start() {
         {
           label: '所屬職位',
           value: 'jobTitle',
+          default: '未提供'
+        },
+        {
+          label: '工作內容',
+          value: 'jobDescription',
+          default: '未提供'
+        },
+        {
+          label: '企業名稱 - 2',
+          value: 'companyName2',
+          default: '未提供'
+        },
+        {
+          label: '所屬職位 - 2',
+          value: 'jobTitle2',
+          default: '未提供'
+        },
+        {
+          label: '工作內容 - 2',
+          value: 'jobDescription2',
+          default: '未提供'
+        },
+        {
+          label: '企業名稱 - 3',
+          value: 'companyName3',
+          default: '未提供'
+        },
+        {
+          label: '所屬職位 - 3',
+          value: 'jobTitle3',
+          default: '未提供'
+        },
+        {
+          label: '工作內容 - 3',
+          value: 'jobDescription3',
           default: '未提供'
         },
         {
