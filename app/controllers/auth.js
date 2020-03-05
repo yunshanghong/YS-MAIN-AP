@@ -866,7 +866,7 @@ exports.verifyEmail = async (req, res) => {
   try {
     const user = await verificationExists(req.params.vid)
     await verifyUser(user)
-    res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
+    res.redirect(`${process.env.FRONTEND_URL}/personal-settings/edit`)
   } catch (error) {
     res.redirect(`${process.env.FRONTEND_URL}/personal-settings`)
     utils.handleError(res, error)
