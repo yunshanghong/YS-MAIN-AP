@@ -204,6 +204,20 @@ exports.updateItemPermission = [
     validationResult(req, res, next)
   }
 ]
+/**
+ * Validates delete item request
+ */
+exports.deleteItem = [
+  check('id')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
 
 /**
  * Validates get item request

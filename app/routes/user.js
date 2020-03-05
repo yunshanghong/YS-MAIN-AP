@@ -107,6 +107,18 @@ router.patch(
   controller.updateItemPermission
 )
 
+/*
+ * Delete item (only admin)
+ */
+router.delete(
+  '/:id',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  validate.deleteItem,
+  controller.deleteItem
+)
+
 // /*
 //  * Delete item route
 //  */
