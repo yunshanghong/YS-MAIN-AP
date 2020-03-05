@@ -198,7 +198,14 @@ exports.updateRegistrationItem = [
  * Validates Cancel item request
  */
 exports.cancelItem = [
-  check('activityId')
+  check('event')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('applicant')
     .exists()
     .withMessage('MISSING')
     .not()

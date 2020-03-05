@@ -134,10 +134,10 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemRegistration({ activityId }, model, req) {
+  async updateItemRegistration({ event, applicant }, model, req) {
     return new Promise((resolve, reject) => {
       model.findOneAndUpdate(
-        activityId,
+        { event, applicant},
         req,
         {
           new: true,
