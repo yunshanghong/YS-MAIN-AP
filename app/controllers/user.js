@@ -1,10 +1,13 @@
 const { Parser } = require('json2csv')
-const model = require('../models/user')
 const uuid = require('uuid')
+const moment = require('moment')
+const model = require('../models/user')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const db = require('../middleware/db')
 const emailer = require('../middleware/emailer')
+
+const converterUtils = require('../utils');
 
 /*********************
  * Private functions *
@@ -95,12 +98,23 @@ exports.getExportSCV = async (req, res) => {
             },
             {
               label: '性別',
-              value: 'gender',
+              value: (row, field) => row['gender'] ? (
+                converterUtils.genderConverter(row['gender'])
+              ) : '未提供',
+              default: '未提供'
+            },
+            {
+              label: '年齡',
+              value: (row, field) => row['bob'] ? (
+                moment().diff(moment(row['bob']), 'years')
+              ) : '未提供',
               default: '未提供'
             },
             {
               label: '生日',
-              value: 'bob',
+              value: (row, field) => row['bob'] ? (
+                moment(row['bob']).format('YYYY-MM-DD')
+              ) : '未提供',
               default: '未提供'
             },
             {
@@ -124,8 +138,20 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '最高學歷',
-              value: 'education',
+              label: '綁定 Google 帳號',
+              value: 'google.displayName',
+              default: '未綁定'
+            },
+            {
+              label: '綁定 Facebook 帳號',
+              value: 'facebook.displayName',
+              default: '未綁定'
+            },
+            {
+              label: '教育程度',
+              value: (row, field) => row['education'] ? (
+                converterUtils.educationConverter(row['education'])
+              ) : '未提供',
               default: '未提供'
             },
             {
@@ -134,27 +160,34 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '所屬學群',
-              value: 'departmentName',
+              label: '科系類別',
+              // value: 'departmentName',
+              value: (row, field) => row['departmentName'] ? (
+                converterUtils.departmentNameConverter(row['departmentName'])
+              ) : '未提供',
               default: '未提供'
             },
             {
-              label: '目前工作狀態',
-              value: 'employmentStatus',
+              label: '身分狀態',
+              // value: 'employmentStatus',
+              value: (row, field) => row['employmentStatus'] ? (
+                converterUtils.statusConverter(row['employmentStatus'])
+              ) : '未提供',
               default: '未提供'
             },
+
             {
-              label: '企業名稱',
+              label: '任職企業',
               value: 'companyName',
               default: '未提供'
             },
             {
-              label: '所屬企業部門',
+              label: '任職部門',
               value: 'serviceDepartment',
               default: '未提供'
             },
             {
-              label: '所屬職位',
+              label: '職稱',
               value: 'jobTitle',
               default: '未提供'
             },
@@ -202,16 +235,6 @@ exports.getExportSCV = async (req, res) => {
               label: '是否參加過 YS 活動',
               value: 'haveParticipated',
               default: '未提供'
-            },
-            {
-              label: '綁定 Google 帳號',
-              value: 'google.displayName',
-              default: '未綁定'
-            },
-            {
-              label: '綁定 Facebook 帳號',
-              value: 'facebook.displayName',
-              default: '未綁定'
             },
             {
               label: '是否驗證',
