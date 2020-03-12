@@ -36,7 +36,7 @@ const guideLogSchema = new mongoose.Schema(
     // Question 4. guide time slot.
     guideTimeSlot: {
       type: String,
-      enum: ['上午', '下午'],
+      enum: ['上午', '下午', '整日', '其他'],
       required: true
     },
     // Question 5. guide people number.
