@@ -264,9 +264,7 @@ const countUserEmploymentStatusByVerification = async req => {
         { $match: { verified: true } },
         {
           $group: {
-            _id: {
-              employmentStatus: '$employmentStatus'
-            },
+            _id: '$employmentStatus',
             usersCount: { $sum: 1 }
           }
         }
@@ -331,9 +329,7 @@ const countUserEducationByVerification = async req => {
         { $match: { verified: true } },
         {
           $group: {
-            _id: {
-              education: '$education'
-            },
+            _id: '$education',
             usersCount: { $sum: 1 }
           }
         }
@@ -359,9 +355,7 @@ const countUserHeardFromByVerification = async req => {
         { $match: { verified: true } },
         {
           $group: {
-            _id: {
-              heardFrom: '$heardFrom'
-            },
+            _id: '$heardFrom',
             usersCount: { $sum: 1 }
           }
         }

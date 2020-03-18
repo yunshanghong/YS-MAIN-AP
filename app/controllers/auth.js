@@ -71,6 +71,7 @@ const setUserInfo = req => {
       employmentStatus: req.employmentStatus,
       receivingEmail: req.receivingEmail,
       city: req.city,
+      lastPasswordUpdatedAt: req.lastPasswordUpdatedAt,
       postAddress: req.postAddress,
       companyName: req.companyName,
       serviceDepartment: req.serviceDepartment,
@@ -575,6 +576,7 @@ const markResetPasswordAsUsed = async (req, forgot) => {
 const updatePassword = async (password, user) => {
   return new Promise((resolve, reject) => {
     user.password = password
+    user.lastPasswordUpdatedAt = Date.now() / 1000
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
       resolve(item)

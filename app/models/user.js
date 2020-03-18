@@ -82,6 +82,10 @@ const UserSchema = new mongoose.Schema(
       },
       select: false
     },
+    lastPasswordUpdatedAt: {
+      type: Date,
+      default: Date.now
+    },
     verification: {
       type: String,
       select: false

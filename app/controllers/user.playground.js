@@ -212,7 +212,7 @@ const employmentStatusConverter = (status) => {
 }
 
 // step1();
-step2();
+// step2();
 // temp()
 
 // var start = new Date('2020-03-11');
@@ -224,3 +224,15 @@ step2();
 // User.deleteMany({ createdAt: {$gte: start, $lt: end} }).then((item) => {
 //   console.log('item, ', item);
 // })
+
+
+// async function Verify() { 
+//   console.time('update')
+
+//   const res = await User.updateMany({}, { $set: { verified: true } })
+  
+//   console.log('res, ', res);
+//   console.timeEnd('update')
+// }
+
+// Verify()

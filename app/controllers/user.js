@@ -242,6 +242,12 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
+              label: '加入日期',
+              value: 'createdAt',
+              value: (row, field) => moment(row['verified']).format('YYYY-MM-DD'),
+              default: '未提供'
+            },
+            {
               label: '是否驗證',
               value: 'verified',
               value: (row, field) => row['verified'] ? '已驗證' : '未驗證',
