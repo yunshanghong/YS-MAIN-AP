@@ -237,6 +237,11 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
+              label: '對 YS 的服務需求',
+              value: 'serviceRequirements',
+              default: '未提供'
+            },
+            {
               label: '是否驗證',
               value: 'verified',
               value: (row, field) => row['verified'] ? '已驗證' : '未驗證',

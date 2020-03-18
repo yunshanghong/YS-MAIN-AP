@@ -33,6 +33,13 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
+  check('postDate')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('imageName')
     .exists()
     .withMessage('MISSING')
@@ -84,6 +91,13 @@ exports.updateItem = [
     .withMessage('IS_EMPTY')
     .trim(),
   check('subTitle')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('postDate')
     .exists()
     .withMessage('MISSING')
     .not()

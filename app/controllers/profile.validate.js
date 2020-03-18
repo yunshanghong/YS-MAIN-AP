@@ -94,6 +94,10 @@ exports.updateProfile = [
     .exists()
     .withMessage('MISSING')
     .trim(),
+  check('serviceRequirements')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('haveParticipated')
     .exists()
     .withMessage('MISSING')

@@ -12,6 +12,9 @@ const InformationSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    postDate: {
+      type: Date
+    },
     imageName: {
       type: String,
       required: true

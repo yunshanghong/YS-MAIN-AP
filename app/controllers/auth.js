@@ -84,6 +84,7 @@ const setUserInfo = req => {
       jobDescription3: req.jobDescription3,
       firstYearOfCareer: req.firstYearOfCareer,
       heardFrom: req.heardFrom,
+      serviceRequirements: req.serviceRequirements,
       haveParticipated: req.haveParticipated,
       settings: {
         layout: {
@@ -922,11 +923,13 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const data = matchedData(req)
-    const forgotPassword = await findForgotPassword(data.id)
-    const user = await findUserToResetPassword(forgotPassword.email)
+    // const forgotPassword = await findForgotPassword(data.id)
+    // const user = await findUserToResetPassword(forgotPassword.email)
+    const user = await findUserToResetPassword(data.email)
     await updatePassword(data.password, user)
-    const result = await markResetPasswordAsUsed(req, forgotPassword)
-    res.status(200).json(result)
+    // const result = await markResetPasswordAsUsed(req, forgotPassword)
+    // res.status(200).json(result)
+    res.status(200).json({ message: '密碼已修改成功！' })
   } catch (error) {
     utils.handleError(res, error)
   }

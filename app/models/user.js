@@ -88,7 +88,7 @@ const UserSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      default: false
+      default: true
     },
     shortcuts: {
       type: Array,
@@ -218,6 +218,10 @@ const UserSchema = new mongoose.Schema(
         '親友介紹',
         '其他'
       ]
+    },
+    serviceRequirements: {
+      type: [String],
+      // 職涯諮詢、職業適性測驗、職場軟實力、履歷撰寫‧面試技巧、職人經驗分享、名人分享活動、其他
     },
     haveParticipated: {
       type: String,

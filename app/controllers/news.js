@@ -16,6 +16,7 @@ const createItem = async req => {
     const image = new model({
       title: req.title,
       subTitle: req.subTitle,
+      postDate: req.postDate,
       imageName: req.imageName,
       content: req.content,
       tags: req.tags,

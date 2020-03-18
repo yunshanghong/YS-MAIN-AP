@@ -179,7 +179,13 @@ exports.forgotPassword = [
  * Validates reset password request
  */
 exports.resetPassword = [
-  check('id')
+  // check('id')
+  //   .exists()
+  //   .withMessage('MISSING')
+  //   .not()
+  //   .isEmpty()
+  //   .withMessage('IS_EMPTY'),
+  check('email')
     .exists()
     .withMessage('MISSING')
     .not()
