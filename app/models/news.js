@@ -13,7 +13,8 @@ const NewsSchema = new mongoose.Schema(
       required: true
     },
     postDate: {
-      type: Date
+      type: Date,
+      default: Date.now
     },
     imageName: {
       type: String,
