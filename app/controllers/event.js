@@ -15,6 +15,7 @@ const createItem = async req => {
   return new Promise((resolve, reject) => {
     const newEvent = new model({
       coverImageName: req.coverImageName,
+      coverImageCaption: req.coverImageCaption,
       title: req.title,
       subTitle: req.subTitle,
       tags: req.tags,

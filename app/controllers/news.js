@@ -18,6 +18,7 @@ const createItem = async req => {
       subTitle: req.subTitle,
       postDate: req.postDate,
       imageName: req.imageName,
+      imageCaption: req.imageCaption,
       content: req.content,
       tags: req.tags,
       published: req.published,

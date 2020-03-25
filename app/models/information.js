@@ -20,6 +20,9 @@ const InformationSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    imageCaption: {
+      type: String,
+    },
     content: {
       type: String,
       require: true
@@ -27,7 +30,7 @@ const InformationSchema = new mongoose.Schema(
     tags: {
       type: String,
       enum: ['news', 'skills', 'interview', 'says', 'training'],
-      retquire: true
+      required: true
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,

@@ -26,6 +26,13 @@ exports.createItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
+  check('coverImageCaption')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('title')
     .exists()
     .withMessage('MISSING')
@@ -140,6 +147,13 @@ exports.updateItem = [
     .withMessage('IS_EMPTY')
     .trim(),
   check('coverImageName')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
+  check('coverImageCaption')
     .exists()
     .withMessage('MISSING')
     .not()

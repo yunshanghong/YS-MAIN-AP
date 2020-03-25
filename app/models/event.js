@@ -8,6 +8,9 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    coverImageCaption: {
+      type: String,
+    },
     title: {
       type: String,
       required: true
@@ -18,7 +21,7 @@ const eventSchema = new mongoose.Schema(
     },
     tags: {
       type: [String],
-      retquire: true
+      required: true
     },
     startDateTime: {
       type: Date,
