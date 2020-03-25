@@ -160,7 +160,7 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
-              label: '科系類別',
+              label: '學群類別',
               // value: 'departmentName',
               value: (row, field) => row['departmentName'] ? (
                 converterUtils.departmentNameConverter(row['departmentName'])
