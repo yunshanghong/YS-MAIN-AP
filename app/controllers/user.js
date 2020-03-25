@@ -244,7 +244,7 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '加入日期',
               value: 'createdAt',
-              value: (row, field) => moment(row['verified']).format('YYYY-MM-DD'),
+              value: (row, field) => moment(row['createdAt']).format('YYYY-MM-DD'),
               default: '未提供'
             },
             {
