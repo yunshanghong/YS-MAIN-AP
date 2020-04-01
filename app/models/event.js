@@ -83,8 +83,7 @@ const eventSchema = new mongoose.Schema(
         'participantIsManager',
         'participateLunch',
         'lunchType'
-      ],
-      default: undefined
+      ]
     },
 
     published: {

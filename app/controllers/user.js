@@ -113,7 +113,7 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '生日',
               value: (row, field) => row['bob'] ? (
-                moment(row['bob']).format('YYYY-MM-DD')
+                moment(row['bob']).utc().format('YYYY-MM-DD')
               ) : '未提供',
               default: '未提供'
             },
