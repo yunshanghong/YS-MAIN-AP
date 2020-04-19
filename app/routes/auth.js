@@ -53,9 +53,23 @@ router.post(
  */
 router.post(
   '/reset',
+  requireAuth,
+  controller.roleAuthorization(['user', 'staff', 'admin']),
   trimRequest.all,
   validate.resetPassword,
   controller.resetPassword
+)
+
+/*
+ * Admin reset password route
+ */
+router.post(
+  '/admin-reset',
+  requireAuth,
+  controller.roleAuthorization(['user', 'staff', 'admin']),
+  trimRequest.all,
+  validate.adminResetPassword,
+  controller.adminResetPassword
 )
 
 /*

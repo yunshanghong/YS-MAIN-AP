@@ -918,11 +918,26 @@ exports.forgotPassword = async (req, res) => {
 }
 
 /**
- * Reset password function called by route
+ * Reset password function called by route (self reset)
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
 exports.resetPassword = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    // const forgotPassword = await findForgotPassword(data.id)
+    // const user = await findUserToResetPassword(forgotPassword.email)
+    const user = await findUserToResetPassword(req.user.email)
+    await updatePassword(data.password, user)
+    // const result = await markResetPasswordAsUsed(req, forgotPassword)
+    // res.status(200).json(result)
+    res.status(200).json({ message: '密碼已修改成功！' })
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.adminResetPassword = async (req, res) => {
   try {
     const data = matchedData(req)
     // const forgotPassword = await findForgotPassword(data.id)

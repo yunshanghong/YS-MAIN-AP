@@ -185,6 +185,37 @@ exports.resetPassword = [
   //   .not()
   //   .isEmpty()
   //   .withMessage('IS_EMPTY'),
+  // check('email')
+  //   .exists()
+  //   .withMessage('MISSING')
+  //   .not()
+  //   .isEmpty()
+  //   .withMessage('IS_EMPTY'),
+  check('password')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .isLength({
+      min: 5
+    })
+    .withMessage('PASSWORD_TOO_SHORT_MIN_5'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
+ * Validates admin reset password request
+ */
+exports.adminResetPassword = [
+  // check('id')
+  //   .exists()
+  //   .withMessage('MISSING')
+  //   .not()
+  //   .isEmpty()
+  //   .withMessage('IS_EMPTY'),
   check('email')
     .exists()
     .withMessage('MISSING')
