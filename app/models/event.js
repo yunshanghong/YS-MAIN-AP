@@ -57,6 +57,10 @@ const eventSchema = new mongoose.Schema(
     contactPhone: {
       type: String,
     },
+    notes: {
+      type: String,
+      required: true
+    },
     content: {
       type: String
     },

@@ -28,6 +28,7 @@ const createItem = async req => {
       contactName: req.contactName,
       contactEmail: req.contactEmail,
       contactPhone: req.contactPhone,
+      notes: req.notes,
       content: req.content,
 
       speaker: req.speaker,

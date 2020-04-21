@@ -102,6 +102,13 @@ exports.createItem = [
     .exists()
     .withMessage('MISSING')
     .trim(),
+  check('notes')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('content')
     .exists()
     .withMessage('MISSING')
@@ -228,6 +235,13 @@ exports.updateItem = [
   check('contactPhone')
     .exists()
     .withMessage('MISSING')
+    .trim(),
+  check('notes')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
     .trim(),
   check('content')
     .exists()
