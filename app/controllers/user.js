@@ -1,6 +1,6 @@
 const { Parser } = require('json2csv')
 const uuid = require('uuid')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const model = require('../models/user')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
@@ -113,7 +113,7 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '生日',
               value: (row, field) => row['bob'] ? (
-                moment(row['bob']).utc().format('YYYY-MM-DD')
+                moment(row['bob']).tz('Asia/Taipei').format('YYYY-MM-DD')
               ) : '未提供',
               default: '未提供'
             },
@@ -244,7 +244,7 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '加入日期',
               value: 'createdAt',
-              value: (row, field) => moment(row['createdAt']).format('YYYY-MM-DD'),
+              value: (row, field) => moment(row['createdAt']).tz('Asia/Taipei').format('YYYY-MM-DD'),
               default: '未提供'
             },
             {
