@@ -210,7 +210,6 @@ const createItem = async req => {
           .populate({ path: 'applicant' })
           .exec((err, resp) => {
             utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
-            console.log('resp ', resp)
             resolve(resp)
           })
         // resolve(item)

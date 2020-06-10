@@ -141,6 +141,31 @@ const setUserInfo = req => {
 }
 
 /**
+ * Saves a new user access
+ * @param {Object} req - request object
+ * @param {Object} user - user object
+ */
+const saveUserAccess = async (req, user) => {
+  return new Promise((resolve, reject) => {
+    const userAccess = new UserAccess({
+      email: user.email,
+      ip: utils.getIP(req),
+      browser: utils.getBrowserInfo(req),
+      country: utils.getCountry(req),
+      method: req.method,
+      action: `${req.baseUrl}${req.path}`
+    })
+    userAccess.save(err => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      // Returns data with access token
+      resolve()
+    })
+  })
+}
+
+/**
  * Saves a new user access and then returns token
  * @param {Object} req - request object
  * @param {Object} user - user object
@@ -152,6 +177,8 @@ const saveUserAccessAndReturnToken = async ({ req, user, byToken }) => {
       ip: utils.getIP(req),
       browser: utils.getBrowserInfo(req),
       country: utils.getCountry(req),
+      method: req.method,
+      action: `${req.baseUrl}${req.path}`,
       byToken: !!byToken
     })
     userAccess.save(err => {
@@ -260,7 +287,7 @@ const findUser = async email => {
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
       '+password +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
+        utils.itemNotFound(err, item, reject, { email: '帳號或密碼錯誤' })
         resolve(item)
       }
     )
@@ -351,7 +378,7 @@ const LinkGoogleAccountToUser = async (user, googleInfo) => {
         select: '-_id -updatedAt -createdAt'
       },
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
+        utils.itemNotFound(err, item, reject, { email: '帳號或密碼錯誤' })
         resolve(item)
       }
     )
@@ -398,7 +425,7 @@ const LinkFacebookAccountToUser = async (user, facebookInfo) => {
         select: '-_id -updatedAt -createdAt'
       },
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
+        utils.itemNotFound(err, item, reject, { email: '帳號或密碼錯誤' })
         resolve(item)
       }
     )
@@ -412,7 +439,7 @@ const LinkFacebookAccountToUser = async (user, facebookInfo) => {
 const findUserById = async userId => {
   return new Promise((resolve, reject) => {
     User.findById(userId, (err, item) => {
-      utils.itemNotFound(err, item, reject, { email: '該使用者不存在' })
+      utils.itemNotFound(err, item, reject, { email: '帳號或密碼錯誤' })
       resolve(item)
     })
   })
@@ -427,7 +454,7 @@ const passwordsDoNotMatch = async user => {
   await saveLoginAttemptsToDB(user)
   return new Promise((resolve, reject) => {
     if (user.loginAttempts <= LOGIN_ATTEMPTS) {
-      resolve(utils.buildErrObject(409, 'WRONG_PASSWORD'))
+      resolve(utils.buildErrObject(409, '帳號或密碼錯誤'))
     } else {
       resolve(blockUser(user))
     }
@@ -1008,8 +1035,10 @@ exports.roleAuthorization = roles => async (req, res, next) => {
   try {
     const data = {
       id: req.user._id,
+      email: req.user.email,
       roles
     }
+    await saveUserAccess(req, data)
     await checkPermissions(data, next)
   } catch (error) {
     utils.handleError(res, error)

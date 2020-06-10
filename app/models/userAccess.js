@@ -24,6 +24,15 @@ const UserAccessSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    method: {
+      type: String,
+      required: true,
+      enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+    },
+    action: {
+      type: String,
+      required: true
+    },
     byToken: {
       type: Boolean,
       require: true,
