@@ -59,6 +59,13 @@ const listInitOptions = async req => {
   })
 }
 
+const getAgeDatetime = age => {
+  const date = new Date()
+  date.setFullYear(date.getFullYear() - age)
+
+  return date
+}
+
 module.exports = {
   /**
    * Checks the query string for filtering records
@@ -74,7 +81,7 @@ module.exports = {
           typeof query.fields !== 'undefined'
         ) {
           const data = {
-            $or: [],
+            $or: []
           }
           const array = []
           // Takes fields param and builds an array by splitting with ','
@@ -90,13 +97,62 @@ module.exports = {
           // Apply Condition Search
           if (query.conditions) {
             const arrayCondition = []
-            Object.entries(JSON.parse(query.conditions)).map(([key, value]) => {
-              if (value !== 'all') {
-                arrayCondition.push({
-                  [key]: value
-                })
+            Object.entries(JSON.parse(query.conditions)).forEach(
+              ([key, value]) => {
+                if (key == 'agePeriod') {
+                  if (value === 'age0to15') {
+                    const dateAge15Year = getAgeDatetime(15)
+                    arrayCondition.push({
+                      bob: {
+                        $gt: dateAge15Year
+                      }
+                    })
+                  }
+                  if (value === 'age16to20') {
+                    const dateAge16Year = getAgeDatetime(16)
+                    const dateAge20Year = getAgeDatetime(20)
+                    arrayCondition.push({
+                      bob: {
+                        $lte: dateAge16Year,
+                        $gt: dateAge20Year
+                      }
+                    })
+                  }
+                  if (value === 'age21to25') {
+                    const dateAge21Year = getAgeDatetime(21)
+                    const dateAge25Year = getAgeDatetime(25)
+                    arrayCondition.push({
+                      bob: {
+                        $lte: dateAge21Year,
+                        $gt: dateAge25Year
+                      }
+                    })
+                  }
+                  if (value === 'age26to29') {
+                    const dateAge26Year = getAgeDatetime(26)
+                    const dateAge29Year = getAgeDatetime(29)
+                    arrayCondition.push({
+                      bob: {
+                        $lte: dateAge26Year,
+                        $gt: dateAge29Year
+                      }
+                    })
+                  }
+                  if (value === 'age30Above') {
+                    const dateAge30Year = getAgeDatetime(30)
+                    arrayCondition.push({
+                      bob: {
+                        $lte: dateAge30Year
+                      }
+                    })
+                  }
+                } else if (value !== 'all') {
+                  arrayCondition.push({
+                    [key]: value
+                  })
+                }
               }
-            })
+            )
 
             if (arrayCondition.length) {
               data.$and = arrayCondition

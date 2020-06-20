@@ -85,6 +85,7 @@ const setUserInfo = req => {
       jobDescription3: req.jobDescription3,
       firstYearOfCareer: req.firstYearOfCareer,
       heardFrom: req.heardFrom,
+      motivation: req.motivation,
       serviceRequirements: req.serviceRequirements,
       haveParticipated: req.haveParticipated,
       settings: {

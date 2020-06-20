@@ -223,8 +223,11 @@ const UserSchema = new mongoose.Schema(
         '其他'
       ]
     },
+    motivation: {
+      type: String
+    },
     serviceRequirements: {
-      type: [String],
+      type: [String]
       // 職涯諮詢、職業適性測驗、職場軟實力、履歷撰寫‧面試技巧、職人經驗分享、名人分享活動、其他
     },
     haveParticipated: {
