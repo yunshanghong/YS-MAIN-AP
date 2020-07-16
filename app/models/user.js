@@ -154,6 +154,9 @@ const UserSchema = new mongoose.Schema(
     departmentName: {
       type: String
     },
+    majorName:{
+      type: String
+    },
     employmentStatus: {
       type: String,
       enum: ['student', 'employed', 'unemployed', 'other']

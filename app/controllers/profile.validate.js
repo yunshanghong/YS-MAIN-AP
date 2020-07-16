@@ -30,6 +30,10 @@ exports.updateProfile = [
     .exists()
     .withMessage('MISSING')
     .trim(),
+  check('majorName')
+    .exists()
+    .withMessage('MISSING')
+    .trim(),
   check('employmentStatus')
     .exists()
     .withMessage('MISSING')
@@ -94,10 +98,10 @@ exports.updateProfile = [
     .exists()
     .withMessage('MISSING')
     .trim(),
-  check('motivation')
-    .exists()
-    .withMessage('MISSING')
-    .trim(),
+  // check('motivation')
+  //   .exists()
+  //   .withMessage('MISSING')
+  //   .trim(),
   check('serviceRequirements')
     .exists()
     .withMessage('MISSING')
