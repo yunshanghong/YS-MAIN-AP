@@ -29,6 +29,7 @@ const asyncParser = new AsyncParser(
       'education',
       'schoolName',
       'departmentName',
+      'majorName',
       'employmentStatus',
       'companyName',
       'city',
@@ -264,6 +265,11 @@ async function start() {
         {
           label: '所屬學群',
           value: 'departmentName',
+          default: '未提供'
+        },
+        {
+          label: '主修科系',
+          value: 'majorName',
           default: '未提供'
         },
         {

@@ -168,6 +168,13 @@ exports.getExportSCV = async (req, res) => {
               default: '未提供'
             },
             {
+              label: '主修科目',
+              value: (row, field) => row['majorName'] ? (
+                row['majorName']
+              ) : '未提供',
+              default: '未提供'
+            },
+            {
               label: '身分狀態',
               // value: 'employmentStatus',
               value: (row, field) => row['employmentStatus'] ? (
