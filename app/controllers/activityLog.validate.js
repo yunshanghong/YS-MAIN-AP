@@ -97,6 +97,9 @@ exports.createItem = [
   check('lunchType')
     .optional()
     .trim(),
+  check('otherQuestions')
+    .optional()
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }

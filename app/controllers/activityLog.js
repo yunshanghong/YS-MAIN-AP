@@ -194,7 +194,8 @@ const createItem = async req => {
       participantID: req.participantID,
       participantIsManager: req.participantIsManager,
       participateLunch: req.participateLunch,
-      lunchType: req.lunchType
+      lunchType: req.lunchType,
+      otherQuestions: JSON.parse(req.otherQuestions)
     })
     activityLog.save((err, item) => {
       if (err) {

@@ -79,15 +79,15 @@ const eventSchema = new mongoose.Schema(
       // Question 5. are you a manager.
       // Question 6. Participate in lunch or not.
       // Question 7. what is your lunch type ? meal or vegetarian.
-      enum: [
-        'participateReason',
-        'participantHeardFrom',
-        'participantExpectation',
-        'participantID',
-        'participantIsManager',
-        'participateLunch',
-        'lunchType'
-      ]
+      // enum: [
+      //   'participateReason',
+      //   'participantHeardFrom',
+      //   'participantExpectation',
+      //   'participantID',
+      //   'participantIsManager',
+      //   'participateLunch',
+      //   'lunchType'
+      // ]
     },
 
     published: {

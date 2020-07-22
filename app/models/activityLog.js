@@ -73,6 +73,11 @@ const actvityLogSchema = new mongoose.Schema(
       eum: ['meal', 'vegetarian'],
       default: undefined
     },
+    // Question 8. other custom questions.
+    otherQuestions:{
+      type: Object,
+      default: undefined
+    },
 
     // Reviews
     eventStars: {
