@@ -968,8 +968,6 @@ exports.resetPassword = async (req, res) => {
 }
 
 exports.adminResetPassword = async (req, res) => {
-  console.log(req.headers);
-  console.log(req.body);
   try {
     const data = matchedData(req)
     // const forgotPassword = await findForgotPassword(data.id)
