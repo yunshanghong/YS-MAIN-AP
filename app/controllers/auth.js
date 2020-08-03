@@ -606,6 +606,7 @@ const updatePassword = async (password, user) => {
   return new Promise((resolve, reject) => {
     user.password = password
     user.lastPasswordUpdatedAt = Date.now() / 1000
+    user.loginAttempts = 0
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
       resolve(item)
@@ -967,6 +968,8 @@ exports.resetPassword = async (req, res) => {
 }
 
 exports.adminResetPassword = async (req, res) => {
+  console.log(req.headers);
+  console.log(req.body);
   try {
     const data = matchedData(req)
     // const forgotPassword = await findForgotPassword(data.id)
