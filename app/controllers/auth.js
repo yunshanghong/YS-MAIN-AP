@@ -607,6 +607,7 @@ const updatePassword = async (password, user) => {
     user.password = password
     user.lastPasswordUpdatedAt = Date.now() / 1000
     user.loginAttempts = 0
+    user.blockExpires = Date.now();
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
       resolve(item)
