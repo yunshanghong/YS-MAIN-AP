@@ -70,7 +70,7 @@ module.exports = {
         return '體育休閒學群';
       case 'other':
       default:
-        return '其他學群';
+        return departmentName;
     }
   },
 
