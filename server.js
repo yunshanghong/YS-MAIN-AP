@@ -62,8 +62,16 @@ i18n.configure({
 })
 app.use(i18n.init)
 
+// cors settings
+
+const corsOptions = {
+  origin: [ 'http://localhost:8080' ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 // Init all other stuff
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(passport.initialize())
 app.use(compression())
 app.use(helmet())
