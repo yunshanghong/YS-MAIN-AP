@@ -56,6 +56,12 @@ exports.login = [
       min: 5
     })
     .withMessage('PASSWORD_TOO_SHORT_MIN_5'),
+  check('verifyCode')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
   (req, res, next) => {
     validationResult(req, res, next)
   }
@@ -168,6 +174,43 @@ exports.forgotPassword = [
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY')
+    .isEmail()
+    .withMessage('EMAIL_IS_NOT_VALID'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
+ * apply unlock user account request
+ */
+exports.applyUnlock = [
+  check('displayName')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  check('email')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .isEmail()
+    .withMessage('EMAIL_IS_NOT_VALID'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+exports.checkIsApplyUnlock = [
+  check('email')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')  
     .isEmail()
     .withMessage('EMAIL_IS_NOT_VALID'),
   (req, res, next) => {

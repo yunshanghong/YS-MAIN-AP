@@ -2,14 +2,16 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const UserAccess = require('../models/userAccess')
 const ForgotPassword = require('../models/forgotPassword')
+const ApplyUnlock = require('../models/applyUnlock')
 const utils = require('../middleware/utils')
 const uuid = require('uuid')
 const { addHours } = require('date-fns')
 const { matchedData } = require('express-validator')
 const auth = require('../middleware/auth')
 const emailer = require('../middleware/emailer')
+const svgCaptcha = require('svg-captcha')
 const HOURS_TO_BLOCK = 2
-const LOGIN_ATTEMPTS = 5
+const LOGIN_ATTEMPTS = 2
 
 /* TODO: update facebook/google login flow */
 /*********************
@@ -269,8 +271,55 @@ const checkLoginAttemptsAndBlockExpires = async user => {
  */
 const userIsBlocked = async user => {
   return new Promise((resolve, reject) => {
-    if (user.blockExpires > new Date()) {
-      reject(utils.buildErrObject(409, 'BLOCKED_USER'))
+    const result = loginStatus(user.loginAttempts, user.isApplyUnlock);
+    
+    if (result === "locked") {
+      reject(utils.buildErrObject(403, '帳號已遭封鎖，請填寫表單申請系統管理者解鎖'));
+    }
+    if(result === "applied"){
+      reject(utils.buildErrObject(403,"已填寫表單申請解鎖，等待系統管理者解鎖中"));
+    }
+    if(result === "undefined"){
+      reject(utils.buildErrObject(403, "帳號異常，請聯絡系統管理者"));
+    }
+    resolve(true)
+  })
+}
+
+const isDisplayNameMatched = async (inputDisplayName, DbDisplayName) =>{
+  return new Promise ((resolve, reject) =>{
+    if (inputDisplayName !== DbDisplayName) {
+      reject(utils.buildErrObject(409, '輸入名稱與信箱不相符！'));
+    }
+    resolve(true);
+  })
+}
+
+const isApplyUnlockNeeded = async (user) =>{
+  return new Promise((resolve, reject) => {
+    const result = loginStatus(user.loginAttempts, user.isApplyUnlock);
+
+    if (result === "pass") {
+      reject(utils.buildErrObject(409, '帳號可正常登入，不需申請解鎖'));
+    }
+    if (result === "applied") {
+      reject(utils.buildErrObject(409, "已填寫表單申請解鎖，等待系統管理者解鎖中"));
+    }
+    if (result === "undefined") {
+      reject(utils.buildErrObject(409, "帳號異常，請聯絡系統管理者"));
+    }
+    resolve(true)
+  })
+}
+
+/**
+ * Checks if veriycode from user is right
+ * @param {Object} user - user object
+ */
+const isVerifycodeRight = async (verifyCode, captcha) => {
+  return new Promise((resolve, reject) => {
+    if (!captcha || verifyCode.toLowerCase() !== captcha) {
+      reject(utils.buildErrObject(409, '驗證碼輸入錯誤！'))
     }
     resolve(true)
   })
@@ -295,6 +344,21 @@ const findUser = async email => {
     )
   })
 }
+
+const loginStatus = (attempts, isApplied) => {
+  if (attempts > LOGIN_ATTEMPTS && isApplied) {
+    return "applied";
+  }
+  if (attempts > LOGIN_ATTEMPTS && (!isApplied)) {
+    return "locked";
+  }
+  if (attempts <= LOGIN_ATTEMPTS && !isApplied) {
+    return "pass";
+  }
+  return "undefined";
+}
+
+exports.loginStatus = loginStatus
 
 /**
  * Finds google user by email
@@ -455,12 +519,7 @@ const passwordsDoNotMatch = async user => {
   user.loginAttempts += 1
   await saveLoginAttemptsToDB(user)
   return new Promise((resolve, reject) => {
-    if (user.loginAttempts <= LOGIN_ATTEMPTS) {
-      resolve(utils.buildErrObject(409, '帳號或密碼錯誤'))
-    } else {
-      resolve(blockUser(user))
-    }
-    reject(utils.buildErrObject(422, 'ERROR'))
+    resolve(utils.buildErrObject(409, '帳號或密碼錯誤'))
   })
 }
 
@@ -607,6 +666,7 @@ const updatePassword = async (password, user) => {
     user.password = password
     user.lastPasswordUpdatedAt = Date.now() / 1000
     user.loginAttempts = 0
+    user.isApplyUnlock = false
     user.blockExpires = Date.now();
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
@@ -666,6 +726,28 @@ const saveForgotPassword = async req => {
       countryRequest: utils.getCountry(req)
     })
     forgot.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      resolve(item)
+    })
+  })
+}
+
+/**
+ * apply for unlock user account
+ * @param {Object} req - request object
+ */
+const applyUnlock = async req => {
+  return new Promise((resolve, reject) => {
+    const apply = new ApplyUnlock({
+      email: req.body.email,
+      verification: uuid.v4(),
+      ipRequest: utils.getIP(req),
+      browserRequest: utils.getBrowserInfo(req),
+      countryRequest: utils.getCountry(req)
+    })
+    apply.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       }
@@ -737,16 +819,27 @@ const getUserIdFromToken = async token => {
  */
 exports.login = async (req, res) => {
   try {
+    const captcha = req.session.captcha;
+    console.log("line 823 req: ", req);
+    console.log("line 824 req.session: ", req.session);
+    console.log("line 825 captcha: ", captcha)
     const data = matchedData(req)
+    console.log("line 827 verifyCode: ", data.verifyCode)
     const user = await findUser(data.email)
+    // 1.檢查驗證碼是否正確
+    //await isVerifycodeRight(data.verifyCode, captcha);
+    // 2.檢查是否仍在封鎖時段
     await userIsBlocked(user)
+    // 3.檢查是否應解除封鎖
     await checkLoginAttemptsAndBlockExpires(user)
+    // 4.檢查帳密是否輸入正確
     const isPasswordMatch = await auth.checkPassword(data.password, user)
     if (!isPasswordMatch) {
       utils.handleError(res, await passwordsDoNotMatch(user))
     } else {
       // all ok, register access and return token
       user.loginAttempts = 0
+      user.isApplyUnlock = false;
       await saveLoginAttemptsToDB(user)
       res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
     }
@@ -949,6 +1042,43 @@ exports.forgotPassword = async (req, res) => {
 }
 
 /**
+ * Forgot password function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.applyUnlock = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const user = await findUser(data.email)
+    // 1.檢核displayName是否與email相符
+    await isDisplayNameMatched(data.displayName, user.displayName);
+    // 2.檢核是否需要申請解鎖
+    await isApplyUnlockNeeded(user);
+
+    // 2.寫入applyUnlock
+    const item = await applyUnlock(req)
+    // 3.改寫users.isApplyUnlock為true
+    user.isApplyUnlock = true;
+    await saveLoginAttemptsToDB(user);
+
+    res.status(200).json(forgotPasswordResponse(item))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.checkIsApplyUnlock = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const user = await findUser(data.email)
+    const result = await loginStatus(user.loginAttempts, user.isApplyUnlock);
+    res.status(200).json(result);
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
  * Reset password function called by route (self reset)
  * @param {Object} req - request object
  * @param {Object} res - response object
@@ -1044,6 +1174,24 @@ exports.roleAuthorization = roles => async (req, res, next) => {
     }
     await saveUserAccess(req, data)
     await checkPermissions(data, next)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.getCaptcha = async (req, res) =>{
+  try {
+    const captcha = svgCaptcha.create({
+      color: true, // 翻轉顏色 
+      fontSize: 72, // 字型大小 
+      noise: 3, // 噪聲線條數 
+      width: 300, // 寬度 
+      height: 150, // 高度 
+      ignoreChars: '0o1iIl', // 避免混淆字元
+    });
+    // 儲存到session,忽略大小寫 
+    req.session.captcha = captcha.text.toLowerCase();
+    res.status(200).json({img: String(captcha.data)});
   } catch (error) {
     utils.handleError(res, error)
   }

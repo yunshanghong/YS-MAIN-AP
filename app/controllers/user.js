@@ -6,6 +6,7 @@ const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const db = require('../middleware/db')
 const emailer = require('../middleware/emailer')
+const authController = require('./auth')
 
 const converterUtils = require('../utils');
 
@@ -64,7 +65,15 @@ exports.getItems = async (req, res) => {
       ...query,
       role: 'user'
     }
-    res.status(200).json(await db.getItems(req, model, queryRoleUser))
+    const users = await db.getItems(req, model, queryRoleUser);
+    const result = {
+      ...users, 
+      docs: users.docs.map((item) => ({
+        ...item,
+        accountStatus: authController.loginStatus(item.loginAttempts, item.isApplyUnlock)
+      }))
+    }
+    res.status(200).json(result)
   } catch (error) {
     utils.handleError(res, error)
   }

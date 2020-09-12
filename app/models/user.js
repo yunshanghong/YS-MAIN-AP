@@ -105,7 +105,7 @@ const UserSchema = new mongoose.Schema(
     loginAttempts: {
       type: Number,
       default: 0,
-      select: false
+      select: true
     },
     blockExpires: {
       type: Date,
@@ -206,6 +206,9 @@ const UserSchema = new mongoose.Schema(
     },
     jobDescription3: {
       type: String
+    },
+    isApplyUnlock:{
+      type: Boolean
     },
 
     /* Marketing */

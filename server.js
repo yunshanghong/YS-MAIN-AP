@@ -10,6 +10,7 @@ require('./config/passport')(passport)
 const app = express()
 const i18n = require('i18n')
 const initMongo = require('./config/mongo')
+const session = require('express-session')
 
 // Init MongoDB
 initMongo()
@@ -65,10 +66,20 @@ app.use(i18n.init)
 // cors settings
 
 const corsOptions = {
-  origin: [ 'http://localhost:8080' ],
+  origin: [process.env.NODE_ENV.trim() === "development" ? "http://localhost:8080" : "http://kys.wda.gov.tw"],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 };
+
+
+
+// 使用 session middleware
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+}));
 
 // Init all other stuff
 app.use(cors(corsOptions))

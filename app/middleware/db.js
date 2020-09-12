@@ -146,7 +146,46 @@ module.exports = {
                       }
                     })
                   }
-                } else if (value !== 'all') {
+                }
+                else if (key == 'accountStatus'){
+                  if (value === 'pass') {
+                    arrayCondition.push({
+                      loginAttempts: {
+                        $lte: 2
+                      },
+                      isApplyUnlock:{
+                        $ne: true
+                      }
+                    })
+                  }
+                  if (value === 'locked') {
+                    arrayCondition.push({
+                      loginAttempts: {
+                        $gt: 2
+                      },
+                      isApplyUnlock: {
+                        $ne: true
+                      }
+                    })
+                  }
+                  if (value === 'applied') {
+                    arrayCondition.push({
+                      loginAttempts: {
+                        $gt: 2
+                      },
+                      isApplyUnlock: true
+                    })
+                  }
+                  if (value === 'undefined') {
+                    arrayCondition.push({
+                      loginAttempts: {
+                        $lte: 2
+                      },
+                      isApplyUnlock: true
+                    })
+                  }
+                }
+                else if (value !== 'all') {
                   arrayCondition.push({
                     [key]: value
                   })

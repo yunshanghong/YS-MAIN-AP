@@ -13,6 +13,16 @@ const trimRequest = require('trim-request')
  * Auth routes
  */
 
+
+/*
+* Captcha img route
+*/
+router.get(
+  '/getCaptcha',
+  trimRequest.all, 
+  controller.getCaptcha,
+)
+
 /*
  * Register route
  */
@@ -46,6 +56,26 @@ router.post(
   trimRequest.all,
   validate.forgotPassword,
   controller.forgotPassword
+)
+
+/*
+ * apply unlock user account route
+ */
+router.post(
+  '/applyUnlock',
+  trimRequest.all,
+  validate.applyUnlock,
+  controller.applyUnlock
+)
+
+/*
+ * apply unlock user account route
+ */
+router.post(
+  '/checkIsApplyUnlock',
+  trimRequest.all,
+  validate.checkIsApplyUnlock,
+  controller.checkIsApplyUnlock,
 )
 
 /*
@@ -119,7 +149,7 @@ router.post(
 /*
  * Login Route
  */
-router.post('/login', trimRequest.all, validate.login, controller.login)
+router.post('/login',trimRequest.all, validate.login, controller.login)
 
 /*
  * Login Googel Route
