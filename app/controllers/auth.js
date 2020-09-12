@@ -820,14 +820,10 @@ const getUserIdFromToken = async token => {
 exports.login = async (req, res) => {
   try {
     const captcha = req.session.captcha;
-    console.log("line 823 req: ", req);
-    console.log("line 824 req.session: ", req.session);
-    console.log("line 825 captcha: ", captcha)
     const data = matchedData(req)
-    console.log("line 827 verifyCode: ", data.verifyCode)
     const user = await findUser(data.email)
     // 1.檢查驗證碼是否正確
-    //await isVerifycodeRight(data.verifyCode, captcha);
+    await isVerifycodeRight(data.verifyCode, captcha);
     // 2.檢查是否仍在封鎖時段
     await userIsBlocked(user)
     // 3.檢查是否應解除封鎖

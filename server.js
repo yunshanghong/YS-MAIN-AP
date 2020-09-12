@@ -11,9 +11,11 @@ const app = express()
 const i18n = require('i18n')
 const initMongo = require('./config/mongo')
 const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
+const mongoose = require('mongoose')
 
 // Init MongoDB
-initMongo()
+initMongo(mongoose);
 
 // Setup express server port from ENV, default: 3000
 app.set('port', process.env.PORT || 3000)
@@ -78,8 +80,10 @@ const corsOptions = {
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
+
 
 // Init all other stuff
 app.use(cors(corsOptions))
