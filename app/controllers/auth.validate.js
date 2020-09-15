@@ -51,11 +51,7 @@ exports.login = [
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY')
-    .isLength({
-      min: 5
-    })
-    .withMessage('PASSWORD_TOO_SHORT_MIN_5'),
+    .withMessage('IS_EMPTY'),
   check('verifyCode')
     .exists()
     .withMessage('MISSING')

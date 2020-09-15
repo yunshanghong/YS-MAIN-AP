@@ -326,6 +326,19 @@ const isVerifycodeRight = async (verifyCode, captcha) => {
 }
 
 /**
+ * Checks if password length from user is right
+ * @param {Object} user - user object
+ */
+const isPasswordValidate = async (password) => {
+  return new Promise((resolve, reject) => {
+    if (password.length < 5) {
+      reject(utils.buildErrObject(409, '密碼輸入需至少5碼'))
+    }
+    resolve(true)
+  })
+}
+
+/**
  * Finds user by email
  * @param {string} email - user´s email
  */
@@ -338,7 +351,7 @@ const findUser = async email => {
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
       '+password +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
-        utils.itemNotFound(err, item, reject, { email: '帳號或密碼錯誤' })
+        utils.itemNotFound(err, item, reject, '查無此帳號！')
         resolve(item)
       }
     )
@@ -519,7 +532,7 @@ const passwordsDoNotMatch = async user => {
   user.loginAttempts += 1
   await saveLoginAttemptsToDB(user)
   return new Promise((resolve, reject) => {
-    resolve(utils.buildErrObject(409, '帳號或密碼錯誤'))
+    resolve(utils.buildErrObject(409, '密碼輸入錯誤！'))
   })
 }
 
@@ -821,6 +834,8 @@ exports.login = async (req, res) => {
   try {
     const captcha = req.session.captcha;
     const data = matchedData(req)
+    // 0.檢查密碼長度是否超過5碼
+    await isPasswordValidate(data.password);
     const user = await findUser(data.email)
     // 1.檢查驗證碼是否正確
     await isVerifycodeRight(data.verifyCode, captcha);

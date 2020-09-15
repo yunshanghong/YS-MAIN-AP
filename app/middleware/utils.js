@@ -124,7 +124,7 @@ exports.itemNotFound = (err, item, reject, message) => {
     reject(this.buildErrObject(422, err.message))
   }
   if (!item) {
-    reject(this.buildErrObject(404, message))
+    reject(this.buildErrObject(422, message))
   }
 }
 
