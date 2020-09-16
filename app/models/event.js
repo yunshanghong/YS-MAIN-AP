@@ -99,6 +99,11 @@ const eventSchema = new mongoose.Schema(
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
+    },
+    fullClosed:{
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   {

@@ -1,6 +1,8 @@
 const model = require('../models/activityLog')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
+const EventDb = require('../middleware/db')
+const eventModel = require('../models/event')
 // const db = require('../middleware/db')
 
 /*********************
@@ -386,6 +388,34 @@ exports.createItem = async (req, res) => {
       ...data,
       applicantId: req.user._id
     })
+    const appliedData = await getEventActivitysHistoryFromDB(data.eventId)
+    const eventData = await EventDb.getItem(data.eventId, eventModel);
+    let newData = {
+      _id: eventData._id,
+      coverImageName: eventData.coverImageName,
+      coverImageCaption: eventData.coverImageCaption,
+      title: eventData.title,
+      subTitle: eventData.subTitle,
+      tags: eventData.tags,
+      startDateTime: eventData.startDateTime,
+      endDateTime: eventData.endDateTime,
+      enrollStartDateTime: eventData.enrollStartDateTime,
+      enrollEndDateTime: eventData.enrollEndDateTime,
+      maximumOfApplicants: eventData.maximumOfApplicants,
+      location: eventData.location,
+      contactName: eventData.contactName,
+      contactEmail: eventData.contactEmail,
+      contactPhone: eventData.contactPhone,
+      notes: eventData.notes,
+      content: eventData.content,
+      speaker: eventData.speaker._id,
+      preQuestionList: eventData.preQuestionList,
+      published: eventData.published,
+      fullClosed: true,
+    };
+    if (appliedData.length === eventData.maximumOfApplicants) {
+      await EventDb.updateItem(eventData._id, eventModel, newData)
+    }
     res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)

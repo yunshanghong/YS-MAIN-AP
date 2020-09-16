@@ -119,7 +119,8 @@ exports.getItems = async (req, res) => {
 exports.getItem = async (req, res) => {
   try {
     const { eventId } = matchedData(req)
-    res.status(200).json(await db.getItem(eventId, model))
+    const item = await db.getItem(eventId, model)
+    item.published ? res.status(200).json(item) : res.status(409).json('密碼輸入需至少5碼')
   } catch (error) {
     utils.handleError(res, error)
   }

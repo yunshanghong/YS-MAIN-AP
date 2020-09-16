@@ -271,6 +271,13 @@ exports.updateItem = [
     .isEmpty()
     .withMessage('IS_EMPTY')
     .trim(),
+  check('fullClosed')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }
