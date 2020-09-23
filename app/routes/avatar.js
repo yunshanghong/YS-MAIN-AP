@@ -10,6 +10,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Uploads routes
@@ -20,7 +21,7 @@ const trimRequest = require('trim-request')
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   uploader.single('avatarData'),
   // validate.updateAvatar,

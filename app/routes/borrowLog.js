@@ -8,6 +8,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Space Borrow log history routes
@@ -25,7 +26,7 @@ router.get('/', trimRequest.all, controller.getItems)
 router.get(
   '/self',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.getItemsBySelfId
 )
@@ -36,7 +37,7 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.createItem,
   controller.createItem
@@ -47,7 +48,7 @@ router.post(
 router.post(
   '/checkin',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.checkinItem,
   controller.checkinItem
@@ -58,7 +59,7 @@ router.post(
 router.post(
   '/update',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.updateItem,
   controller.updateItem
@@ -69,7 +70,7 @@ router.post(
 router.post(
   '/cancel',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.cancelItem,
   controller.cancelItem

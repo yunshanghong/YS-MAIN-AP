@@ -10,6 +10,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Uploads Document routes
@@ -20,7 +21,7 @@ const trimRequest = require('trim-request')
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getDocuments
 )
@@ -30,7 +31,7 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   uploader.single('documentData'),
   validate.uploadDocument,
@@ -42,7 +43,7 @@ router.post(
 router.delete(
   '/:documentId',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.deleteDocument,
   controller.deleteDocument

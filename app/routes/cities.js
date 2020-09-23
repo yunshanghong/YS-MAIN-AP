@@ -9,6 +9,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Cities routes
@@ -25,7 +26,7 @@ router.get('/all', controller.getAllItems)
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   controller.getItems
 )
@@ -36,7 +37,7 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.createItem,
   controller.createItem
@@ -48,7 +49,7 @@ router.post(
 router.get(
   '/:id',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.getItem,
   controller.getItem
@@ -60,7 +61,7 @@ router.get(
 router.patch(
   '/:id',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.updateItem,
   controller.updateItem
@@ -72,7 +73,7 @@ router.patch(
 router.delete(
   '/:id',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.deleteItem,
   controller.deleteItem

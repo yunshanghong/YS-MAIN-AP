@@ -9,6 +9,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Profile routes
@@ -20,7 +21,7 @@ const trimRequest = require('trim-request')
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.getProfile
 )
@@ -31,7 +32,7 @@ router.get(
 router.post(
   '/update',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.updateProfile,
   controller.updateProfile
@@ -43,7 +44,7 @@ router.post(
 router.patch(
   '/shortcuts',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.updateProfileShortcuts,
   controller.updateProfileShortcuts
@@ -55,7 +56,7 @@ router.patch(
 router.post(
   '/changePassword',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.changePassword,
   controller.changePassword
@@ -67,7 +68,7 @@ router.post(
 router.post(
   '/access-history',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.getAccesses
 )

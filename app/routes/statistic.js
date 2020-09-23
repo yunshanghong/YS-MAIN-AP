@@ -8,6 +8,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Admin Dashbiard Statistics chart data routes
@@ -19,7 +20,7 @@ const trimRequest = require('trim-request')
 router.post(
   '/reviewStars',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getReviewStars
 )
@@ -30,7 +31,7 @@ router.post(
 router.post(
   '/reviewLogs',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getReviewLogs
 )
@@ -41,7 +42,7 @@ router.post(
 router.post(
   '/newUserNumberPerMonth',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getNewUserNumberPerMonth
 )
@@ -52,7 +53,7 @@ router.post(
 router.post(
   '/genderStastic',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getUserGenderStastic
 )
@@ -63,7 +64,7 @@ router.post(
 router.post(
   '/employmentStatusStastic',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getUserEmploymentStatusStastic
 )
@@ -74,7 +75,7 @@ router.post(
 router.post(
   '/agePeriodStastic',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getUserAgePeriodStastic
 )
@@ -85,7 +86,7 @@ router.post(
 router.post(
   '/educationStastic',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getUserEducationStastic
 )
@@ -96,7 +97,7 @@ router.post(
 router.post(
   '/heardFromStastic',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getUserheardFromStastic
 )

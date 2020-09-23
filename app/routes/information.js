@@ -8,6 +8,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Home page Information list routes
@@ -35,7 +36,7 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.createItem,
   controller.createItem
@@ -46,7 +47,7 @@ router.post(
 router.post(
   '/update',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.updateItem,
   controller.updateItem
@@ -57,7 +58,7 @@ router.post(
 router.delete(
   '/:informationId',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.deleteItem,
   controller.deleteItem

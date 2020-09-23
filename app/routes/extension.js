@@ -8,6 +8,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Get extensions route
@@ -15,7 +16,7 @@ const trimRequest = require('trim-request')
 
 router.get('/',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.getItems,
 )
@@ -26,7 +27,7 @@ router.get('/',
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.createItem,
   controller.createItem,
@@ -38,7 +39,7 @@ router.post(
 router.post(
   '/update',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.updateItem,
   controller.updateItem

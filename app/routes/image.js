@@ -10,6 +10,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Uploads Image routes
@@ -20,7 +21,7 @@ const trimRequest = require('trim-request')
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getImages
 )
@@ -30,7 +31,7 @@ router.get(
 router.get(
   '/manager',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getImagesForManager
 )
@@ -40,7 +41,7 @@ router.get(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   uploader.single('imageData'),
   validate.uploadImage,
@@ -52,7 +53,7 @@ router.post(
 router.post(
   '/update',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.updateImage,
   controller.updateImage
@@ -63,7 +64,7 @@ router.post(
 router.delete(
   '/:imageId',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.deleteImage,
   controller.deleteImage

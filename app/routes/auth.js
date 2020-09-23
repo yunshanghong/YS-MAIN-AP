@@ -8,6 +8,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Auth routes
@@ -39,7 +40,7 @@ router.post(
 router.post(
   '/resend-verify',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.resendVerifyEmail
 )
@@ -84,7 +85,7 @@ router.post(
 router.post(
   '/reset',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.resetPassword,
   controller.resetPassword
@@ -96,7 +97,7 @@ router.post(
 router.post(
   '/admin-reset',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.adminResetPassword,
   controller.adminResetPassword
@@ -108,7 +109,7 @@ router.post(
 router.post(
   '/refresh-token',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.getRefreshToken
 )
@@ -119,7 +120,7 @@ router.post(
 router.post(
   '/access-token',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   trimRequest.all,
   controller.loginWithAccessToken
 )
@@ -130,7 +131,7 @@ router.post(
 router.post(
   '/link/google',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   validate.signWithGoogle,
   controller.linkGoogle
 )
@@ -141,7 +142,7 @@ router.post(
 router.post(
   '/link/facebook',
   requireAuth,
-  controller.roleAuthorization(['user', 'staff', 'admin']),
+  controller.roleAuthorization(authRoles.user),
   validate.signWithFacebook,
   controller.linkFacebook
 )

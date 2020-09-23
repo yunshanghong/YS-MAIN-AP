@@ -9,6 +9,7 @@ const requireAuth = passport.authenticate('jwt', {
   session: false
 })
 const trimRequest = require('trim-request')
+const authRoles = require('../middleware/authRoles')
 
 /*
  * Users routes
@@ -20,7 +21,7 @@ const trimRequest = require('trim-request')
 router.get(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   controller.getItems
 )
@@ -31,7 +32,7 @@ router.get(
 router.post(
   '/csv',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   controller.getExportSCV
 )
 
@@ -41,7 +42,7 @@ router.post(
 router.post(
   '/',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.createItem,
   controller.createItem
@@ -53,7 +54,7 @@ router.post(
 router.get(
   '/:id',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.getItem,
   controller.getItem
@@ -77,7 +78,7 @@ router.get(
 router.patch(
   '/receiving-email',
   requireAuth,
-  AuthController.roleAuthorization(['user', 'staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.user),
   trimRequest.all,
   validate.updateItemReceivingEmailStatus,
   controller.updateItemReceivingEmailStatus
@@ -89,7 +90,7 @@ router.patch(
 router.patch(
   '/activation/:id',
   requireAuth,
-  AuthController.roleAuthorization(['staff', 'admin']),
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.updateItemActivation,
   controller.updateItemActivation
@@ -101,7 +102,7 @@ router.patch(
 router.patch(
   '/permission/:id',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.updateItemPermission,
   controller.updateItemPermission
@@ -113,7 +114,7 @@ router.patch(
 router.delete(
   '/:id',
   requireAuth,
-  AuthController.roleAuthorization(['admin']),
+  AuthController.roleAuthorization(authRoles.admin),
   trimRequest.all,
   validate.deleteItem,
   controller.deleteItem
