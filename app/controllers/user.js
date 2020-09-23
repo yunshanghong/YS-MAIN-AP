@@ -63,7 +63,7 @@ exports.getItems = async (req, res) => {
     const query = await db.checkQueryString(req.query)
     const queryRoleUser = {
       ...query,
-      role: 'user'
+      role: req.query.role === "user" ? "user" : {$not: /user/}
     }
     const users = await db.getItems(req, model, queryRoleUser);
     const result = {
@@ -86,8 +86,14 @@ exports.getItems = async (req, res) => {
  */
 exports.getExportSCV = async (req, res) => {
   try {
+    const query = await db.checkQueryString(req.body)
+    const queryRoleUser = {
+      ...query,
+      role: req.body.role === "user" ? "user" : {$not: /user/}
+    }
+    
     model
-      .find({ role: 'user' }, '-shortcuts -referralCode -referralList')
+      .find(queryRoleUser, '-shortcuts -referralCode -referralList')
       .exec((err, items) => {
         const parser = new Parser({
           fields: [
