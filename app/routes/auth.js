@@ -97,7 +97,7 @@ router.post(
 router.post(
   '/admin-reset',
   requireAuth,
-  controller.roleAuthorization(authRoles.user),
+  controller.roleAuthorization(authRoles.manager),
   trimRequest.all,
   validate.adminResetPassword,
   controller.adminResetPassword
