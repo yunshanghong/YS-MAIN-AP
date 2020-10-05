@@ -80,6 +80,18 @@ router.post(
   validate.createItem,
   controller.createItem
 )
+
+/*
+ * apply activity again log route
+ */
+router.post(
+  '/applyAgain',
+  requireAuth,
+  AuthController.roleAuthorization(authRoles.user),
+  trimRequest.all,
+  validate.applyAgain,
+  controller.applyAgain
+)
 /*
  * Update activity Log route
  */

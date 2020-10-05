@@ -106,6 +106,53 @@ exports.createItem = [
 ]
 
 /**
+ * Validates create new item request
+ */
+exports.applyAgain = [
+  check('eventId')
+  .exists()
+  .withMessage('MISSING')
+  .not()
+  .isEmpty()
+  .withMessage('IS_EMPTY')
+  .trim(),
+  check('speakerId')
+  .exists()
+  .withMessage('MISSING')
+  .not()
+  .isEmpty()
+  .withMessage('IS_EMPTY')
+  .trim(),
+  check('participateReason')
+  .optional()
+  .trim(),
+  check('participantHeardFrom')
+  .optional()
+  .trim(),
+  check('participantExpectation')
+  .optional()
+  .trim(),
+  check('participantID')
+  .optional()
+  .trim(),
+  check('participantIsManager')
+  .optional()
+  .trim(),
+  check('participateLunch')
+  .optional()
+  .trim(),
+  check('lunchType')
+  .optional()
+  .trim(),
+  check('otherQuestions')
+  .optional()
+  .trim(),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
+/**
  * Validates update item request
  */
 exports.updateItem = [

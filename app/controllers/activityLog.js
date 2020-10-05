@@ -166,12 +166,21 @@ const db = {
         {
           new: true,
           runValidators: true
-        },
-        (err, item) => {
-          utils.itemNotFound(err, item, reject, 'NOT_FOUND')
-          resolve(item)
         }
-      )
+      ).populate({
+          path: 'event'
+        })
+        .populate({
+          path: 'speaker',
+          select: 'displayName title photoURL website'
+        })
+        .populate({
+          path: 'applicant'
+        })
+        .exec((err, resp) => {
+          utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+          resolve(resp)
+        })
     })
   }
 }
@@ -416,6 +425,39 @@ exports.createItem = async (req, res) => {
     if (appliedData.length === eventData.maximumOfApplicants) {
       await EventDb.updateItem(eventData._id, eventModel, newData)
     }
+    res.status(200).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+/**
+ * applyAgain item function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.applyAgain = async (req, res) => {
+  try {
+    await utils.isIDGood(req.user._id)
+    const data = matchedData(req)
+    const updateData = {
+      registrationStatus: 'pending'
+    };
+    Object.keys(data).map((key) => {
+      if (key !== 'eventId' && key !== 'speakerId' && key !== 'otherQuestions') {
+        updateData[key] = data[key]
+      }
+      if (key == 'otherQuestions' ){
+        updateData[key] = JSON.parse(data[key])
+      }
+    });
+    const item = await db.updateItemReview({
+        event: data.eventId,
+        applicant: req.user._id,
+        speaker: data.speakerId
+      },
+      model, updateData
+    )
     res.status(200).json(item)
   } catch (error) {
     utils.handleError(res, error)
