@@ -447,7 +447,7 @@ exports.applyAgain = async (req, res) => {
       if (key !== 'eventId' && key !== 'speakerId' && key !== 'otherQuestions') {
         updateData[key] = data[key]
       }
-      if (key == 'otherQuestions' ){
+      if (key === 'otherQuestions' && data[key] !== '') {
         updateData[key] = JSON.parse(data[key])
       }
     });
