@@ -74,15 +74,17 @@ const corsOptions = {
   credentials: true,
 };
 
-
-
 // 使用 session middleware
-app.use(session({
-  secret: 'keyboard cat',
+const sessionConfig = session({
+  cookie: { 
+    secure: process.env.NODE_ENV.trim() === "production",
+    httpOnly: true
+  },
+  secret: 'kysMainWeb',
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection })
-}));
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+})
 
 
 // Init all other stuff
@@ -90,6 +92,7 @@ app.use(cors(corsOptions))
 app.use(passport.initialize())
 app.use(compression())
 app.use(helmet())
+app.use(sessionConfig);
 app.use(express.static('public'))
 app.use(require('./app/routes'))
 app.listen(app.get('port'))
