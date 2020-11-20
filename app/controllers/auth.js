@@ -558,6 +558,27 @@ const registerUser = async req => {
 }
 
 /**
+ * Registers a new user in database
+ * @param {Object} req - request object
+ */
+const csvregisterUser = async req => {
+  return new Promise((resolve, reject) => {
+    const user = new User({
+      displayName: req.displayname,
+      email: req.email,
+      password: req.email.split("@")[0] + req.birthday,
+      verification: uuid.v4()
+    })
+    user.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      resolve(item)
+    })
+  })
+}
+
+/**
  * Registers a new google user in database
  * @param {Object} req - request object
  */
@@ -993,6 +1014,31 @@ exports.register = async (req, res) => {
   } catch (error) {
     utils.handleError(res, error)
   }
+}
+
+/**
+ * Register function called by route
+ * @param {Object} req - request object
+ * @param {Object} res - response object
+ */
+exports.csvregister = async (req, res) => {
+  for(const i in req.body){
+    try {
+      // Gets locale from header 'Accept-Language'
+      const locale = req.getLocale()
+      const data = req.body[i];
+      const doesEmailExists = await emailer.emailExists(data.email)
+      if (!doesEmailExists) {
+        const user = await csvregisterUser(data)
+        emailer.sendRegistrationEmailMessage(locale, user)
+        // res.status(201).json(response)
+        res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
+      }
+    } catch (error) {
+      utils.handleError(res, error)
+    }
+  }
+  
 }
 
 /**

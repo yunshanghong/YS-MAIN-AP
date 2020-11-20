@@ -35,6 +35,16 @@ router.post(
 )
 
 /*
+ * CSV Register route
+ */
+router.post(
+  '/csvregister',
+  trimRequest.all,
+  validate.csvregister,
+  controller.csvregister
+)
+
+/*
  * Re-Send Verify Email token
  */
 router.post(
