@@ -698,7 +698,7 @@ const markResetPasswordAsUsed = async (req, forgot) => {
 const updatePassword = async (password, user) => {
   return new Promise((resolve, reject) => {
     user.password = password
-    user.lastPasswordUpdatedAt = Date.now() / 1000
+    user.lastPasswordUpdatedAt = Date.now() 
     user.loginAttempts = 0
     user.isApplyUnlock = false
     user.blockExpires = Date.now();
@@ -1146,10 +1146,21 @@ exports.resetPassword = async (req, res) => {
     // const forgotPassword = await findForgotPassword(data.id)
     // const user = await findUserToResetPassword(forgotPassword.email)
     const user = await findUserToResetPassword(req.user.email)
-    await updatePassword(data.password, user)
+    const newUser = await updatePassword(data.password, user)
     // const result = await markResetPasswordAsUsed(req, forgotPassword)
     // res.status(200).json(result)
-    res.status(200).json({ message: '密碼已修改成功！' })
+    res.status(200).json({ 
+      message: '密碼已修改成功！',
+      newUser: {
+        active: newUser.active,
+        data: newUser,
+        from: "m-lab-db",
+        role: newUser.role,
+        uuid: newUser._id,
+        verification: newUser.verification,
+        verified: newUser.verified,
+      } 
+    })
   } catch (error) {
     utils.handleError(res, error)
   }
