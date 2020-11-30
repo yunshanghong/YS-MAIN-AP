@@ -272,7 +272,8 @@ exports.getItemsBySelfId = async (req, res) => {
 exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    res.status(200).json(await db.getItems(req, model, query))
+    const newQuery = {...query, createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }};
+    res.status(200).json(await db.getItems(req, model, newQuery))
   } catch (error) {
     utils.handleError(res, error)
   }

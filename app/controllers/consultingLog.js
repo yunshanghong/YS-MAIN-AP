@@ -312,7 +312,8 @@ exports.getPublicItems = async (req, res) => {
 exports.getSecretItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    res.status(200).json(await db.getSecretItems(req, model, query))
+    const newQuery = {...query, createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }};
+    res.status(200).json(await db.getSecretItems(req, model, newQuery))
   } catch (error) {
     utils.handleError(res, error)
   }
