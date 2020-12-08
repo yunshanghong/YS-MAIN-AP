@@ -79,7 +79,7 @@ const sessionConfig = session({
   cookie: { 
     secure: process.env.NODE_ENV.trim() === "production",
     httpOnly: true,
-    sameSite: 'none'
+    sameSite: process.env.NODE_ENV.trim() === "production" ? 'none' : ''
   },
   secret: 'kysMainWeb',
   resave: false,
@@ -89,11 +89,6 @@ const sessionConfig = session({
 
 
 // Init all other stuff
-app.use(function(req, res, next) {
-  res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader("Content-Security-Policy", "script-src 'self'");
-  return next();
-});
 app.use(cors(corsOptions))
 app.use(passport.initialize())
 app.use(compression())
@@ -101,6 +96,11 @@ app.use(helmet())
 app.enable('trust proxy');
 app.use(sessionConfig);
 app.use(express.static('public'))
+app.use(function(req, res, next) {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader("Content-Security-Policy", "script-src 'self'");
+  return next();
+});
 app.use(require('./app/routes'))
 app.listen(app.get('port'))
 
