@@ -69,7 +69,7 @@ app.use(i18n.init)
 
 const corsOptions = {
   origin: [process.env.NODE_ENV.trim() === "development" ? "http://localhost:8080" : "http://kys.wda.gov.tw"],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  methods: 'GET,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
@@ -78,7 +78,8 @@ const corsOptions = {
 const sessionConfig = session({
   cookie: { 
     secure: process.env.NODE_ENV.trim() === "production",
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'none'
   },
   secret: 'kysMainWeb',
   resave: false,
@@ -88,6 +89,11 @@ const sessionConfig = session({
 
 
 // Init all other stuff
+app.use(function(req, res, next) {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader("Content-Security-Policy", "script-src 'self'");
+  return next();
+});
 app.use(cors(corsOptions))
 app.use(passport.initialize())
 app.use(compression())
