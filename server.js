@@ -98,7 +98,7 @@ app.use(sessionConfig);
 app.use(express.static('public'))
 app.use(function(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader("Content-Security-Policy", "script-src 'self'");
+  res.setHeader("Content-Security-Policy", "default-src 'self'");
   return next();
 });
 app.use(require('./app/routes'))
