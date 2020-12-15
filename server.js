@@ -13,6 +13,8 @@ const initMongo = require('./config/mongo')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const mongoose = require('mongoose')
+const spdy = require('spdy')
+const fs = require('fs')
 
 // Init MongoDB
 initMongo(mongoose);
@@ -102,6 +104,27 @@ app.use(function(req, res, next) {
   return next();
 });
 app.use(require('./app/routes'))
-app.listen(app.get('port'))
+
+if(process.env.NODE_ENV.trim() === "production"){
+  // spdy settings
+  const spdyOptions = {
+      key: fs.readFileSync(process.env.keyPath),
+      cert:  fs.readFileSync(process.env.crtPath)
+  }
+
+  // officially run server
+  spdy
+  .createServer(spdyOptions, app)
+  .listen(app.get('port'), (error) => {
+    if (error) {
+      console.error(error)
+      return process.exit(1)
+    } else {
+      console.log('Listening on port: ' + app.get('port') + '.')
+    }
+  })
+}else{
+  app.listen(app.get('port'))
+}
 
 module.exports = app // for testing

@@ -55,6 +55,7 @@
     "request-ip": "^2.1.3",
     "short-uuid": "^3.1.1",
     "shortid": "^2.2.14",
+    "spdy": "^4.0.2",
     "stripe": "^7.4.0",
     "svg-captcha": "^1.4.0",
     "trim-request": "^1.0.6",
