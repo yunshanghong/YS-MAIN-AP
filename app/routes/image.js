@@ -61,7 +61,7 @@ router.post(
 /*
  * Delete single Image by image's id route
  */
-router.delete(
+router.post(
   '/:imageId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

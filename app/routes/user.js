@@ -111,7 +111,7 @@ router.patch(
 /*
  * Delete item (only admin)
  */
-router.delete(
+router.post(
   '/:id',
   requireAuth,
   AuthController.roleAuthorization(authRoles.manager),

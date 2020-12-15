@@ -46,7 +46,7 @@ router.post(
 /*
  * Delete carousel route
  */
-router.delete(
+router.post(
   '/:carouselId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

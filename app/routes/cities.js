@@ -70,7 +70,7 @@ router.patch(
 /*
  * Delete item route
  */
-router.delete(
+router.post(
   '/:id',
   requireAuth,
   AuthController.roleAuthorization(authRoles.admin),

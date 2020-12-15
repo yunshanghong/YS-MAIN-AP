@@ -40,7 +40,7 @@ router.post(
 /*
  * Delete single Document by document's id route
  */
-router.delete(
+router.post(
   '/:documentId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

@@ -59,7 +59,7 @@ router.post(
 /*
  * Delete speaker route
  */
-router.delete(
+router.post(
   '/:speakerId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

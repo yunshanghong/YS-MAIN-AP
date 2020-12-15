@@ -45,7 +45,7 @@ router.post(
 /*
  * Delete event route
  */
-router.delete(
+router.post(
   '/:milestoneId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

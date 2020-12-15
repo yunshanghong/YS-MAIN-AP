@@ -55,7 +55,7 @@ router.post(
 /*
  * Delete information route
  */
-router.delete(
+router.post(
   '/:informationId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

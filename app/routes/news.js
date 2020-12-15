@@ -55,7 +55,7 @@ router.post(
 /*
  * Delete news route
  */
-router.delete(
+router.post(
   '/:newsId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

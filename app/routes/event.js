@@ -46,7 +46,7 @@ router.post(
 /*
  * Delete event route
  */
-router.delete(
+router.post(
   '/:eventId',
   requireAuth,
   AuthController.roleAuthorization(authRoles.staff),

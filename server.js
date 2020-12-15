@@ -69,7 +69,7 @@ app.use(i18n.init)
 
 const corsOptions = {
   origin: [process.env.NODE_ENV.trim() === "development" ? "http://localhost:8080" : "http://kys.wda.gov.tw"],
-  methods: 'GET,PATCH,POST,DELETE',
+  methods: 'GET,PATCH,POST',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
@@ -98,7 +98,7 @@ app.use(sessionConfig);
 app.use(express.static('public'))
 app.use(function(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader("Content-Security-Policy", "default-src 'self'");
+  //res.setHeader("Content-Security-Policy", "default-src 'self'");
   return next();
 });
 app.use(require('./app/routes'))
