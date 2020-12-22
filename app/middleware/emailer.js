@@ -20,7 +20,8 @@ const sendEmail = async (data, callback) => {
       pass: process.env.EMAIL_SMTP_PASS
     },
     tls: {
-      ciphers: 'SSLv3'
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false
     },
     secureConnection: false
   })
