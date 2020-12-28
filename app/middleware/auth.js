@@ -25,6 +25,35 @@ module.exports = {
     })
   },
 
+  async checkPassword1(password, user) {
+    return new Promise((resolve, reject) => {
+      user.comparePassword1(password, (err, isMatch) => {
+        if (err) {
+          reject(utils.buildErrObject(422, err.message))
+          // reject({ code: 422, message: err.message })
+        }
+        if (!isMatch) {
+          resolve(false)
+        }
+        resolve(true)
+      })
+    })
+  },
+
+  async checkPassword2(password, user) {
+    return new Promise((resolve, reject) => {
+      user.comparePassword2(password, (err, isMatch) => {
+        if (err) {
+          reject(utils.buildErrObject(422, err.message))
+          // reject({ code: 422, message: err.message })
+        }
+        if (!isMatch) {
+          resolve(false)
+        }
+        resolve(true)
+      })
+    })
+  },
   /**
    * Encrypts text
    * @param {string} text - text to encrypt

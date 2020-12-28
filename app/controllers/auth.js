@@ -537,6 +537,24 @@ const passwordsDoNotMatch = async user => {
 }
 
 /**
+ * 檢查輸入密碼是否與前三次密碼重覆
+ */
+const passwordsIsSameWithUsed = async () => {
+  return new Promise((resolve, reject) => {
+    resolve(utils.buildErrObject(409, '輸入密碼不得與前三次相同, 請重新輸入'))
+  })
+}
+
+/**
+ * 檢查輸入密碼是否含大小寫英文及數字
+ */
+const passwordsMatchRegex = async () => {
+  return new Promise((resolve, reject) => {
+    resolve(utils.buildErrObject(409, '請輸入至少 12 位數，含大小寫英文及數字'))
+  })
+}
+
+/**
  * Registers a new user in database
  * @param {Object} req - request object
  */
@@ -696,8 +714,13 @@ const markResetPasswordAsUsed = async (req, forgot) => {
  * @param {Object} user - user object
  */
 const updatePassword = async (password, user) => {
+  const newUsedPassword2 = user.usedPassword1 ;
+  const newUsedPassword1 = user.password;
+
   return new Promise((resolve, reject) => {
     user.password = password
+    user.usedPassword1 = newUsedPassword1;
+    user.usedPassword2 = newUsedPassword2;
     user.lastPasswordUpdatedAt = Date.now() 
     user.loginAttempts = 0
     user.isApplyUnlock = false
@@ -719,6 +742,7 @@ const findUserToResetPassword = async email => {
       {
         email
       },
+      '+password +usedPassword1 +usedPassword2 +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, user) => {
         utils.itemNotFound(err, user, reject, 'NOT_FOUND')
         resolve(user)
@@ -867,6 +891,9 @@ exports.login = async (req, res) => {
     // 4.檢查帳密是否輸入正確
     const isPasswordMatch = await auth.checkPassword(data.password, user)
     if (!isPasswordMatch) {
+      const newReq = {...req};
+      newReq.path = "/login-fail"
+      await saveUserAccessAndReturnToken({ req: newReq, user })
       utils.handleError(res, await passwordsDoNotMatch(user))
     } else {
       // all ok, register access and return token
@@ -1143,25 +1170,40 @@ exports.checkIsApplyUnlock = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const data = matchedData(req)
-    // const forgotPassword = await findForgotPassword(data.id)
-    // const user = await findUserToResetPassword(forgotPassword.email)
     const user = await findUserToResetPassword(req.user.email)
-    const newUser = await updatePassword(data.password, user)
-    // const result = await markResetPasswordAsUsed(req, forgotPassword)
-    // res.status(200).json(result)
-    res.status(200).json({ 
-      message: '密碼已修改成功！',
-      newUser: {
-        active: newUser.active,
-        data: newUser,
-        from: "m-lab-db",
-        role: newUser.role,
-        uuid: newUser._id,
-        verification: newUser.verification,
-        verified: newUser.verified,
-      } 
-    })
+    const newPassword = data.password;
+    // 1.檢查密碼是否與當前密碼相同
+    const isPasswordSame = await auth.checkPassword(newPassword, user);
+    // 2.檢查前一組密碼是否與當前密碼相同
+    const isPassword1Same = await auth.checkPassword1(newPassword, user);
+    // 3.檢查前兩組密碼是否與當前密碼相同
+    const isPassword2Same = await auth.checkPassword2(newPassword, user);
+    // 4.檢查密碼是否含大小寫英文及數字
+    const isRegexMatch = newPassword.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).+$/);
+
+    if(isPasswordSame || isPassword1Same || isPassword2Same){
+      utils.handleError(res, await passwordsIsSameWithUsed())
+    }
+    else if(!isRegexMatch){
+      utils.handleError(res, await passwordsMatchRegex())
+    }
+    else{
+      const newUser = await updatePassword(newPassword, user)
+      res.status(200).json({ 
+        message: '密碼已修改成功！',
+        newUser: {
+          active: newUser.active,
+          data: newUser,
+          from: "m-lab-db",
+          role: newUser.role,
+          uuid: newUser._id,
+          verification: newUser.verification,
+          verified: newUser.verified,
+        } 
+      })
+    }
   } catch (error) {
+    console.log(error)
     utils.handleError(res, error)
   }
 }

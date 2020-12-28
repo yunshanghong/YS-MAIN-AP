@@ -86,6 +86,14 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     },
+    usedPassword1:{
+      type: String,
+      select: false
+    },
+    usedPassword2:{
+      type: String,
+      select: false
+    },
     verification: {
       type: String,
       select: false
@@ -302,6 +310,26 @@ UserSchema.methods.comparePassword = function(passwordAttempt, cb) {
   bcrypt.compare(passwordAttempt, this.password, (err, isMatch) =>
     err ? cb(err) : cb(null, isMatch)
   )
+}
+
+UserSchema.methods.comparePassword1 = function(passwordAttempt, cb) {
+  if(!this.usedPassword1){
+    cb(null, false);
+  }else{
+    bcrypt.compare(passwordAttempt, this.usedPassword1, (err, isMatch) =>
+      err ? cb(err) : cb(null, isMatch)
+    )
+  }
+}
+
+UserSchema.methods.comparePassword2 = function(passwordAttempt, cb) {
+  if(!this.usedPassword2){
+    cb(null, false);
+  }else{
+    bcrypt.compare(passwordAttempt, this.usedPassword2, (err, isMatch) =>
+      err ? cb(err) : cb(null, isMatch)
+    )
+  }
 }
 UserSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('User', UserSchema)
