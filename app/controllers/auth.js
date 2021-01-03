@@ -132,7 +132,8 @@ const setUserInfo = req => {
         : null
     },
     verified: req.verified,
-    active: req.active
+    active: req.active,
+    isSystemPassword: req.isSystemPassword,
   }
   // Adds verification for testing purposes
   if (process.env.NODE_ENV !== 'production') {
@@ -326,13 +327,26 @@ const isVerifycodeRight = async (verifyCode, captcha) => {
 }
 
 /**
+ * Checks if veriycode from user is right
+ * @param {Object} user - user object
+ */
+const isEmailVerifyPass = async (isVerified) => {
+  return new Promise((resolve, reject) => {
+    if (!isVerified) {
+      reject(utils.buildErrObject(409, '新申請帳號需先過Email驗證尚可登入！'))
+    }
+    resolve(true)
+  })
+}
+
+/**
  * Checks if password length from user is right
  * @param {Object} user - user object
  */
 const isPasswordValidate = async (password) => {
   return new Promise((resolve, reject) => {
-    if (password.length < 5) {
-      reject(utils.buildErrObject(409, '密碼輸入需至少5碼'))
+    if (password.length < 12 ){
+      reject(utils.buildErrObject(409, '密碼輸入需至少12碼'))
     }
     resolve(true)
   })
@@ -879,9 +893,12 @@ exports.login = async (req, res) => {
   try {
     const captcha = req.session.captcha;
     const data = matchedData(req)
-    // 0.檢查密碼長度是否超過5碼
+    // 0.檢查密碼長度是否超過12碼
     await isPasswordValidate(data.password);
+
     const user = await findUser(data.email)
+    // 0.檢查是否已通過Email驗證
+    await isEmailVerifyPass(user.verified);
     // 1.檢查驗證碼是否正確
     await isVerifycodeRight(data.verifyCode, captcha);
     // 2.檢查是否仍在封鎖時段
@@ -1188,6 +1205,7 @@ exports.resetPassword = async (req, res) => {
       utils.handleError(res, await passwordsMatchRegex())
     }
     else{
+      user.isSystemPassword = false;
       const newUser = await updatePassword(newPassword, user)
       res.status(200).json({ 
         message: '密碼已修改成功！',
@@ -1214,6 +1232,7 @@ exports.adminResetPassword = async (req, res) => {
     // const forgotPassword = await findForgotPassword(data.id)
     // const user = await findUserToResetPassword(forgotPassword.email)
     const user = await findUserToResetPassword(data.email)
+    user.isSystemPassword = true;
     await updatePassword(data.password, user)
     // const result = await markResetPasswordAsUsed(req, forgotPassword)
     // res.status(200).json(result)

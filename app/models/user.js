@@ -100,7 +100,11 @@ const UserSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      default: true
+      default: false
+    },
+    isSystemPassword:{
+      type: Boolean,
+      default: false
     },
     shortcuts: {
       type: Array,
