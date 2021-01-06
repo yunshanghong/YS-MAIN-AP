@@ -129,11 +129,11 @@ const setUserInfo = req => {
             photoURL: req.facebook.photoURL,
             accessToken: req.facebook.accessToken
           }
-        : null
+        : null,
+      isSystemPassword: req.isSystemPassword,
     },
     verified: req.verified,
     active: req.active,
-    isSystemPassword: req.isSystemPassword,
   }
   // Adds verification for testing purposes
   if (process.env.NODE_ENV !== 'production') {
@@ -546,7 +546,7 @@ const passwordsDoNotMatch = async user => {
   user.loginAttempts += 1
   await saveLoginAttemptsToDB(user)
   return new Promise((resolve, reject) => {
-    resolve(utils.buildErrObject(409, '密碼輸入錯誤！'))
+    resolve(utils.buildErrObject(409, '帳號或密碼輸入錯誤！'))
   })
 }
 
@@ -1221,7 +1221,6 @@ exports.resetPassword = async (req, res) => {
       })
     }
   } catch (error) {
-    console.log(error)
     utils.handleError(res, error)
   }
 }
