@@ -1130,17 +1130,35 @@ exports.forgotPassword = async (req, res) => {
     const data = matchedData(req)
     const user = await findUser(data.email)
     const item = await saveForgotPassword(req)
+    const newPassword = generatePassword(12)
+    user.isSystemPassword = true;
+    await updatePassword(newPassword, user)
     const userData = {
       email: item.email,
       verification: item.verification,
-      displayName: user.displayName
+      displayName: user.displayName,
+      password: newPassword
     }
-    emailer.sendResetPasswordEmailMessage(locale, userData)
+    emailer.sendNewPasswordEmailMessage(locale, userData)
     res.status(200).json(forgotPasswordResponse(item))
   } catch (error) {
     utils.handleError(res, error)
   }
 }
+
+/**
+ * randomly return a new password in terms of length
+ */
+const generatePassword = (length) => {
+  let result = '';
+  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+};
 
 /**
  * Forgot password function called by route

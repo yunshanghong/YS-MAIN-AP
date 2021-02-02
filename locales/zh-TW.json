@@ -14,5 +14,13 @@
     "LINK_TEXT": "重新設定我的密碼",
     "HINT": "如果您不想重新設定 YS 密碼，可以略過這封郵件",
     "MESSAGE": "<p>To recover the password for user: %s</p> <p>click the following link:</p> <p>%s/reset-password/%s</p> <p>If this was a mistake, you can ignore this message.</p> <p>Thank you.</p>"
+  },
+  "newPassword": {
+    "SUBJECT": "【YS】- 已為您重設您的密碼",
+    "HEADER": "已為您重設您的密碼",
+    "DESCRIPTION": "已為您重設您的密碼，您的新密碼為  ",
+    "LINK_TEXT": "",
+    "HINT": "請先以新密碼登入後立即重設您的密碼",
+    "MESSAGE": "<p>To recover the password for user: %s</p> <p>click the following link:</p> <p>%s/reset-password/%s</p> <p>If this was a mistake, you can ignore this message.</p> <p>Thank you.</p>"
   }
 }

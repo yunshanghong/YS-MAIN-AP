@@ -138,7 +138,8 @@ module.exports = {
       DESCRIPTION: i18n.__('registration.DESCRIPTION'),
       LINK_TEXT: i18n.__('registration.LINK_TEXT'),
       HINT: i18n.__('registration.HINT'),
-      VERIFY_URL: `${process.env.AUTH_API_END_POINT}/auth/verify-email/${user.verification}`
+      VERIFY_URL: `${process.env.AUTH_API_END_POINT}/auth/verify-email/${user.verification}`,
+      YEAR: `${new Date().getFullYear()}`
     }
     prepareToSendEmail(user, subject, emailTemplate, emailLocals)
   },
@@ -157,7 +158,28 @@ module.exports = {
       DESCRIPTION: i18n.__('forgotPassword.DESCRIPTION'),
       LINK_TEXT: i18n.__('forgotPassword.LINK_TEXT'),
       HINT: i18n.__('forgotPassword.HINT'),
-      RESET_URL: `${process.env.FRONTEND_URL}/reset-password/${user.verification}`
+      RESET_URL: `${process.env.FRONTEND_URL}/reset-password/${user.verification}`,
+      YEAR: `${new Date().getFullYear()}`
+    }
+    prepareToSendEmail(user, subject, emailTemplate, emailLocals)
+  },
+
+  /**
+   * Sends new password email
+   * @param {string} locale - locale
+   * @param {Object} user - user object
+   */
+  async sendNewPasswordEmailMessage(locale, user) {
+    i18n.setLocale(locale)
+    const subject = i18n.__('newPassword.SUBJECT')
+    const emailTemplate = 'new'
+    const emailLocals = {
+      HEADER: i18n.__('newPassword.HEADER'),
+      DESCRIPTION: i18n.__('newPassword.DESCRIPTION'),
+      LINK_TEXT: i18n.__('newPassword.LINK_TEXT'),
+      HINT: i18n.__('newPassword.HINT'),
+      NEW_PASS: `${user.password}`,
+      YEAR: `${new Date().getFullYear()}`
     }
     prepareToSendEmail(user, subject, emailTemplate, emailLocals)
   }
