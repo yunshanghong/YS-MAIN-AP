@@ -1132,6 +1132,7 @@ exports.forgotPassword = async (req, res) => {
     const item = await saveForgotPassword(req)
     const newPassword = generatePassword(12)
     user.isSystemPassword = true;
+    user.verified = true;
     await updatePassword(newPassword, user)
     const userData = {
       email: item.email,
