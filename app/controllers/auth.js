@@ -1126,8 +1126,11 @@ exports.resendVerifyEmail = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   try {
     // Gets locale from header 'Accept-Language'
+    const captcha = req.session.captcha;
     const locale = req.getLocale()
     const data = matchedData(req)
+    // 1.檢查驗證碼是否正確
+    await isVerifycodeRight(data.verifyCode, captcha);
     const user = await findUser(data.email)
     const item = await saveForgotPassword(req)
     const newPassword = generatePassword(12)

@@ -213,6 +213,12 @@ exports.forgotPassword = [
     .withMessage('IS_EMPTY')
     .isEmail()
     .withMessage('EMAIL_IS_NOT_VALID'),
+  check('verifyCode')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
   (req, res, next) => {
     validationResult(req, res, next)
   }
