@@ -1127,6 +1127,7 @@ exports.forgotPassword = async (req, res) => {
   try {
     // Gets locale from header 'Accept-Language'
     const captcha = req.session.captcha;
+    req.session.captcha = null;
     const locale = req.getLocale()
     const data = matchedData(req)
     // 1.檢查驗證碼是否正確
