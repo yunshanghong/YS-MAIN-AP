@@ -365,7 +365,7 @@ const findUser = async email => {
       // 'password loginAttempts blockExpires displayName photoURL email role verified verification shortcuts active balance',
       '+password +verification +loginAttempts +blockExpires -updatedAt -createdAt',
       (err, item) => {
-        utils.itemNotFound(err, item, reject, '查無此帳號！')
+        utils.itemNotFound(err, item, reject, '帳號或密碼錯誤！')
         resolve(item)
       }
     )
@@ -892,6 +892,7 @@ const getUserIdFromToken = async token => {
 exports.login = async (req, res) => {
   try {
     const captcha = req.session.captcha;
+    req.session.captcha = null; 
     const data = matchedData(req)
     // 0.檢查密碼長度是否超過12碼
     await isPasswordValidate(data.password);
