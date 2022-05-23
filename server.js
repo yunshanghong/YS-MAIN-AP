@@ -15,7 +15,7 @@ const MongoStore = require('connect-mongo')(session)
 const mongoose = require('mongoose')
 
 // Init MongoDB
-initMongo(mongoose);
+initMongo(mongoose)
 
 // Setup express server port from ENV, default: 3000
 app.set('port', process.env.PORT || 3000)
@@ -68,39 +68,41 @@ app.use(i18n.init)
 // cors settings
 
 const corsOptions = {
-  origin: [process.env.NODE_ENV.trim() === "development" ? "http://localhost:8080" : "http://kys.wda.gov.tw"],
+  origin: [
+    process.env.NODE_ENV.trim() === 'development'
+      ? 'http://localhost:8080'
+      : 'http://kys.wda.gov.tw'
+  ],
   methods: 'GET,PATCH,POST',
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
+  credentials: true
+}
 
 // 使用 session middleware
 const sessionConfig = session({
-  cookie: { 
-    secure: process.env.NODE_ENV.trim() === "production",
+  cookie: {
+    secure: process.env.NODE_ENV.trim() === 'production',
     httpOnly: true,
-    sameSite: process.env.NODE_ENV.trim() === "production" ? 'none' : ''
+    sameSite: process.env.NODE_ENV.trim() === 'production' ? 'none' : ''
   },
   secret: 'kysMainWeb',
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
 })
-
 
 // Init all other stuff
 app.use(cors(corsOptions))
 app.use(passport.initialize())
 app.use(compression())
 app.use(helmet())
-app.enable('trust proxy');
-app.use(sessionConfig);
+app.enable('trust proxy')
+app.use(sessionConfig)
 app.use(express.static('public'))
-app.use(function(req, res, next) {
+app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff')
-  //res.setHeader("Content-Security-Policy", "default-src 'self'");
-  return next();
-});
+  return next()
+})
 app.use(require('./app/routes'))
 app.listen(app.get('port'))
 

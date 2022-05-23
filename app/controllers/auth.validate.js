@@ -39,37 +39,37 @@ exports.register = [
  */
 exports.csvregister = [
   body()
-  .isArray()
-  .custom ( item => {
-    return item.every( (row) => {
-      // validate displayname
-      if (!row.displayname) {
-        return false;
-      } 
-      // validate email
-      if (!row.email){
-        return false;
-      }
-      // validate fullname
-      if(!row.fullname){
-        return false;
-      }
-      // validate gender
-      const genderType = ['male', 'female', 'diversity'];
-      if(!row.gender || genderType.indexOf(row.gender) === -1){
-        return false;
-      }
-      // validate birthday
-      if(!row.birthday){
-        return false;
-      }
+    .isArray()
+    .custom(item => {
+      return item.every(row => {
+        // validate displayname
+        if (!row.displayname) {
+          return false
+        }
+        // validate email
+        if (!row.email) {
+          return false
+        }
+        // validate fullname
+        if (!row.fullname) {
+          return false
+        }
+        // validate gender
+        const genderType = ['male', 'female', 'diversity']
+        if (!row.gender || genderType.indexOf(row.gender) === -1) {
+          return false
+        }
+        // validate birthday
+        if (!row.birthday) {
+          return false
+        }
 
-      return true;
-      // if you return false at least once, then the result of 'every' is false and 
-      // the validator triggers an error
+        return true
+        // if you return false at least once, then the result of 'every' is false and
+        // the validator triggers an error
+      })
     })
-  })
-  .withMessage('something wrong in csv data'),
+    .withMessage('something wrong in csv data'),
   (req, res, next) => {
     validationResult(req, res, next)
   }
@@ -253,7 +253,7 @@ exports.checkIsApplyUnlock = [
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY')  
+    .withMessage('IS_EMPTY')
     .isEmail()
     .withMessage('EMAIL_IS_NOT_VALID'),
   (req, res, next) => {

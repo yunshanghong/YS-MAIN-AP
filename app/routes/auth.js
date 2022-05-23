@@ -14,15 +14,10 @@ const authRoles = require('../middleware/authRoles')
  * Auth routes
  */
 
-
 /*
-* Captcha img route
-*/
-router.get(
-  '/getCaptcha',
-  trimRequest.all, 
-  controller.getCaptcha,
-)
+ * Captcha img route
+ */
+router.get('/getCaptcha', trimRequest.all, controller.getCaptcha)
 
 /*
  * Register route
@@ -86,7 +81,7 @@ router.post(
   '/checkIsApplyUnlock',
   trimRequest.all,
   validate.checkIsApplyUnlock,
-  controller.checkIsApplyUnlock,
+  controller.checkIsApplyUnlock
 )
 
 /*
@@ -160,7 +155,7 @@ router.post(
 /*
  * Login Route
  */
-router.post('/login',trimRequest.all, validate.login, controller.login)
+router.post('/login', trimRequest.all, validate.login, controller.login)
 
 /*
  * Login Googel Route

@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const UserAccess = require('../models/userAccess')
@@ -130,10 +131,10 @@ const setUserInfo = req => {
             accessToken: req.facebook.accessToken
           }
         : null,
-      isSystemPassword: req.isSystemPassword,
+      isSystemPassword: req.isSystemPassword
     },
     verified: req.verified,
-    active: req.active,
+    active: req.active
   }
   // Adds verification for testing purposes
   if (process.env.NODE_ENV !== 'production') {
@@ -266,48 +267,67 @@ const checkLoginAttemptsAndBlockExpires = async user => {
   })
 }
 
+const loginStatus = (attempts, isApplied) => {
+  if (attempts > LOGIN_ATTEMPTS && isApplied) {
+    return 'applied'
+  }
+  if (attempts > LOGIN_ATTEMPTS && !isApplied) {
+    return 'locked'
+  }
+  if (attempts <= LOGIN_ATTEMPTS && !isApplied) {
+    return 'pass'
+  }
+  return 'undefined'
+}
+
 /**
  * Checks if blockExpires from user is greater than now
  * @param {Object} user - user object
  */
 const userIsBlocked = async user => {
   return new Promise((resolve, reject) => {
-    const result = loginStatus(user.loginAttempts, user.isApplyUnlock);
-    
-    if (result === "locked") {
-      reject(utils.buildErrObject(403, '帳號已遭封鎖，請填寫表單申請系統管理者解鎖'));
+    const result = loginStatus(user.loginAttempts, user.isApplyUnlock)
+
+    if (result === 'locked') {
+      reject(
+        utils.buildErrObject(403, '帳號已遭封鎖，請填寫表單申請系統管理者解鎖')
+      )
     }
-    if(result === "applied"){
-      reject(utils.buildErrObject(403,"已填寫表單申請解鎖，等待系統管理者解鎖中"));
+    if (result === 'applied') {
+      reject(
+        utils.buildErrObject(403, '已填寫表單申請解鎖，等待系統管理者解鎖中')
+      )
     }
-    if(result === "undefined"){
-      reject(utils.buildErrObject(403, "帳號異常，請聯絡系統管理者"));
+    if (result === 'undefined') {
+      reject(utils.buildErrObject(403, '帳號異常，請聯絡系統管理者'))
     }
     resolve(true)
   })
 }
 
-const isDisplayNameMatched = async (inputDisplayName, DbDisplayName) =>{
-  return new Promise ((resolve, reject) =>{
+const isDisplayNameMatched = async (inputDisplayName, DbDisplayName) => {
+  return new Promise((resolve, reject) => {
     if (inputDisplayName !== DbDisplayName) {
-      reject(utils.buildErrObject(409, '輸入名稱與信箱不相符！'));
+      reject(utils.buildErrObject(409, '輸入名稱與信箱不相符！'))
     }
-    resolve(true);
+    resolve(true)
   })
 }
 
-const isApplyUnlockNeeded = async (user) =>{
+const isApplyUnlockNeeded = async user => {
   return new Promise((resolve, reject) => {
-    const result = loginStatus(user.loginAttempts, user.isApplyUnlock);
+    const result = loginStatus(user.loginAttempts, user.isApplyUnlock)
 
-    if (result === "pass") {
-      reject(utils.buildErrObject(409, '帳號可正常登入，不需申請解鎖'));
+    if (result === 'pass') {
+      reject(utils.buildErrObject(409, '帳號可正常登入，不需申請解鎖'))
     }
-    if (result === "applied") {
-      reject(utils.buildErrObject(409, "已填寫表單申請解鎖，等待系統管理者解鎖中"));
+    if (result === 'applied') {
+      reject(
+        utils.buildErrObject(409, '已填寫表單申請解鎖，等待系統管理者解鎖中')
+      )
     }
-    if (result === "undefined") {
-      reject(utils.buildErrObject(409, "帳號異常，請聯絡系統管理者"));
+    if (result === 'undefined') {
+      reject(utils.buildErrObject(409, '帳號異常，請聯絡系統管理者'))
     }
     resolve(true)
   })
@@ -330,7 +350,7 @@ const isVerifycodeRight = async (verifyCode, captcha) => {
  * Checks if veriycode from user is right
  * @param {Object} user - user object
  */
-const isEmailVerifyPass = async (isVerified) => {
+const isEmailVerifyPass = async isVerified => {
   return new Promise((resolve, reject) => {
     if (!isVerified) {
       reject(utils.buildErrObject(409, '新申請帳號需先過Email驗證尚可登入！'))
@@ -343,9 +363,9 @@ const isEmailVerifyPass = async (isVerified) => {
  * Checks if password length from user is right
  * @param {Object} user - user object
  */
-const isPasswordValidate = async (password) => {
+const isPasswordValidate = async password => {
   return new Promise((resolve, reject) => {
-    if (password.length < 12 ){
+    if (password.length < 12) {
       reject(utils.buildErrObject(409, '密碼輸入需至少12碼'))
     }
     resolve(true)
@@ -370,19 +390,6 @@ const findUser = async email => {
       }
     )
   })
-}
-
-const loginStatus = (attempts, isApplied) => {
-  if (attempts > LOGIN_ATTEMPTS && isApplied) {
-    return "applied";
-  }
-  if (attempts > LOGIN_ATTEMPTS && (!isApplied)) {
-    return "locked";
-  }
-  if (attempts <= LOGIN_ATTEMPTS && !isApplied) {
-    return "pass";
-  }
-  return "undefined";
 }
 
 exports.loginStatus = loginStatus
@@ -598,7 +605,7 @@ const csvregisterUser = async req => {
     const user = new User({
       displayName: req.displayname,
       email: req.email,
-      password: req.email.split("@")[0] + req.birthday,
+      password: req.email.split('@')[0] + req.birthday,
       verification: uuid.v4()
     })
     user.save((err, item) => {
@@ -728,17 +735,17 @@ const markResetPasswordAsUsed = async (req, forgot) => {
  * @param {Object} user - user object
  */
 const updatePassword = async (password, user) => {
-  const newUsedPassword2 = user.usedPassword1 ;
-  const newUsedPassword1 = user.password;
+  const newUsedPassword2 = user.usedPassword1
+  const newUsedPassword1 = user.password
 
   return new Promise((resolve, reject) => {
     user.password = password
-    user.usedPassword1 = newUsedPassword1;
-    user.usedPassword2 = newUsedPassword2;
-    user.lastPasswordUpdatedAt = Date.now() 
+    user.usedPassword1 = newUsedPassword1
+    user.usedPassword2 = newUsedPassword2
+    user.lastPasswordUpdatedAt = Date.now()
     user.loginAttempts = 0
     user.isApplyUnlock = false
-    user.blockExpires = Date.now();
+    user.blockExpires = Date.now()
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
       resolve(item)
@@ -891,32 +898,32 @@ const getUserIdFromToken = async token => {
  */
 exports.login = async (req, res) => {
   try {
-    const captcha = req.session.captcha;
-    req.session.captcha = null; 
+    const captcha = req.session.captcha
+    req.session.captcha = null
     const data = matchedData(req)
     // 0.檢查密碼長度是否超過12碼
-    await isPasswordValidate(data.password);
+    await isPasswordValidate(data.password)
 
     const user = await findUser(data.email)
     // 0.檢查是否已通過Email驗證
-    await isEmailVerifyPass(user.verified);
+    await isEmailVerifyPass(user.verified)
     // 1.檢查驗證碼是否正確
-    await isVerifycodeRight(data.verifyCode, captcha);
+    await isVerifycodeRight(data.verifyCode, captcha)
     // 2.檢查是否仍在封鎖時段
     await userIsBlocked(user)
     // 3.檢查是否應解除封鎖
     await checkLoginAttemptsAndBlockExpires(user)
     // 4.檢查帳密是否輸入正確
-    const isPasswordMatch = await auth.checkPassword(data.password, user)
+    const isPasswordMatch = auth.checkPassword(data.password, user)
     if (!isPasswordMatch) {
-      const newReq = {...req};
-      newReq.path = "/login-fail"
+      const newReq = { ...req }
+      newReq.path = '/login-fail'
       await saveUserAccessAndReturnToken({ req: newReq, user })
       utils.handleError(res, await passwordsDoNotMatch(user))
     } else {
       // all ok, register access and return token
       user.loginAttempts = 0
-      user.isApplyUnlock = false;
+      user.isApplyUnlock = false
       await saveLoginAttemptsToDB(user)
       res.status(200).json(await saveUserAccessAndReturnToken({ req, user }))
     }
@@ -1067,11 +1074,11 @@ exports.register = async (req, res) => {
  * @param {Object} res - response object
  */
 exports.csvregister = async (req, res) => {
-  for(const i in req.body){
+  for (const i in req.body) {
     try {
       // Gets locale from header 'Accept-Language'
       const locale = req.getLocale()
-      const data = req.body[i];
+      const data = req.body[i]
       const doesEmailExists = await emailer.emailExists(data.email)
       if (!doesEmailExists) {
         const user = await csvregisterUser(data)
@@ -1083,7 +1090,6 @@ exports.csvregister = async (req, res) => {
       utils.handleError(res, error)
     }
   }
-  
 }
 
 /**
@@ -1120,24 +1126,42 @@ exports.resendVerifyEmail = async (req, res) => {
 }
 
 /**
+ * randomly return a new password in terms of length
+ */
+const generatePassword = length => {
+  let result = ''
+  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+
+  return result
+}
+
+/**
  * Forgot password function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
  */
+// eslint-disable-next-line max-statements
 exports.forgotPassword = async (req, res) => {
   try {
     // Gets locale from header 'Accept-Language'
-    const captcha = req.session.captcha;
-    req.session.captcha = null;
+    const captcha = req.session.captcha
+    req.session.captcha = null
     const locale = req.getLocale()
     const data = matchedData(req)
     // 1.檢查驗證碼是否正確
-    await isVerifycodeRight(data.verifyCode, captcha);
+    await isVerifycodeRight(data.verifyCode, captcha)
     const user = await findUser(data.email)
     const item = await saveForgotPassword(req)
     const newPassword = generatePassword(12)
-    user.isSystemPassword = true;
-    user.verified = true;
+
+    console.log(newPassword)
+
+    user.isSystemPassword = true
+    user.verified = true
     await updatePassword(newPassword, user)
     const userData = {
       email: item.email,
@@ -1153,20 +1177,6 @@ exports.forgotPassword = async (req, res) => {
 }
 
 /**
- * randomly return a new password in terms of length
- */
-const generatePassword = (length) => {
-  let result = '';
-  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return result;
-};
-
-/**
  * Forgot password function called by route
  * @param {Object} req - request object
  * @param {Object} res - response object
@@ -1176,15 +1186,15 @@ exports.applyUnlock = async (req, res) => {
     const data = matchedData(req)
     const user = await findUser(data.email)
     // 1.檢核displayName是否與email相符
-    await isDisplayNameMatched(data.displayName, user.displayName);
+    await isDisplayNameMatched(data.displayName, user.displayName)
     // 2.檢核是否需要申請解鎖
-    await isApplyUnlockNeeded(user);
+    await isApplyUnlockNeeded(user)
 
     // 2.寫入applyUnlock
     const item = await applyUnlock(req)
     // 3.改寫users.isApplyUnlock為true
-    user.isApplyUnlock = true;
-    await saveLoginAttemptsToDB(user);
+    user.isApplyUnlock = true
+    await saveLoginAttemptsToDB(user)
 
     res.status(200).json(forgotPasswordResponse(item))
   } catch (error) {
@@ -1196,8 +1206,8 @@ exports.checkIsApplyUnlock = async (req, res) => {
   try {
     const data = matchedData(req)
     const user = await findUser(data.email)
-    const result = await loginStatus(user.loginAttempts, user.isApplyUnlock);
-    res.status(200).json(result);
+    const result = await loginStatus(user.loginAttempts, user.isApplyUnlock)
+    res.status(200).json(result)
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -1212,36 +1222,34 @@ exports.resetPassword = async (req, res) => {
   try {
     const data = matchedData(req)
     const user = await findUserToResetPassword(req.user.email)
-    const newPassword = data.password;
+    const newPassword = data.password
     // 1.檢查密碼是否與當前密碼相同
-    const isPasswordSame = await auth.checkPassword(newPassword, user);
+    const isPasswordSame = await auth.checkPassword(newPassword, user)
     // 2.檢查前一組密碼是否與當前密碼相同
-    const isPassword1Same = await auth.checkPassword1(newPassword, user);
+    const isPassword1Same = await auth.checkPassword1(newPassword, user)
     // 3.檢查前兩組密碼是否與當前密碼相同
-    const isPassword2Same = await auth.checkPassword2(newPassword, user);
+    const isPassword2Same = await auth.checkPassword2(newPassword, user)
     // 4.檢查密碼是否含大小寫英文及數字
-    const isRegexMatch = newPassword.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).+$/);
+    const isRegexMatch = newPassword.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).+$/)
 
-    if(isPasswordSame || isPassword1Same || isPassword2Same){
+    if (isPasswordSame || isPassword1Same || isPassword2Same) {
       utils.handleError(res, await passwordsIsSameWithUsed())
-    }
-    else if(!isRegexMatch){
+    } else if (!isRegexMatch) {
       utils.handleError(res, await passwordsMatchRegex())
-    }
-    else{
-      user.isSystemPassword = false;
+    } else {
+      user.isSystemPassword = false
       const newUser = await updatePassword(newPassword, user)
-      res.status(200).json({ 
+      res.status(200).json({
         message: '密碼已修改成功！',
         newUser: {
           active: newUser.active,
           data: newUser,
-          from: "m-lab-db",
+          from: 'm-lab-db',
           role: newUser.role,
           uuid: newUser._id,
           verification: newUser.verification,
-          verified: newUser.verified,
-        } 
+          verified: newUser.verified
+        }
       })
     }
   } catch (error) {
@@ -1255,7 +1263,7 @@ exports.adminResetPassword = async (req, res) => {
     // const forgotPassword = await findForgotPassword(data.id)
     // const user = await findUserToResetPassword(forgotPassword.email)
     const user = await findUserToResetPassword(data.email)
-    user.isSystemPassword = true;
+    user.isSystemPassword = true
     await updatePassword(data.password, user)
     // const result = await markResetPasswordAsUsed(req, forgotPassword)
     // res.status(200).json(result)
@@ -1331,19 +1339,19 @@ exports.roleAuthorization = roles => async (req, res, next) => {
   }
 }
 
-exports.getCaptcha = async (req, res) =>{
+exports.getCaptcha = async (req, res) => {
   try {
     const captcha = svgCaptcha.create({
-      color: true, // 翻轉顏色 
-      fontSize: 72, // 字型大小 
-      noise: 3, // 噪聲線條數 
-      width: 300, // 寬度 
-      height: 150, // 高度 
-      ignoreChars: '0o1iIl', // 避免混淆字元
-    });
-    // 儲存到session,忽略大小寫 
-    req.session.captcha = captcha.text.toLowerCase();
-    res.status(200).json({img: String(captcha.data)});
+      color: true, // 翻轉顏色
+      fontSize: 72, // 字型大小
+      noise: 3, // 噪聲線條數
+      width: 300, // 寬度
+      height: 150, // 高度
+      ignoreChars: '0o1iIl' // 避免混淆字元
+    })
+    // 儲存到session,忽略大小寫
+    req.session.captcha = captcha.text.toLowerCase()
+    res.status(200).json({ img: String(captcha.data) })
   } catch (error) {
     utils.handleError(res, error)
   }

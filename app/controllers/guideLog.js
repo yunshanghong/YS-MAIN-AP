@@ -83,10 +83,10 @@ const db = {
    * @param {Object} req - request object
    * @param {Object} query - query object
    */
-  async getItems(req, model, query) {
+  async getItems(req, _model, query) {
     const options = await listInitOptions(req)
     return new Promise((resolve, reject) => {
-      model.paginate(query, options, (err, items) => {
+      _model.paginate(query, options, (err, items) => {
         if (err) {
           reject(utils.buildErrObject(422, err.message))
         }
@@ -100,9 +100,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItem(_id, model, req) {
+  async updateItem(_id, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findByIdAndUpdate(
+      _model.findByIdAndUpdate(
         _id,
         req,
         {
@@ -122,9 +122,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemRegistration({ event, applicant }, model, req) {
+  async updateItemRegistration({ event, applicant }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
+      _model.findOneAndUpdate(
         { event, applicant },
         req,
         {
@@ -144,9 +144,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemGuideStatus({ _id }, model, req) {
+  async updateItemGuideStatus({ _id }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
+      _model.findOneAndUpdate(
         { _id },
         req,
         {
@@ -166,9 +166,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async cancelSelfGuideStatus({ _id, applicant }, model, req) {
+  async cancelSelfGuideStatus({ _id, applicant }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
+      _model.findOneAndUpdate(
         { _id, applicant },
         req,
         {
@@ -216,8 +216,8 @@ const createItem = async req => {
           // .findById(item._id)
           .find({ applicant: req.applicantId })
           .populate({ path: 'applicant' })
-          .exec((err, resp) => {
-            utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+          .exec((_err, resp) => {
+            utils.itemNotFound(_err, resp, reject, 'NOT_FOUND')
             resolve(resp)
           })
         // resolve(item)
@@ -272,7 +272,10 @@ exports.getItemsBySelfId = async (req, res) => {
 exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    const newQuery = {...query, createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }};
+    const newQuery = {
+      ...query,
+      createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }
+    }
     res.status(200).json(await db.getItems(req, model, newQuery))
   } catch (error) {
     utils.handleError(res, error)
@@ -307,7 +310,7 @@ exports.checkinItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    let updateStatus = {
+    const updateStatus = {
       checkinStatus: true
     }
     const item = await db.updateItemGuideStatus(
@@ -332,7 +335,7 @@ exports.updateItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    let updateStatus = {}
+    const updateStatus = {}
     if (data.appointmentStatus) {
       updateStatus.appointmentStatus = data.appointmentStatus
     }

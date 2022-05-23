@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 const model = require('../models/borrowLog')
 const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
@@ -272,7 +273,10 @@ exports.getItemsBySelfId = async (req, res) => {
 exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    const newQuery = {...query, createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }};
+    const newQuery = {
+      ...query,
+      createdAt: { $gte: req.query.startDate, $lt: req.query.endDate }
+    }
     res.status(200).json(await db.getItems(req, model, newQuery))
   } catch (error) {
     utils.handleError(res, error)
@@ -307,7 +311,7 @@ exports.checkinItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    let updateStatus = {
+    const updateStatus = {
       checkinStatus: true
     }
     const item = await db.updateItemBorrowStatus(
@@ -332,7 +336,7 @@ exports.updateItem = async (req, res) => {
   try {
     await utils.isIDGood(req.user._id)
     const data = matchedData(req)
-    let updateStatus = {}
+    const updateStatus = {}
     if (data.appointmentStatus) {
       updateStatus.appointmentStatus = data.appointmentStatus
     }

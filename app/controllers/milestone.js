@@ -1,17 +1,7 @@
-const {
-  Parser
-} = require('json2csv')
-const uuid = require('uuid')
-const moment = require('moment-timezone')
 const model = require('../models/milestone')
-const {
-  matchedData
-} = require('express-validator')
+const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const db = require('../middleware/db')
-const emailer = require('../middleware/emailer')
-
-const converterUtils = require('../utils');
 
 /********************
  * Public functions *
@@ -26,7 +16,7 @@ const createItem = async req => {
       year: req.year,
       month: req.month,
       title: req.title,
-      description: req.description,
+      description: req.description
     })
     newEvent.save((err, item) => {
       if (err) {
@@ -35,8 +25,8 @@ const createItem = async req => {
         model
           .findById(item._id)
           .lean()
-          .exec((err, resp) => {
-            utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+          .exec((_err, resp) => {
+            utils.itemNotFound(_err, resp, reject, 'NOT_FOUND')
             resolve(resp)
           })
       }
@@ -52,7 +42,7 @@ const createItem = async req => {
 exports.getItems = async (req, res) => {
   try {
     const query = await db.checkQueryString(req.query)
-    res.status(200).json(await db.getItems(req, model, query));
+    res.status(200).json(await db.getItems(req, model, query))
   } catch (error) {
     utils.handleError(res, error)
   }
@@ -73,7 +63,6 @@ exports.updateItem = async (req, res) => {
   }
 }
 
-
 /**
  * Create item function called by route
  * @param {Object} req - request object
@@ -83,11 +72,11 @@ exports.createItem = async (req, res) => {
   try {
     const data = matchedData(req)
     const item = await createItem({
-      ...data,
+      ...data
     })
 
     res.status(200).json({
-      ...item,
+      ...item
     })
   } catch (error) {
     utils.handleError(res, error)

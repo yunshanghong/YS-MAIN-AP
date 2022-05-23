@@ -7,6 +7,6 @@ const authRoles = {
   staff: ['admin', 'manager', 'staff'],
   user: ['admin', 'manager', 'staff', 'user'],
   onlyGuest: []
-};
+}
 
-module.exports = authRoles;
+module.exports = authRoles

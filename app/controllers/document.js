@@ -82,14 +82,14 @@ exports.uploadDocument = async (req, res) => {
     const item = await createItem({
       ...data,
       documentName: req.file.filename,
-      authorId: req.user._id,
+      authorId: req.user._id
     })
     res.status(200).json({
       ...item,
       author: {
         displayName: req.user.displayName,
         photoURL: req.user.photoURL,
-        email: req.user.email,
+        email: req.user.email
       }
     })
   } catch (error) {

@@ -110,43 +110,43 @@ exports.createItem = [
  */
 exports.applyAgain = [
   check('eventId')
-  .exists()
-  .withMessage('MISSING')
-  .not()
-  .isEmpty()
-  .withMessage('IS_EMPTY')
-  .trim(),
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('speakerId')
-  .exists()
-  .withMessage('MISSING')
-  .not()
-  .isEmpty()
-  .withMessage('IS_EMPTY')
-  .trim(),
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('participateReason')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('participantHeardFrom')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('participantExpectation')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('participantID')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('participantIsManager')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('participateLunch')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('lunchType')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   check('otherQuestions')
-  .optional()
-  .trim(),
+    .optional()
+    .trim(),
   (req, res, next) => {
     validationResult(req, res, next)
   }

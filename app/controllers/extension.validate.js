@@ -7,14 +7,14 @@ const { check } = require('express-validator')
  */
 exports.createItem = [
   check('objType')
-  .exists()
-  .withMessage('MISSING')
-  .not()
-  .isEmpty()
-  .withMessage('IS_EMPTY'),
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
   check('data')
-  .exists()
-  .withMessage('MISSING'),
+    .exists()
+    .withMessage('MISSING'),
   (req, res, next) => {
     validationResult(req, res, next)
   }
@@ -25,21 +25,21 @@ exports.createItem = [
  */
 exports.updateItem = [
   check('_id')
-  .exists()
-  .withMessage('MISSING')
-  .not()
-  .isEmpty()
-  .withMessage('IS_EMPTY')
-  .trim(),
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY')
+    .trim(),
   check('objType')
-  .exists()
-  .withMessage('MISSING')
-  .not()
-  .isEmpty()
-  .withMessage('IS_EMPTY'),
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
   check('data')
-  .exists()
-  .withMessage('MISSING'),
+    .exists()
+    .withMessage('MISSING'),
   (req, res, next) => {
     validationResult(req, res, next)
   }

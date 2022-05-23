@@ -9,13 +9,7 @@ const requireAuth = passport.authenticate('jwt', {
 })
 const trimRequest = require('trim-request')
 const authRoles = require('../middleware/authRoles')
-/*
- * Event registration log history routes
- * purposes
- *  - get user's registration history
- *  - get event's registration history
- *  - get speaker's stars by user's reviews
- */
+
 /*
  * Get self all event registration log by user id route
  */
@@ -42,32 +36,12 @@ router.get(
  */
 router.get(
   '/event/:eventId',
+  // requireAuth,
+  // AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.getItemsByEventId,
   controller.getItemsByEventId
 )
-/*
- * Get Speaker's stars by all user reviews by speaker id route
- */
-// router.get(
-//   '/speaker/stars/:speakerId',
-//   requireAuth,
-//   AuthController.roleAuthorization(['user', 'staff', 'admin']),
-//   trimRequest.all,
-//   validate.getSpeakerStarsBySpeakerId,
-//   controller.getSpeakerStarsBySpeakerId
-// )
-/*
- * Get Event's stars by all user reviews by event id route
- */
-// router.get(
-//   '/event/stars/:eventId',
-//   requireAuth,
-//   AuthController.roleAuthorization(['user', 'staff', 'admin']),
-//   trimRequest.all,
-//   validate.getEventStarsByEventId,
-//   controller.getEventStarsByEventId
-// )
 
 /*
  * Add new activity log route
@@ -136,27 +110,5 @@ router.post(
   validate.cancelItem,
   controller.cancelItem
 )
-// /*
-//  * Approve activity apply route
-//  */
-// router.post(
-//   '/event/approve',
-//   requireAuth,
-//   AuthController.roleAuthorization(['staff', 'admin']),
-//   trimRequest.all,
-//   validate.approveItem,
-//   controller.approveItem
-// )
-// /*
-//  * Reject activity apply route
-//  */
-// router.post(
-//   '/event/reject',
-//   requireAuth,
-//   AuthController.roleAuthorization(['staff', 'admin']),
-//   trimRequest.all,
-//   validate.rejectItem,
-//   controller.rejectItem
-// )
 
 module.exports = router

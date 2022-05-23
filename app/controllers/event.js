@@ -49,8 +49,8 @@ const createItem = async req => {
             path: 'speaker',
             select: 'displayName title photoURL website'
           })
-          .exec((err, resp) => {
-            utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+          .exec((_err, resp) => {
+            utils.itemNotFound(_err, resp, reject, 'NOT_FOUND')
             resolve(resp)
           })
       }
@@ -120,7 +120,12 @@ exports.getItem = async (req, res) => {
   try {
     const { eventId } = matchedData(req)
     const item = await db.getItem(eventId, model)
-    item.published ? res.status(200).json(item) : res.status(409).json('密碼輸入需至少5碼')
+
+    if (item.published) {
+      res.status(200).json(item)
+    } else {
+      res.status(409).json('密碼輸入需至少5碼')
+    }
   } catch (error) {
     utils.handleError(res, error)
   }

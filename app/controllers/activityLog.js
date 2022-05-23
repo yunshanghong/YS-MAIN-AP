@@ -3,7 +3,6 @@ const { matchedData } = require('express-validator')
 const utils = require('../middleware/utils')
 const EventDb = require('../middleware/db')
 const eventModel = require('../models/event')
-// const db = require('../middleware/db')
 
 /*********************
  *    DB functions   *
@@ -44,7 +43,7 @@ const db = {
         }
       } catch (err) {
         console.log(err.message)
-        reject(buildErrObject(422, 'ERROR_WITH_FILTER'))
+        reject(utils.buildErrObject(422, 'ERROR_WITH_FILTER'))
       }
     })
   },
@@ -54,14 +53,14 @@ const db = {
    * @param {Object} req - request object
    * @param {Object} query - query object
    */
-  async getItems(req, model, query) {
-    const options = await listInitOptions(req)
+  async getItems(req, _model, query) {
+    const options = await EventDb.listInitOptions(req)
     return new Promise((resolve, reject) => {
-      model.paginate(query, options, (err, items) => {
+      _model.paginate(query, options, (err, items) => {
         if (err) {
-          reject(buildErrObject(422, err.message))
+          reject(utils.buildErrObject(422, err.message))
         }
-        resolve(cleanPaginationID(items))
+        resolve(EventDb.cleanPaginationID(items))
       })
     })
   },
@@ -70,9 +69,9 @@ const db = {
    * Gets item from database by id
    * @param {string} id - item id
    */
-  async getItem(id, model) {
+  async getItem(id, _model) {
     return new Promise((resolve, reject) => {
-      model
+      _model
         .findById(id)
         .populate({ path: 'event' })
         .populate({
@@ -92,9 +91,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItem(_id, model, req) {
+  async updateItem(_id, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findByIdAndUpdate(
+      _model.findByIdAndUpdate(
         _id,
         req,
         {
@@ -114,9 +113,9 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemCheckinStatus({ event, applicant }, model, req) {
+  async updateItemCheckinStatus({ event, applicant }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
+      _model.findOneAndUpdate(
         { event, applicant },
         req,
         {
@@ -136,10 +135,10 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemRegistration({ event, applicant }, model, req) {
+  async updateItemRegistration({ event, applicant }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
-        { event, applicant},
+      _model.findOneAndUpdate(
+        { event, applicant },
         req,
         {
           new: true,
@@ -158,16 +157,14 @@ const db = {
    * @param {string} id - item id
    * @param {Object} req - request object
    */
-  async updateItemReview({ event, applicant }, model, req) {
+  async updateItemReview({ event, applicant }, _model, req) {
     return new Promise((resolve, reject) => {
-      model.findOneAndUpdate(
-        { event, applicant },
-        req,
-        {
+      _model
+        .findOneAndUpdate({ event, applicant }, req, {
           new: true,
           runValidators: true
-        }
-      ).populate({
+        })
+        .populate({
           path: 'event'
         })
         .populate({
@@ -220,8 +217,8 @@ const createItem = async req => {
             select: 'displayName title photoURL website'
           })
           .populate({ path: 'applicant' })
-          .exec((err, resp) => {
-            utils.itemNotFound(err, resp, reject, 'NOT_FOUND')
+          .exec((_err, resp) => {
+            utils.itemNotFound(_err, resp, reject, 'NOT_FOUND')
             resolve(resp)
           })
         // resolve(item)
@@ -398,8 +395,8 @@ exports.createItem = async (req, res) => {
       applicantId: req.user._id
     })
     const appliedData = await getEventActivitysHistoryFromDB(data.eventId)
-    const eventData = await EventDb.getItem(data.eventId, eventModel);
-    let newData = {
+    const eventData = await EventDb.getItem(data.eventId, eventModel)
+    const newData = {
       _id: eventData._id,
       coverImageName: eventData.coverImageName,
       coverImageCaption: eventData.coverImageCaption,
@@ -420,8 +417,8 @@ exports.createItem = async (req, res) => {
       speaker: eventData.speaker._id,
       preQuestionList: eventData.preQuestionList,
       published: eventData.published,
-      fullClosed: true,
-    };
+      fullClosed: true
+    }
     if (appliedData.length === eventData.maximumOfApplicants) {
       await EventDb.updateItem(eventData._id, eventModel, newData)
     }
@@ -442,21 +439,27 @@ exports.applyAgain = async (req, res) => {
     const data = matchedData(req)
     const updateData = {
       registrationStatus: 'pending'
-    };
-    Object.keys(data).map((key) => {
-      if (key !== 'eventId' && key !== 'speakerId' && key !== 'otherQuestions') {
+    }
+    Object.keys(data).map(key => {
+      if (
+        key !== 'eventId' &&
+        key !== 'speakerId' &&
+        key !== 'otherQuestions'
+      ) {
         updateData[key] = data[key]
       }
       if (key === 'otherQuestions' && data[key] !== '') {
         updateData[key] = JSON.parse(data[key])
       }
-    });
-    const item = await db.updateItemReview({
+    })
+    const item = await db.updateItemReview(
+      {
         event: data.eventId,
         applicant: req.user._id,
         speaker: data.speakerId
       },
-      model, updateData
+      model,
+      updateData
     )
     res.status(200).json(item)
   } catch (error) {

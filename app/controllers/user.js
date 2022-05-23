@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 const { Parser } = require('json2csv')
 const uuid = require('uuid')
 const moment = require('moment-timezone')
@@ -8,7 +9,7 @@ const db = require('../middleware/db')
 const emailer = require('../middleware/emailer')
 const authController = require('./auth')
 
-const converterUtils = require('../utils');
+const converterUtils = require('../utils')
 
 /*********************
  * Private functions *
@@ -63,14 +64,17 @@ exports.getItems = async (req, res) => {
     const query = await db.checkQueryString(req.query)
     const queryRoleUser = {
       ...query,
-      role: req.query.role === "user" ? "user" : {$not: /user/}
+      role: req.query.role === 'user' ? 'user' : { $not: /user/ }
     }
-    const users = await db.getItems(req, model, queryRoleUser);
+    const users = await db.getItems(req, model, queryRoleUser)
     const result = {
-      ...users, 
-      docs: users.docs.map((item) => ({
+      ...users,
+      docs: users.docs.map(item => ({
         ...item,
-        accountStatus: authController.loginStatus(item.loginAttempts, item.isApplyUnlock)
+        accountStatus: authController.loginStatus(
+          item.loginAttempts,
+          item.isApplyUnlock
+        )
       }))
     }
     res.status(200).json(result)
@@ -89,17 +93,17 @@ exports.getExportSCV = async (req, res) => {
     const query = await db.checkQueryString(req.body)
     const queryRoleUser = {
       ...query,
-      role: req.body.role === "user" ? "user" : {$not: /user/}
+      role: req.body.role === 'user' ? 'user' : { $not: /user/ }
     }
-    
+
     model
       .find(queryRoleUser, '-shortcuts -referralCode -referralList')
-      .exec((err, items) => {
+      .exec((_err, items) => {
         const parser = new Parser({
           fields: [
             {
               label: '會員編號',
-              value: '_id',
+              value: '_id'
             },
             {
               label: '顯示名稱',
@@ -113,23 +117,26 @@ exports.getExportSCV = async (req, res) => {
             },
             {
               label: '性別',
-              value: (row, field) => row['gender'] ? (
-                converterUtils.genderConverter(row['gender'])
-              ) : '未提供',
+              value: (row, field) =>
+                row.gender
+                  ? converterUtils.genderConverter(row.gender)
+                  : '未提供',
               default: '未提供'
             },
             {
               label: '年齡',
-              value: (row, field) => row['bob'] ? (
-                moment().diff(moment(row['bob']), 'years')
-              ) : '未提供',
+              value: (row, field) =>
+                row.bob ? moment().diff(moment(row.bob), 'years') : '未提供',
               default: '未提供'
             },
             {
               label: '生日',
-              value: (row, field) => row['bob'] ? (
-                moment(row['bob']).tz('Asia/Taipei').format('YYYY-MM-DD')
-              ) : '未提供',
+              value: (row, field) =>
+                row.bob
+                  ? moment(row.bob)
+                      .tz('Asia/Taipei')
+                      .format('YYYY-MM-DD')
+                  : '未提供',
               default: '未提供'
             },
             {
@@ -164,9 +171,10 @@ exports.getExportSCV = async (req, res) => {
             },
             {
               label: '教育程度',
-              value: (row, field) => row['education'] ? (
-                converterUtils.educationConverter(row['education'])
-              ) : '未提供',
+              value: (row, field) =>
+                row.education
+                  ? converterUtils.educationConverter(row.education)
+                  : '未提供',
               default: '未提供'
             },
             {
@@ -177,24 +185,24 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '學群類別',
               // value: 'departmentName',
-              value: (row, field) => row['departmentName'] ? (
-                converterUtils.departmentNameConverter(row['departmentName'])
-              ) : '未提供',
+              value: (row, field) =>
+                row.departmentName
+                  ? converterUtils.departmentNameConverter(row.departmentName)
+                  : '未提供',
               default: '未提供'
             },
             {
               label: '主修科目',
-              value: (row, field) => row['majorName'] ? (
-                row['majorName']
-              ) : '未提供',
+              value: (row, field) => (row.majorName ? row.majorName : '未提供'),
               default: '未提供'
             },
             {
               label: '身分狀態',
               // value: 'employmentStatus',
-              value: (row, field) => row['employmentStatus'] ? (
-                converterUtils.statusConverter(row['employmentStatus'])
-              ) : '未提供',
+              value: (row, field) =>
+                row.employmentStatus
+                  ? converterUtils.statusConverter(row.employmentStatus)
+                  : '未提供',
               default: '未提供'
             },
 
@@ -266,15 +274,18 @@ exports.getExportSCV = async (req, res) => {
             {
               label: '加入日期',
               value: 'createdAt',
-              value: (row, field) => moment(row['createdAt']).tz('Asia/Taipei').format('YYYY-MM-DD'),
+              value: (row, field) =>
+                moment(row.createdAt)
+                  .tz('Asia/Taipei')
+                  .format('YYYY-MM-DD'),
               default: '未提供'
             },
             {
               label: '是否驗證',
               value: 'verified',
-              value: (row, field) => row['verified'] ? '已驗證' : '未驗證',
+              value: (row, field) => (row.verified ? '已驗證' : '未驗證'),
               default: '未提供'
-            },
+            }
           ]
         })
 
