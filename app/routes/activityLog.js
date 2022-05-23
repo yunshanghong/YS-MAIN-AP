@@ -36,8 +36,8 @@ router.get(
  */
 router.get(
   '/event/:eventId',
-  // requireAuth,
-  // AuthController.roleAuthorization(authRoles.staff),
+  requireAuth,
+  AuthController.roleAuthorization(authRoles.staff),
   trimRequest.all,
   validate.getItemsByEventId,
   controller.getItemsByEventId
