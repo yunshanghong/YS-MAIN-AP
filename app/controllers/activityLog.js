@@ -329,7 +329,21 @@ exports.getItemsByUserId = async (req, res) => {
 exports.getItemsByEventId = async (req, res) => {
   try {
     const data = matchedData(req)
-    res.status(200).json(await getEventActivitysHistoryFromDB(data.eventId))
+    const result = await getEventActivitysHistoryFromDB(data.eventId)
+    res.status(200).json(result)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.getCountsByEventId = async (req, res) => {
+  try {
+    const data = matchedData(req)
+    const dataFromDb = await getEventActivitysHistoryFromDB(data.eventId)
+    const result = dataFromDb.map(item => ({
+      registrationStatus: item.registrationStatus
+    }))
+    res.status(200).json(result)
   } catch (error) {
     utils.handleError(res, error)
   }

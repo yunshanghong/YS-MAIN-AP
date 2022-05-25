@@ -29,6 +29,22 @@ exports.getItemsByEventId = [
     validationResult(req, res, next)
   }
 ]
+
+/**
+ * Validates Get Items By EventId request
+ */
+exports.getCountsByEventId = [
+  check('eventId')
+    .exists()
+    .withMessage('MISSING')
+    .not()
+    .isEmpty()
+    .withMessage('IS_EMPTY'),
+  (req, res, next) => {
+    validationResult(req, res, next)
+  }
+]
+
 /**
  * Validates Get Speaker Stars By SpeakerId request
  */

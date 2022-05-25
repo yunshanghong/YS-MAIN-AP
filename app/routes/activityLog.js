@@ -44,6 +44,16 @@ router.get(
 )
 
 /*
+ * Get Event's all user registration log by event id route
+ */
+router.get(
+  '/eventCount/:eventId',
+  requireAuth,
+  validate.getCountsByEventId,
+  controller.getCountsByEventId
+)
+
+/*
  * Add new activity log route
  */
 router.post(
